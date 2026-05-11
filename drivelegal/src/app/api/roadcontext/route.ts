@@ -28,18 +28,25 @@ export async function POST(req: Request) {
       { signal: AbortSignal.timeout(7000) }
     );
 
-    const empty = {
-      nearbyZones: [] as string[], roadType: "unknown",
+    type RoadCtx = {
+      nearbyZones: string[]; roadType: string;
+      hasSpeedCamera: boolean; hasTrafficSignal: boolean;
+      hasTollBooth: boolean; hasRailwayCrossing: boolean;
+      nearestPOI: string | null;
+    };
+
+    const empty: RoadCtx = {
+      nearbyZones: [], roadType: "unknown",
       hasSpeedCamera: false, hasTrafficSignal: false,
       hasTollBooth: false, hasRailwayCrossing: false,
-      nearestPOI: null as string | null,
+      nearestPOI: null,
     };
 
     if (!osmRes.ok) return NextResponse.json(empty);
 
     const osmData = await osmRes.json();
     const elements = osmData.elements || [];
-    const ctx = { ...empty };
+    const ctx: RoadCtx = { ...empty };
 
     const zoneMap: Record<string, string> = {
       school: "school zone", hospital: "hospital zone",
