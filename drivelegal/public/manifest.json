@@ -1,0 +1,16 @@
+{
+  "name": "LexDrive AI",
+  "short_name": "LexDrive",
+  "description": "AI-powered legal co-pilot and road safety platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#2563EB",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
