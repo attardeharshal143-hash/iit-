@@ -29,10 +29,10 @@ export async function POST(req: Request) {
     );
 
     const empty = {
-      nearbyZones: [], roadType: "unknown",
+      nearbyZones: [] as string[], roadType: "unknown",
       hasSpeedCamera: false, hasTrafficSignal: false,
       hasTollBooth: false, hasRailwayCrossing: false,
-      nearestPOI: null,
+      nearestPOI: null as string | null,
     };
 
     if (!osmRes.ok) return NextResponse.json(empty);
