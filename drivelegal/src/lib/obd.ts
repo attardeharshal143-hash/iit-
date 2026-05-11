@@ -12,9 +12,9 @@
  */
 
 // Standard BLE UART service used by most ELM327 BLE adapters
-const OBD_SERVICE_UUID   = "0000fff0-0000-1000-8000-00805f9b34fb";
-const OBD_WRITE_UUID     = "0000fff2-0000-1000-8000-00805f9b34fb";
-const OBD_NOTIFY_UUID    = "0000fff1-0000-1000-8000-00805f9b34fb";
+const OBD_SERVICE_UUID  = "0000fff0-0000-1000-8000-00805f9b34fb";
+const OBD_WRITE_UUID    = "0000fff2-0000-1000-8000-00805f9b34fb";
+const OBD_NOTIFY_UUID   = "0000fff1-0000-1000-8000-00805f9b34fb";
 
 // Some adapters use the generic Nordic UART service instead
 const NORDIC_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
@@ -32,9 +32,12 @@ type SpeedCallback = (reading: OBDReading) => void;
 type StatusCallback = (status: OBDStatus) => void;
 
 export class OBDManager {
-  private device: BluetoothDevice | null = null;
-  private writeChar: BluetoothRemoteGATTCharacteristic | null = null;
-  private notifyChar: BluetoothRemoteGATTCharacteristic | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private device: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private writeChar: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private notifyChar: any = null;
   private speedCallback: SpeedCallback | null = null;
   private statusCallback: StatusCallback | null = null;
   private pollInterval: ReturnType<typeof setInterval> | null = null;
@@ -45,7 +48,7 @@ export class OBDManager {
   static isSupported(): boolean {
     return typeof navigator !== "undefined" &&
       "bluetooth" in navigator &&
-      typeof (navigator as any).bluetooth?.requestDevice === "function";
+      typeof (navigator as any).bluetooth?.requestDevice === "function"; // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   onSpeed(cb: SpeedCallback) { this.speedCallback = cb; }
@@ -66,7 +69,7 @@ export class OBDManager {
 
     try {
       // Request device — shows browser's native BLE picker
-      this.device = await (navigator as any).bluetooth.requestDevice({
+      this.device = await (navigator as any).bluetooth.requestDevice({ // eslint-disable-line @typescript-eslint/no-explicit-any
         filters: [
           { namePrefix: "OBDII" },
           { namePrefix: "OBD" },
@@ -85,20 +88,20 @@ export class OBDManager {
         this.stopPolling();
       });
 
-      const server = await this.device.gatt!.connect();
+      const server = await this.device.gatt.connect();
 
       // Try standard FFF0 service first, then Nordic UART
-      let service: BluetoothRemoteGATTService;
+      let service: any; // eslint-disable-line @typescript-eslint/no-explicit-any
       let writeUUID: string;
       let notifyUUID: string;
 
       try {
-        service   = await server.getPrimaryService(OBD_SERVICE_UUID);
-        writeUUID = OBD_WRITE_UUID;
+        service    = await server.getPrimaryService(OBD_SERVICE_UUID);
+        writeUUID  = OBD_WRITE_UUID;
         notifyUUID = OBD_NOTIFY_UUID;
       } catch {
-        service   = await server.getPrimaryService(NORDIC_SERVICE_UUID);
-        writeUUID = NORDIC_WRITE_UUID;
+        service    = await server.getPrimaryService(NORDIC_SERVICE_UUID);
+        writeUUID  = NORDIC_WRITE_UUID;
         notifyUUID = NORDIC_NOTIFY_UUID;
       }
 
@@ -108,20 +111,20 @@ export class OBDManager {
       // Subscribe to notifications (adapter sends responses here)
       await this.notifyChar.startNotifications();
       this.notifyChar.addEventListener("characteristicvaluechanged", (e: Event) => {
-        const value = (e.target as BluetoothRemoteGATTCharacteristic).value!;
+        const value = (e.target as any).value; // eslint-disable-line @typescript-eslint/no-explicit-any
         const chunk = new TextDecoder().decode(value);
         this.responseBuffer += chunk;
         this.parseBuffer();
       });
 
       // Initialize ELM327
-      await this.sendCommand("ATZ");    // Reset
+      await this.sendCommand("ATZ");   // Reset
       await this.delay(1000);
-      await this.sendCommand("ATE0");   // Echo off
-      await this.sendCommand("ATL0");   // Linefeeds off
-      await this.sendCommand("ATS0");   // Spaces off
-      await this.sendCommand("ATH0");   // Headers off
-      await this.sendCommand("ATSP0");  // Auto protocol
+      await this.sendCommand("ATE0");  // Echo off
+      await this.sendCommand("ATL0");  // Linefeeds off
+      await this.sendCommand("ATS0");  // Spaces off
+      await this.sendCommand("ATH0");  // Headers off
+      await this.sendCommand("ATSP0"); // Auto protocol
 
       this.isInitialized = true;
       this.setStatus("connected");
@@ -130,9 +133,8 @@ export class OBDManager {
       this.startPolling();
       return true;
 
-    } catch (err: any) {
+    } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       console.error("OBD connect error:", err.message);
-      // User cancelled picker or connection failed
       this.setStatus(err.name === "NotFoundError" ? "disconnected" : "error");
       return false;
     }
