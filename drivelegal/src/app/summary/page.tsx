@@ -1,16 +1,38 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useDriveContext } from "../../context/DriveContext";
 import finesData from "../../data/fines.json";
 import "../globals.css";
+import { translations, Language, carTranslations, summaryTranslations } from "../../lib/translations";
 
 export default function PostDriveSummary() {
-  const { drivingScore, maxSpeedReached, alertsTriggered, violationHistory, setViolationHistory } = useDriveContext();
+  const { drivingScore, maxSpeedReached, alertsTriggered, violationHistory, setViolationHistory, appLanguage } = useDriveContext();
+  const t = translations[appLanguage as Language] || translations["en-IN"];
+  const ct = carTranslations[appLanguage] || carTranslations["en-IN"];
+  const st = summaryTranslations[appLanguage] || summaryTranslations["en-IN"];
   const [vehicleNo, setVehicleNo] = useState("");
   const [challans, setChallans] = useState<any[] | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [paymentModal, setPaymentModal] = useState(false);
   const [vehicleDetails, setVehicleDetails] = useState<any | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const win = window as any;
+    if (win.google && win.google.translate && win.google.translate.TranslateElement) {
+      setTimeout(() => {
+        const el = document.getElementById('google_translate_element');
+        if (el && el.innerHTML.trim() === '') {
+          new win.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi,mr,kn,ta,te,gu,bn',
+            layout: win.google.translate.TranslateElement.InlineLayout.SIMPLE
+          }, 'google_translate_element');
+        }
+      }, 500);
+    }
+  }, []);
 
   const fetchVahanData = async (plate: string) => {
     try {
@@ -20,16 +42,10 @@ export default function PostDriveSummary() {
         body: JSON.stringify({ plateNumber: plate })
       });
       const result = await response.json();
-      console.log("VAHAN API FULL RESPONSE:", JSON.stringify(result));
-
-      if (result?.data) {
-        return result.data;
-      }
+      if (result?.data) return result.data;
     } catch (e) {
       console.error("Vahan API Error", e);
     }
-
-    // Always return something so the card renders
     return {
       ownerName: "Data Unavailable",
       vehicleModel: "Contact RTO",
@@ -40,7 +56,6 @@ export default function PostDriveSummary() {
     };
   };
 
-  // Challan Calculator State
   const [calcCountry, setCalcCountry] = useState("India");
   const [calcState, setCalcState] = useState("All India");
   const [calcVehicle, setCalcVehicle] = useState("All Vehicles");
@@ -54,26 +69,22 @@ export default function PostDriveSummary() {
   const calculatedFine = useMemo(() => {
     let fine = finesData.find((f: any) => f.country === calcCountry && f.state === calcState && f.violation === calcViolation && (f.vehicle === calcVehicle || f.vehicle === "All Vehicles"));
     if (!fine) {
-      // Fallback to national/state defaults if exact vehicle match isn't found
-      fine = finesData.find((f: any) => f.country === calcCountry && (f.state === "All India" || f.state === calcState || f.state === "California" || f.state === "London") && f.violation === calcViolation);
+      fine = finesData.find((f: any) => f.country === calcCountry && (f.state === "All India" || f.state === calcState) && f.violation === calcViolation);
     }
     return fine;
   }, [calcCountry, calcState, calcVehicle, calcViolation]);
 
-  // Gamification Badge Logic
   const getBadge = () => {
-    if (drivingScore >= 90) return { title: "Speed Saint", icon: "😇", color: "#10b981" };
-    if (drivingScore >= 70) return { title: "Safe Driver", icon: "🛡️", color: "#3b82f6" };
-    return { title: "Reckless Rookie", icon: "⚠️", color: "#ef4444" };
+    if (drivingScore >= 90) return { title: st.eliteDriver, icon: "⚡", color: "#0ea5e9" }; 
+    if (drivingScore >= 70) return { title: st.safeDriver, icon: "🛡️", color: "#3b82f6" };
+    return { title: st.highRisk, icon: "⚠️", color: "#ef4444" };
   };
   const badge = getBadge();
 
   const handleFetchChallans = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!vehicleNo) return;
-    
     setIsFetching(true);
-    // Real API call to our /api/vahan route
     const data = await fetchVahanData(vehicleNo);
     setIsFetching(false);
     setVehicleDetails(data);
@@ -88,193 +99,175 @@ export default function PostDriveSummary() {
       setViolationHistory(updated);
       localStorage.setItem("LexDrive_violations", JSON.stringify(updated));
       setChallans(updated);
-      alert("Payment Successful via LexDrive Secure Gateway!");
+      alert("Payment Successful via Secure Gateway!");
     }, 2000);
   };
 
-  return (
-    <main style={{ minHeight: "100vh", position: "relative", paddingBottom: "5rem", background: "var(--background)", color: "var(--foreground)", fontFamily: "'Playfair Display', serif", overflowX: "hidden" }}>
-      
-      {/* Dynamic Grid Background (Light) */}
-      <div style={{ position: "fixed", bottom: 0, left: "-20%", right: "-20%", height: "60%", background: "repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.03) 50px), repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.03) 50px)", transform: "perspective(800px) rotateX(75deg)", transformOrigin: "bottom", pointerEvents: "none", zIndex: 0 }}></div>
+  if (!mounted) return null;
 
-      {/* Navigation */}
-      <nav className="animate-fade-in-up" style={{ padding: "1rem 5%", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--glass-border)", backdropFilter: "blur(20px)", position: "sticky", top: 0, zIndex: 50, background: "var(--nav-bg)" }}>
-        <a href="/" style={{ fontWeight: 900, fontSize: "clamp(1.2rem, 3vw, 1.5rem)", letterSpacing: "0.05em", textDecoration: "none", color: "var(--foreground)", textTransform: "uppercase" }}>
-          LexDrive <span style={{ color: "var(--accent-blue)" }}>AI</span>
+  return (
+    <main style={{ minHeight: "100vh", backgroundColor: "#f0f4f8", position: "relative", color: "#0f172a", fontFamily: "system-ui, -apple-system, sans-serif", overflowX: "hidden" }}>
+      
+      {/* Background Decor */}
+      <div style={{ position: "fixed", top: "-10%", left: "-10%", width: "50vw", height: "50vw", background: "radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(240, 244, 248, 0) 70%)", zIndex: 0, pointerEvents: "none" }} />
+      <div style={{ position: "fixed", bottom: "-10%", right: "-10%", width: "60vw", height: "60vw", background: "radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(240, 244, 248, 0) 70%)", zIndex: 0, pointerEvents: "none" }} />
+      <div style={{ position: "fixed", inset: 0, backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px)", backgroundSize: "40px 40px", zIndex: 0, pointerEvents: "none", opacity: 0.5 }} />
+
+      {/* Floating Particles */}
+      {/* Floating Particles - fixed to avoid SSR hydration mismatch */}
+      {[
+        { top: "10%",  left: "5%",  w: 120, h: 120, delay: "0s"  },
+        { top: "60%",  left: "80%", w: 90,  h: 90,  delay: "2s"  },
+        { top: "30%",  left: "90%", w: 80,  h: 80,  delay: "4s"  },
+        { top: "80%",  left: "20%", w: 110, h: 110, delay: "6s"  },
+        { top: "50%",  left: "50%", w: 70,  h: 70,  delay: "8s"  },
+        { top: "15%",  left: "60%", w: 100, h: 100, delay: "10s" },
+      ].map((p, i) => (
+        <div key={i} className="floating-particle" style={{
+          position: "fixed",
+          top: p.top,
+          left: p.left,
+          width: `${p.w}px`,
+          height: `${p.h}px`,
+          background: "radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0) 70%)",
+          borderRadius: "50%",
+          animationDelay: p.delay,
+          pointerEvents: "none",
+          zIndex: 0
+        }} />
+      ))}
+
+      {/* ══ NAV ══ */}
+      <nav className="nav-container" style={{ 
+        position: "sticky", 
+        top: 0, 
+        zIndex: 1000, 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "space-between", 
+        padding: "0 5%", 
+        height: 64, 
+        background: "transparent"
+      }}>
+        <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+          <span style={{ fontWeight: 800, fontSize: "1.25rem", letterSpacing: "-0.02em", color: "#0f172a" }}>LexDrive AI</span>
         </a>
-        <a href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700, color: "var(--text-muted)", textDecoration: "none", textTransform: "uppercase", letterSpacing: "0.1em", fontSize: "0.85rem" }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Go Back Home
-        </a>
+        <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div className="pulse-dot" style={{ width: 8, height: 8, background: "#10b981", borderRadius: "50%", boxShadow: "0 0 10px #10b981" }} />
+            <span style={{ fontSize: "0.65rem", fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.systemLive}</span>
+          </div>
+          
+          <div id="google_translate_element" style={{ height: "36px", overflow: "hidden", display: "flex", alignItems: "center" }}></div>
+          
+          <a href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 600, color: "#64748b", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.2s ease" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            {st.backHome}
+          </a>
+        </div>
       </nav>
 
-      <section style={{ maxWidth: "1200px", width: "100%", margin: "clamp(2rem, 5vh, 4rem) auto 0", padding: "0 5%", position: "relative", zIndex: 10 }}>
-        <h1 className="animate-fade-in-up" style={{ fontSize: "clamp(2.5rem, 5vw, 3.5rem)", fontWeight: 900, marginBottom: "clamp(2rem, 4vh, 3rem)", textAlign: "center", background: "linear-gradient(to right, var(--accent-blue), var(--accent-purple))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: "0.05em" }}>Post-Drive Summary</h1>
+      <section style={{ maxWidth: 1200, margin: "3rem auto", padding: "0 5%", position: "relative", zIndex: 10 }}>
+        <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+          <div className="animate-fade-in" style={{ display: "inline-block", padding: "0.5rem 1rem", background: "rgba(14, 165, 233, 0.1)", borderRadius: "99px", border: "1px solid rgba(14, 165, 233, 0.2)", marginBottom: "1rem" }}>
+            <p style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.15em", color: "#0ea5e9", textTransform: "uppercase", margin: 0 }}>{st.missionComplete}</p>
+          </div>
+          <h1 className="gradient-text" style={{ fontSize: "clamp(2.5rem, 5vw, 3.5rem)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+            {st.postDriveSummary}
+          </h1>
+        </div>
         
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem", alignItems: "stretch" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: "2.5rem" }}>
           
-          {/* Gamification Card */}
-          <div className="animate-fade-in-up delay-100" style={{ flex: "1 1 400px", background: "var(--glass-bg)", borderRadius: "24px", border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 20px 40px rgba(0,0,0,0.05)", padding: "3rem 2.5rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <h3 style={{ fontSize: "1rem", color: "var(--card-header)", marginBottom: "1rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em" }}>Your Driving Score</h3>
+          {/* Card 1: Score */}
+          <div className="scroll-reveal glass-card" style={{ animationDelay: "0.1s" }}>
+            <h3 style={{ fontSize: "0.85rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2.5rem" }}>{st.driverPerformance}</h3>
             
-            <div style={{ position: "relative", width: "180px", height: "180px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
-              {/* Outer Glow Ring */}
-              <div style={{ 
-                position: "absolute", 
-                width: "160px", 
-                height: "160px", 
-                borderRadius: "50%", 
-                boxShadow: "0 0 40px rgba(30, 64, 175, 0.2), 0 0 40px rgba(52, 103, 57, 0.1)",
-                animation: "pulse 2s infinite ease-in-out"
-              }}></div>
-              
-              <svg width="180" height="180" viewBox="0 0 180 180" style={{ position: "absolute", transform: "rotate(-90deg)" }}>
-                  <defs>
-                   <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                     <stop offset="0%" stopColor="var(--accent-blue)" />
-                     <stop offset="100%" stopColor="var(--accent-purple)" />
-                   </linearGradient>
-                 </defs>
-                 
-                 {/* Track */}
-                 <circle cx="90" cy="90" r="75" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="8" />
-                 
-                 {/* Progress Fill */}
+            <div style={{ position: "relative", width: "180px", height: "180px", margin: "0 auto 2rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="180" height="180" viewBox="0 0 180 180" style={{ transform: "rotate(-90deg)" }}>
+                 <circle cx="90" cy="90" r="75" fill="none" stroke="rgba(14, 165, 233, 0.1)" strokeWidth="6" />
                  <circle cx="90" cy="90" r="75" fill="none" 
-                   stroke="url(#scoreGradient)" 
+                   stroke="url(#blueGrad)" 
                    strokeWidth="12" 
                    strokeLinecap="round"
                    strokeDasharray="471" 
-                   strokeDashoffset={471 - (471 * drivingScore) / 100} 
-                   style={{ 
-                     transition: "stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)",
-                     filter: "drop-shadow(0 0 8px rgba(30, 64, 175, 0.4))" 
-                   }} 
+                   className="progress-ring"
+                   style={{ '--target-offset': 471 - (471 * drivingScore) / 100 } as React.CSSProperties}
                  />
-
-                 {/* Rotating Sweeper Dot */}
-                 <circle cx="165" cy="90" r="5" fill="#ffffff" style={{ 
-                   transformOrigin: "center",
-                   animation: "rotate-score 2s linear infinite",
-                   filter: "drop-shadow(0 0 10px #1e40af)"
-                 }} />
+                 <defs>
+                   <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                     <stop offset="0%" stopColor="#0ea5e9" />
+                     <stop offset="100%" stopColor="#3b82f6" />
+                   </linearGradient>
+                 </defs>
               </svg>
-              
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1 }}>
-                <span style={{ 
-                  fontSize: "4.5rem", 
-                  fontWeight: 900, 
-                  background: "linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  lineHeight: 1 
-                }}>{drivingScore}</span>
-                <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Points</span>
+              <div style={{ position: "absolute", textAlign: "center" }}>
+                <div style={{ fontSize: "3.5rem", fontWeight: 900, color: "#0f172a", lineHeight: 1, letterSpacing: "-0.05em" }}>{drivingScore}</div>
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#0ea5e9", textTransform: "uppercase", letterSpacing: "0.1em" }}>SYS SCORE</div>
               </div>
             </div>
 
-            <div style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "0.5rem", 
-              background: `${badge.color}10`, 
-              border: `1px solid ${badge.color}30`, 
-              color: badge.color, 
-              padding: "0.6rem 1.5rem", 
-              borderRadius: "999px", 
-              fontWeight: 800, 
-              marginBottom: "2.5rem", 
-              textTransform: "uppercase", 
-              letterSpacing: "0.05em",
-              boxShadow: `0 10px 20px ${badge.color}10`
-            }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: "rgba(255, 255, 255, 0.9)", border: `1px solid ${badge.color}30`, padding: "0.75rem 1.5rem", borderRadius: "12px", fontWeight: 700, color: badge.color, boxShadow: "0 4px 15px rgba(0,0,0,0.03)", marginBottom: "2.5rem" }}>
               <span style={{ fontSize: "1.25rem" }}>{badge.icon}</span> {badge.title}
             </div>
 
-            <div style={{ display: "flex", width: "100%", justifyContent: "space-between", borderTop: "1px solid var(--glass-border)", paddingTop: "1.5rem" }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "1.8rem", fontWeight: 900, color: "var(--foreground)" }}>{maxSpeedReached} <span style={{ fontSize: "1rem", color: "var(--text-muted)" }}>km/h</span></div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em" }}>Top Speed</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", borderTop: "1px solid rgba(0,0,0,0.05)", paddingTop: "2rem" }}>
+              <div>
+                <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#0f172a" }}>{maxSpeedReached} <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>km/h</span></div>
+                <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.peakVelocity}</div>
               </div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "1.8rem", fontWeight: 900, color: alertsTriggered > 0 ? "#ef4444" : "#10b981", textShadow: alertsTriggered > 0 ? "0 0 15px rgba(239,68,68,0.3)" : "0 0 15px rgba(16,185,129,0.3)" }}>{alertsTriggered}</div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em" }}>Risk Alerts</div>
+              <div>
+                <div style={{ fontSize: "1.75rem", fontWeight: 900, color: alertsTriggered > 0 ? "#ef4444" : "#0ea5e9" }}>{alertsTriggered}</div>
+                <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.systemAlerts}</div>
               </div>
             </div>
           </div>
 
-          {/* E-Challan Portal */}
-          <div className="animate-fade-in-up delay-200" style={{ flex: "1 1 400px", background: "var(--glass-bg)", borderRadius: "24px", border: "1px solid var(--glass-border)", boxShadow: "0 20px 40px rgba(0,0,0,0.05)", padding: "3rem 2.5rem", display: "flex", flexDirection: "column" }}>
-            <h3 style={{ fontSize: "1.25rem", color: "var(--card-header)", marginBottom: "0.5rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em" }}>Vehicle E-Challan Portal</h3>
-            <p style={{ color: "var(--text-muted)", marginBottom: "2rem", fontSize: "0.95rem", lineHeight: 1.5 }}>Check if your vehicle has any pending traffic violations from previous drives.</p>
+          {/* Card 2: E-Challan */}
+          <div className="scroll-reveal glass-card" style={{ animationDelay: "0.2s" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+              <div style={{ width: "8px", height: "8px", background: "#0ea5e9", borderRadius: "50%", boxShadow: "0 0 10px #0ea5e9" }} />
+              <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.01em" }}>{st.echallanPortal}</h3>
+            </div>
+            <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "2rem" }}>{st.echallanDesc}</p>
             
-            <form onSubmit={handleFetchChallans} style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "2rem" }}>
+            <form onSubmit={handleFetchChallans} style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem" }}>
               <input 
                 type="text" 
-                placeholder="e.g. MH 12 AB 1234" 
+                placeholder="MH 12 AB 1234" 
                 value={vehicleNo}
                 onChange={e => setVehicleNo(e.target.value.toUpperCase())}
-                style={{ flex: "1 1 200px", padding: "1rem", borderRadius: "12px", border: "1px solid var(--glass-border)", background: "rgba(0,0,0,0.02)", color: "var(--foreground)", outline: "none", textTransform: "uppercase", fontWeight: 600, boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)", transition: "all 0.3s ease" }}
+                style={{ flex: 1, padding: "0.875rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(14, 165, 233, 0.2)", background: "rgba(255, 255, 255, 0.9)", color: "#0f172a", fontWeight: 600, outline: "none", fontFamily: "monospace" }}
               />
-              <button type="submit" style={{ flex: "0 1 120px", padding: "1rem 1.5rem", background: "linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%)", color: "#fff", border: "none", borderRadius: "12px", fontWeight: 800, cursor: "pointer", boxShadow: "0 10px 20px rgba(0, 113, 227, 0.2)", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>Check</button>
+              <button type="submit" className="button-glow">{st.run}</button>
             </form>
 
             {challans && (
-              <div className="animate-fade-in-up" style={{ marginTop: "auto" }}>
-                <h4 style={{ fontWeight: 800, marginBottom: "0.25rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontSize: "0.85rem" }}>Results for <span style={{ color: "var(--accent-blue)" }}>{vehicleNo}</span></h4>
+              <div style={{ marginTop: "auto" }}>
                 {vehicleDetails && (
-                  <div style={{ marginBottom: "1.5rem", padding: "1rem", background: "rgba(0,0,0,0.02)", borderRadius: "12px", border: "1px solid var(--glass-border)", fontSize: "0.85rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>👤 OWNER:</span>
-                      <span style={{ fontWeight: 800, color: "var(--foreground)" }}>{vehicleDetails.ownerName}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>🚗 MODEL:</span>
-                      <span style={{ fontWeight: 700, color: "var(--foreground)" }}>{vehicleDetails.vehicleModel}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>⛽ FUEL:</span>
-                      <span style={{ fontWeight: 700, color: "var(--foreground)" }}>{vehicleDetails.fuelType}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>📅 REG DATE:</span>
-                      <span style={{ fontWeight: 700, color: "var(--foreground)" }}>{vehicleDetails.registrationDate}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>🛡️ INSURANCE:</span>
-                      <span style={{ fontWeight: 700, color: "#10b981" }}>{vehicleDetails.insuranceExpiry}</span>
-                    </div>
-                    {vehicleDetails.address && (
-                      <div style={{ marginTop: "0.5rem", paddingTop: "0.5rem", borderTop: "1px solid var(--glass-border)" }}>
-                        <span style={{ color: "var(--text-muted)", fontWeight: 600, display: "block", marginBottom: "0.25rem" }}>📍 ADDRESS:</span>
-                        <span style={{ fontWeight: 600, color: "var(--foreground)", fontSize: "0.8rem" }}>{vehicleDetails.address}</span>
-                      </div>
-                    )}
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem", paddingTop: "0.5rem", borderTop: "1px solid var(--glass-border)" }}>
-                      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>🔢 OWNERS:</span>
-                      <span style={{ fontWeight: 700, color: "var(--foreground)" }}>{vehicleDetails.ownerCount || "1"}</span>
+                  <div style={{ marginBottom: "1.5rem", padding: "1.25rem", background: "rgba(240, 244, 248, 0.5)", borderRadius: "16px", border: "1px solid rgba(0,0,0,0.05)" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                      {[{l:"OWNER",v:vehicleDetails.ownerName},{l:"MODEL",v:vehicleDetails.vehicleModel},{l:"FUEL",v:vehicleDetails.fuelType},{l:"REG DATE",v:vehicleDetails.registrationDate}].map(item => (
+                        <div key={item.l}>
+                          <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "#94a3b8", marginBottom: "0.25rem" }}>{item.l}</div>
+                          <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a" }}>{item.v}</div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
                 {challans.length === 0 ? (
-                  <div style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "16px", padding: "1.5rem", textAlign: "center", color: "#10b981", fontWeight: 700 }}>
-                     ✅ Excellent! No pending violations found for this vehicle.
-                  </div>
+                  <div className="clean-record-badge">✅ {st.cleanRecord}</div>
                 ) : (
                   challans.map(c => (
-                    <div key={c.id} style={{ border: "1px solid var(--glass-border)", borderRadius: "16px", padding: "1.25rem", background: "rgba(0,0,0,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 6px rgba(0,0,0,0.05)", marginBottom: "1rem" }}>
+                    <div key={c.id} className="challan-item">
                       <div>
-                        <div style={{ fontWeight: 800, marginBottom: "0.25rem", color: "var(--foreground)", fontSize: "1.1rem" }}>{c.violation}</div>
-                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: 600 }}>{c.id} • {c.date}</div>
+                        <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.9rem" }}>{c.violation}</div>
+                        <div style={{ fontSize: "0.7rem", color: "#94a3b8", fontFamily: "monospace" }}>{c.id}</div>
                       </div>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem" }}>
-                        <div style={{ fontWeight: 900, fontSize: "1.5rem", color: c.status === "PAID" ? "#10b981" : "#ef4444" }}>₹{c.amount}</div>
-                        {c.status === "UNPAID" ? (
-                          <button onClick={handlePay} style={{ padding: "0.4rem 1rem", fontSize: "0.75rem", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", borderRadius: "8px", fontWeight: 800, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.05em" }}>Pay Now</button>
-                        ) : (
-                          <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#10b981", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", padding: "0.3rem 0.75rem", borderRadius: "999px", textTransform: "uppercase", letterSpacing: "0.05em" }}>PAID</span>
-                        )}
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontWeight: 800, color: c.status === "PAID" ? "#059669" : "#ef4444" }}>₹{c.amount}</div>
+                        {c.status === "UNPAID" && <button onClick={handlePay} className="settle-button">{st.settle}</button>}
                       </div>
                     </div>
                   ))
@@ -283,99 +276,129 @@ export default function PostDriveSummary() {
             )}
           </div>
 
-          {/* Challan Calculator */}
-          <div className="animate-fade-in-up delay-300" style={{ flex: "1 1 100%", background: "var(--glass-bg)", borderRadius: "24px", border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 20px 40px rgba(0,0,0,0.05)", padding: "3rem 2.5rem" }}>
-            <h3 style={{ fontSize: "1.25rem", color: "var(--card-header)", marginBottom: "0.5rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em" }}>Automated Challan Calculator</h3>
-            <p style={{ color: "#64748b", marginBottom: "2rem", fontSize: "0.95rem", lineHeight: 1.5 }}>Global Geo-fenced calculator for compounding fees based on location, violation, and vehicle type.</p>
+          {/* Card 3: Matrix */}
+          <div className="scroll-reveal glass-card" style={{ gridColumn: "1 / -1", animationDelay: "0.3s" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem" }}>
+              <div style={{ width: "8px", height: "8px", background: "#3b82f6", borderRadius: "50%", boxShadow: "0 0 10px #3b82f6" }} />
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.01em" }}>{st.assessmentMatrix}</h3>
+            </div>
             
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
-              <div style={{ flex: "1 1 min(100%, 150px)" }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 800, color: "var(--text-muted)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>Country</label>
-                <select value={calcCountry} onChange={e => { setCalcCountry(e.target.value); setCalcState(finesData.find((f: any) => f.country === e.target.value)?.state || ""); }} style={{ width: "100%", padding: "1rem", borderRadius: "12px", border: "1px solid var(--glass-border)", outline: "none", fontWeight: 600, background: "var(--background)", color: "var(--foreground)", cursor: "pointer", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)" }}>
-                  {uniqueCountries.map(c => <option key={c as string} value={c as string}>{c as string}</option>)}
-                </select>
-              </div>
-              <div style={{ flex: "1 1 min(100%, 150px)" }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 800, color: "var(--text-muted)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>State/Region</label>
-                <select value={calcState} onChange={e => setCalcState(e.target.value)} style={{ width: "100%", padding: "1rem", borderRadius: "12px", border: "1px solid var(--glass-border)", outline: "none", fontWeight: 600, background: "var(--background)", color: "var(--foreground)", cursor: "pointer", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)" }}>
-                  {uniqueStates.map(s => <option key={s as string} value={s as string}>{s as string}</option>)}
-                </select>
-              </div>
-              <div style={{ flex: "1 1 min(100%, 150px)" }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 800, color: "var(--text-muted)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>Vehicle Type</label>
-                <select value={calcVehicle} onChange={e => setCalcVehicle(e.target.value)} style={{ width: "100%", padding: "1rem", borderRadius: "12px", border: "1px solid var(--glass-border)", outline: "none", fontWeight: 600, background: "var(--background)", color: "var(--foreground)", cursor: "pointer", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)" }}>
-                  {uniqueVehicles.map(v => <option key={v as string} value={v as string}>{v as string}</option>)}
-                </select>
-              </div>
-              <div style={{ flex: "1 1 min(100%, 300px)" }}>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 800, color: "var(--text-muted)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>Violation Rule</label>
-                <select value={calcViolation} onChange={e => setCalcViolation(e.target.value)} style={{ width: "100%", padding: "1rem", borderRadius: "12px", border: "1px solid var(--glass-border)", outline: "none", fontWeight: 600, background: "var(--background)", color: "var(--foreground)", cursor: "pointer", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)" }}>
-                  {uniqueViolations.map(v => <option key={v as string} value={v as string}>{v as string}</option>)}
-                </select>
-              </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem", marginBottom: "2.5rem" }}>
+              {[{l:"Jurisdiction",v:calcCountry,s:setCalcCountry,o:uniqueCountries},{l:"Zone",v:calcState,s:setCalcState,o:uniqueStates},{l:"Class",v:calcVehicle,s:setCalcVehicle,o:uniqueVehicles},{l:"Infraction",v:calcViolation,s:setCalcViolation,o:uniqueViolations}].map(f => (
+                <div key={f.l}>
+                  <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", marginBottom: "0.5rem", textTransform: "uppercase" }}>{f.l}</label>
+                  <select value={f.v as string} onChange={e => (f.s as any)(e.target.value)} className="futuristic-select">
+                    {f.o.map(opt => <option key={opt as string} value={opt as string}>{opt as string}</option>)}
+                  </select>
+                </div>
+              ))}
             </div>
 
-            {calculatedFine ? (
-              <div style={{ border: "1px solid var(--glass-border)", borderRadius: "20px", padding: "1.5rem", background: "rgba(0,0,0,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1.5rem", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
+            {calculatedFine && (
+              <div className="matrix-result">
                 <div>
-                  <div style={{ fontSize: "0.85rem", color: "var(--accent-blue)", fontWeight: 800, marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>{(calculatedFine as any).country} • {(calculatedFine as any).state} Code</div>
-                  <div style={{ fontWeight: 900, fontSize: "1.5rem", marginBottom: "0.5rem", color: "var(--foreground)" }}>{(calculatedFine as any).violation}</div>
-                  <div style={{ fontSize: "0.95rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <span style={{ background: "rgba(0,0,0,0.05)", padding: "0.2rem 0.5rem", borderRadius: "6px", fontWeight: 600 }}>📜 {(calculatedFine as any).section}</span>
-                    <span style={{ background: "rgba(0,0,0,0.05)", padding: "0.2rem 0.5rem", borderRadius: "6px", fontWeight: 600 }}>🚗 {(calculatedFine as any).vehicle}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                    <span className="section-badge">SEC {(calculatedFine as any).section}</span>
+                    <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b" }}>{(calculatedFine as any).country} REGULATION</span>
                   </div>
-                  {(calculatedFine as any).consequence && (
-                    <div style={{ fontSize: "0.85rem", color: "#ef4444", fontWeight: 700, marginTop: "1rem", background: "rgba(239,68,68,0.1)", padding: "0.75rem", borderRadius: "8px", borderLeft: "3px solid #ef4444" }}>⚠️ {(calculatedFine as any).consequence}</div>
-                  )}
+                  <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a" }}>{(calculatedFine as any).violation}</div>
                 </div>
-                <div style={{ flex: "1 1 auto", minWidth: "150px", textAlign: "right", background: "rgba(0,0,0,0.02)", padding: "1.25rem 2rem", borderRadius: "16px", border: "1px solid var(--glass-border)", boxShadow: "0 4px 6px rgba(0,0,0,0.05)" }}>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 800, marginBottom: "0.25rem", textTransform: "uppercase", letterSpacing: "0.15em" }}>Fine Amount</div>
-                  <div style={{ fontWeight: 900, fontSize: "clamp(2rem, 5vw, 2.5rem)", color: "#10b981", textShadow: "0 0 20px rgba(16,185,129,0.2)" }}>{(calculatedFine as any).currency === "USD" ? "$" : (calculatedFine as any).currency === "GBP" ? "£" : (calculatedFine as any).currency === "EUR" ? "€" : (calculatedFine as any).currency === "AED" ? "AED " : (calculatedFine as any).currency === "AUD" ? "A$" : "₹"}{(calculatedFine as any).amount.toLocaleString("en-IN")}</div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>{st.estimatedLiability}</div>
+                  <div style={{ fontSize: "2.5rem", fontWeight: 900, color: "#0ea5e9", letterSpacing: "-0.05em" }}>₹{(calculatedFine as any).amount.toLocaleString()}</div>
                 </div>
-              </div>
-            ) : (
-              <div style={{ padding: "3rem", textAlign: "center", border: "1px dashed rgba(0,0,0,0.1)", borderRadius: "16px", color: "#64748b", fontWeight: 600 }}>
-                No precise compounding fee matched for this specific combination.
               </div>
             )}
           </div>
-
         </div>
       </section>
 
-      {/* Payment Processing Modal */}
-      {paymentModal && (
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(10px)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "var(--background)", border: "1px solid var(--glass-border)", borderRadius: "24px", padding: "3.5rem 4rem", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 20px 60px rgba(0,0,0,0.1)" }}>
-            <div style={{ width: "60px", height: "60px", border: "4px solid rgba(0,0,0,0.05)", borderTop: "4px solid var(--accent-blue)", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "2rem" }}></div>
-            <h3 style={{ fontWeight: 900, fontSize: "1.5rem", color: "var(--foreground)", marginBottom: "0.5rem", letterSpacing: "0.05em" }}>Processing Secure Payment...</h3>
-            <p style={{ color: "var(--text-muted)", fontWeight: 600, fontSize: "0.95rem" }}>Connecting to encrypted UPI gateway</p>
-          </div>
-        </div>
-      )}
-      {/* Global Animations */}
+      {/* Styles */}
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes rotate-score {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes reveal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes float { 0% { transform: translate(0, 0); } 50% { transform: translate(20px, 20px); } 100% { transform: translate(0, 0); } }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes drawRing { from { stroke-dashoffset: 471; } to { stroke-dashoffset: var(--target-offset); } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 70% { transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
+
+        .scroll-reveal { opacity: 0; animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .pulse-dot { animation: pulse 2s infinite ease-in-out; }
+        .floating-particle { animation: float 10s infinite ease-in-out; }
+        
+        .progress-ring {
+          animation: drawRing 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation-delay: 0.5s;
+          stroke-dashoffset: 471;
         }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.5; }
-          50% { transform: scale(1.1); opacity: 0.8; }
+
+        .animate-fade-in { animation: popIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        .gradient-text {
+          background: linear-gradient(90deg, #0f172a, #0ea5e9, #3b82f6, #0f172a);
+          background-size: 300% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: gradient 8s infinite linear;
         }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
+
+        .glass-card {
+          background: rgba(255, 255, 255, 0.85);
+          border-radius: 24px;
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+          padding: 3rem 2.5rem;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
         }
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+        .glass-card:hover {
+          transform: translateY(-8px) scale(1.02);
+          border-color: rgba(14, 165, 233, 0.4);
+          box-shadow: 0 25px 50px rgba(14, 165, 233, 0.15);
         }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        .button-glow {
+          padding: 0 1.5rem;
+          background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+          color: #fff;
+          border: none;
+          border-radius: 12px;
+          font-weight: 700;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+          transition: all 0.2s ease;
         }
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
+        .button-glow:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4); }
+
+        .futuristic-select {
+          width: 100%; padding: 0.875rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);
+          background: rgba(255,255,255,0.9); fontWeight: 600; color: #0f172a; cursor: pointer; outline: none; appearance: none;
+          transition: all 0.2s ease;
+        }
+        .futuristic-select:hover { border-color: #0ea5e9; }
+
+        .challan-item {
+          border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 1.25rem; background: #fff;
+          display: flex; justify-content: space-between; alignItems: center; margin-bottom: 0.75rem;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: all 0.2s ease;
+        }
+        .challan-item:hover { transform: translateX(5px); border-color: rgba(14, 165, 233, 0.2); }
+
+        .settle-button {
+          margin-top: 0.25rem; padding: 0.25rem 0.75rem; font-size: 0.65rem; background: rgba(239, 68, 68, 0.1);
+          color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 6px; font-weight: 700; cursor: pointer; text-transform: uppercase;
+        }
+
+        .matrix-result {
+          background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 2rem;
+          border: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .section-badge { padding: 0.25rem 0.5rem; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; borderRadius: 4px; fontSize: 0.65rem; fontWeight: 800; }
+        .clean-record-badge { padding: 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; textAlign: center; color: #059669; fontWeight: 600; font-size: 0.85rem; }
+
+
       `}} />
     </main>
   );

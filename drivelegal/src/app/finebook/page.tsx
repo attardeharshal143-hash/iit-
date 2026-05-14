@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 import { useState, useMemo } from "react";
 import finesData from "../../data/fines.json";
 import "../globals.css";
+import VehicleSelectModal from "../../components/VehicleSelectModal";
 
 // ── Education data ──
 const lawCards = [
@@ -100,6 +101,7 @@ export default function Finebook() {
   const [countryFilter, setCountryFilter] = useState("All Countries");
   const [stateFilter, setStateFilter] = useState("All States");
   const [expandedLaw, setExpandedLaw] = useState<string|null>(null);
+  const [showVehicleModal, setShowVehicleModal] = useState(false);
 
   const uniqueCountries = useMemo(() => ["All Countries", ...Array.from(new Set(finesData.map((f: any) => f.country)))], []);
   const uniqueStates = useMemo(() => ["All States", ...Array.from(new Set(finesData.filter((f: any) => countryFilter === "All Countries" || f.country === countryFilter).map((f: any) => f.state)))], [countryFilter]);
@@ -125,6 +127,7 @@ export default function Finebook() {
 
   return (
     <main style={{ minHeight:"100vh", background:"var(--bg)" }}>
+      <VehicleSelectModal isOpen={showVehicleModal} onClose={() => setShowVehicleModal(false)} />
       <div className="bg-mesh" />
 
       {/* NAV */}
@@ -133,14 +136,14 @@ export default function Finebook() {
           <div style={{ width:34,height:34,borderRadius:"var(--radius-md)",background:"linear-gradient(135deg,var(--brand),var(--violet))",display:"flex",alignItems:"center",justifyContent:"center" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
-          <span style={{ fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,fontSize:"1.125rem",letterSpacing:"-0.03em",color:"var(--fg)" }}>LexDrive <span style={{ color:"var(--brand)" }}>AI</span></span>
+          <span style={{ fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic", fontWeight:700,fontSize:"1.125rem",letterSpacing:"-0.03em",color:"var(--fg)" }}>LexDrive <span style={{ color:"var(--brand)" }}>AI</span></span>
         </a>
         <div style={{ display:"flex",gap:"2rem" }}>
           <a href="/" className="nav-link">Home</a>
           <a href="/finebook" className="nav-link" style={{ color:"var(--brand)" }}>Finebook</a>
           <a href="/summary" className="nav-link">Summary</a>
         </div>
-        <a href="/drive" className="btn-primary" style={{ padding:"0.5rem 1.25rem",fontSize:"0.875rem" }}>Start Driving</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); setShowVehicleModal(true); }} className="btn-primary" style={{ padding:"0.5rem 1.25rem",fontSize:"0.875rem" }}>Start Driving</a>
       </nav>
 
       {/* HEADER */}
@@ -176,7 +179,7 @@ export default function Finebook() {
               { label:"Countries", value:"6", color:"var(--success)" },
             ].map(s => (
               <div key={s.label} className="stat-card" style={{ textAlign:"center" }}>
-                <div style={{ fontSize:"1.75rem",fontWeight:800,color:s.color,fontFamily:"'Space Grotesk',sans-serif",letterSpacing:"-0.03em" }}>{s.value}</div>
+                <div style={{ fontSize:"1.75rem",fontWeight:800,color:s.color,fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing:"-0.03em" }}>{s.value}</div>
                 <div style={{ fontSize:"0.75rem",color:"var(--fg-muted)",fontWeight:600,marginTop:"0.25rem",textTransform:"uppercase",letterSpacing:"0.05em" }}>{s.label}</div>
               </div>
             ))}
@@ -194,7 +197,7 @@ export default function Finebook() {
                     </div>
                     <div>
                       <div style={{ fontWeight:700,fontSize:"1rem",color:"var(--fg)" }}>{law.title}</div>
-                      <div style={{ fontSize:"0.8rem",color:"var(--fg-muted)",marginTop:"0.125rem",fontFamily:"'Space Grotesk',sans-serif" }}>{law.section}</div>
+                      <div style={{ fontSize:"0.8rem",color:"var(--fg-muted)",marginTop:"0.125rem",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>{law.section}</div>
                     </div>
                   </div>
                   <div style={{ display:"flex",alignItems:"center",gap:"0.75rem",flexShrink:0 }}>
@@ -280,7 +283,7 @@ export default function Finebook() {
               { label:"Showing", value: filteredFines.length, color:"var(--success)" },
             ].map(s => (
               <div key={s.label} className="stat-card" style={{ textAlign:"center" }}>
-                <div style={{ fontSize:"1.5rem",fontWeight:800,color:s.color,fontFamily:"'Space Grotesk',sans-serif",letterSpacing:"-0.03em" }}>{s.value}</div>
+                 <div style={{ fontSize:"1.5rem",fontWeight:800,color:s.color,fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing:"-0.03em" }}>{s.value}</div>
                 <div style={{ fontSize:"0.75rem",color:"var(--fg-muted)",fontWeight:600,marginTop:"0.25rem",textTransform:"uppercase",letterSpacing:"0.05em" }}>{s.label}</div>
               </div>
             ))}
@@ -306,12 +309,12 @@ export default function Finebook() {
                       {(fine as any).consequence && <div style={{ fontSize:"0.8rem",color:"var(--danger)",fontWeight:500 }}>{(fine as any).consequence}</div>}
                     </td>
                     <td>
-                      <div style={{ fontWeight:600,fontSize:"0.875rem",color:"var(--fg-secondary)",fontFamily:"'Space Grotesk',sans-serif" }}>{fine.section}</div>
+                      <div style={{ fontWeight:600,fontSize:"0.875rem",color:"var(--fg-secondary)",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>{fine.section}</div>
                       <div style={{ fontSize:"0.75rem",color:"var(--fg-faint)",marginTop:"0.125rem" }}>{fine.state === "All India" ? "Parivahan Verified" : `${fine.state} Traffic Police`}</div>
                     </td>
                     <td><span className="chip chip-gray">{fine.vehicle}</span></td>
                     <td><span className="chip chip-blue">{fine.state}</span></td>
-                    <td style={{ textAlign:"right",fontWeight:800,fontSize:"1rem",color:"var(--fg)",fontFamily:"'Space Grotesk',sans-serif" }}>
+                    <td style={{ textAlign:"right",fontWeight:800,fontSize:"1rem",color:"var(--fg)",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>
                       {currencySymbol((fine as any).currency)}{(fine as any).amount.toLocaleString("en-IN")}
                     </td>
                   </tr>

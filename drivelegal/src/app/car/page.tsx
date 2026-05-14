@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useDriveContext } from "../../context/DriveContext";
 import Robot3D from "../../components/Robot3D";
+import { carTranslations } from "../../lib/translations";
 
 const Waveform = ({ active }: { active: boolean }) => (
   <div style={{ display: "flex", alignItems: "center", gap: "3px", height: "20px" }}>
@@ -29,20 +30,31 @@ const darkCard = (extra?: React.CSSProperties): React.CSSProperties => ({
 });
 
 export default function CarDisplayMode() {
-  const { speed, limit, setIsCarMode, drivingScore, askCoPilot, appLanguage, aiAlert, roadContext, weather } = useDriveContext();
+  const { speed, limit, setIsCarMode, drivingScore, askCoPilot, appLanguage, aiAlert, roadContext, weather, obdStatus, speedSource, connectOBD, disconnectOBD, obdSupported } = useDriveContext();
 
   const [aiCompanionState, setAiCompanionState] = useState<"idle" | "listening" | "speaking" | "alert">("idle");
   const [aiSpeechText, setAiSpeechText] = useState(`"Cruising perfectly. The view of the city is clear tonight."`);
+  const [viewMode, setViewMode] = useState<"radar" | "map" | "dashcam">("radar");
   const recognitionRef = useRef<any>(null);
   const [currentTime, setCurrentTime] = useState("");
+  const [mounted, setMounted] = useState(false);
+  const ct = carTranslations[appLanguage] || carTranslations["en-IN"];
 
   const isOverLimit = speed > limit;
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SR && !recognitionRef.current) {
-      const r = new SR(); r.lang = appLanguage; r.interimResults = true;
-      recognitionRef.current = r;
+    if (SR) {
+      if (!recognitionRef.current) {
+        const r = new SR(); r.lang = appLanguage; r.interimResults = true;
+        recognitionRef.current = r;
+      } else {
+        recognitionRef.current.lang = appLanguage;
+      }
     }
   }, [appLanguage]);
 
@@ -58,25 +70,17 @@ export default function CarDisplayMode() {
 
   useEffect(() => { setIsCarMode(true); return () => setIsCarMode(false); }, [setIsCarMode]);
 
+  // Listen to dynamic Llama 3.1 alerts from DriveContext
   useEffect(() => {
-    if (isOverLimit && speed > 0) {
+    if (aiAlert) {
       setAiCompanionState("alert");
-      setAiSpeechText(`"Speed limit reached. Slow down. Fine applies."`);
-      if ("speechSynthesis" in window) {
-        let text = "Speed limit reached. Slow down.";
-        if (appLanguage === "hi-IN") text = "गति सीमा पार हो गई है। कृपया गति कम करें।";
-        if (appLanguage === "mr-IN") text = "वेग मर्यादा ओलांडली आहे. कृपया वेग कमी करा.";
-        if (appLanguage === "kn-IN") text = "ವೇಗದ ಮಿತಿ ಮೀರಿದೆ. ದಯವಿಟ್ಟು ನಿಧಾನವಾಗಿ.";
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = appLanguage; u.rate = 0.9;
-        u.onend = () => { setAiCompanionState("idle"); setAiSpeechText(`"Please maintain the speed limit."`); };
-        window.speechSynthesis.speak(u);
-      }
+      setAiSpeechText(`"${aiAlert}"`);
+      // DriveContext handles the actual speech synthesis.
     } else {
       setAiCompanionState("idle");
-      setAiSpeechText(`"Speed is optimal. Cruising safely."`);
+      setAiSpeechText(isOverLimit ? `"Speed limit reached. Please slow down."` : `"Speed is optimal. Cruising safely."`);
     }
-  }, [isOverLimit, limit, speed]);
+  }, [aiAlert, isOverLimit]);
 
   const handleVoiceInput = () => {
     if (aiCompanionState === "listening" || aiCompanionState === "speaking") return;
@@ -90,12 +94,41 @@ export default function CarDisplayMode() {
         setAiCompanionState("speaking");
         const reply = await askCoPilot(transcript);
         setAiSpeechText(`"${reply}"`);
+        const shortLang = appLanguage.split('-')[0];
+        let played = false;
+
         if ("speechSynthesis" in window) {
-          const u = new SpeechSynthesisUtterance(reply);
-          u.lang = appLanguage; u.rate = 0.9;
-          u.onend = () => setAiCompanionState("idle");
-          window.speechSynthesis.speak(u);
-        } else { setTimeout(() => setAiCompanionState("idle"), 3000); }
+          const speak = () => {
+            const voices = window.speechSynthesis.getVoices();
+            const voice = voices.find(v => v.lang.startsWith(shortLang));
+            
+            if (voice || shortLang === "en") {
+              const u = new SpeechSynthesisUtterance(reply);
+              u.lang = appLanguage;
+              u.rate = 0.9;
+              if (voice) u.voice = voice;
+              u.onend = () => setAiCompanionState("idle");
+              window.speechSynthesis.speak(u);
+              played = true;
+            } else {
+              // Fallback to our internal Next.js proxy to avoid Google CORS & 403 errors
+              const safeReply = reply.slice(0, 200);
+              const ttsUrl = `/api/tts?text=${encodeURIComponent(safeReply)}&lang=${shortLang}`;
+              const audio = new Audio(ttsUrl);
+              audio.onended = () => setAiCompanionState("idle");
+              audio.onerror = () => setAiCompanionState("idle");
+              audio.play().catch(() => setAiCompanionState("idle"));
+            }
+          };
+
+          if (window.speechSynthesis.getVoices().length > 0) {
+            speak();
+          } else {
+            window.speechSynthesis.onvoiceschanged = () => speak();
+          }
+        } else {
+          setTimeout(() => setAiCompanionState("idle"), 3000);
+        }
       }
     };
     recognition.onerror = (e: any) => {
@@ -110,6 +143,8 @@ export default function CarDisplayMode() {
     catch { /* already started */ }
   };
 
+  if (!mounted) return null;
+
   return (
     <main style={{ minHeight: "100vh", background: "#0a0a0f", color: "#ffffff", padding: "1.5rem", fontFamily: "'Inter', sans-serif", position: "relative", overflow: "hidden" }}>
 
@@ -122,15 +157,35 @@ export default function CarDisplayMode() {
         <div style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", fontWeight: 700, letterSpacing: "0.1em" }}>
           TEMP: <span style={{ color: "#ffffff" }}>{weather ? `${weather.temp}°C` : "—"}</span>
         </div>
-        <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.05em", fontFamily: "'Space Grotesk', sans-serif" }}>
-          LEXDRIVE <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99,102,241,0.5)" }}>TERMINAL</span>
+        <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.05em", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>
+          LEXDRIVE <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99,102,241,0.5)" }}>{ct.terminal}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
           <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", fontWeight: 700, letterSpacing: "0.1em" }}>
             TIME: <span style={{ color: "#ffffff" }}>{currentTime}</span>
           </span>
+          {obdSupported && (
+            <button
+              onClick={obdStatus === "connected" ? disconnectOBD : connectOBD}
+              disabled={obdStatus === "connecting"}
+              style={{
+                padding: "0.6rem 1.25rem",
+                background: obdStatus === "connected" ? "rgba(16,185,129,0.15)" : "rgba(99,102,241,0.15)",
+                border: `1px solid ${obdStatus === "connected" ? "#10b981" : "#6366f1"}`,
+                borderRadius: "980px",
+                color: obdStatus === "connected" ? "#10b981" : "#818cf8",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                cursor: obdStatus === "connecting" ? "not-allowed" : "pointer",
+                transition: "all 0.2s ease",
+                opacity: obdStatus === "connecting" ? 0.6 : 1,
+              }}
+            >
+              {obdStatus === "connected" ? `🔌 ${ct.obdLive}` : obdStatus === "connecting" ? ct.connecting : ct.connectObd}
+            </button>
+          )}
           <a href="/summary" style={{ padding: "0.6rem 1.25rem", background: "#ffffff", color: "#0a0a0f", borderRadius: "980px", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
-            End Trip
+            {ct.endTrip}
           </a>
         </div>
       </div>
@@ -159,31 +214,53 @@ export default function CarDisplayMode() {
         {/* ── LEFT: GPS & SPEED ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div style={darkCard({ flex: 1, padding: "1.25rem", display: "flex", flexDirection: "column", overflow: "hidden" })}>
-            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Space Grotesk', sans-serif" }}>GPS & Radar</div>
-            <div style={{ flex: 1, position: "relative", background: "rgba(0,113,227,0.02)", borderRadius: "16px", border: "1px solid rgba(0,113,227,0.1)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ position: "absolute", top: 0, bottom: 0, left: "45%", width: "10px", background: "#2563eb", boxShadow: "0 0 30px #2563eb", filter: "blur(2px)", transform: "skew(-15deg)" }} />
-              <div style={{ width: "300px", height: "300px", borderRadius: "50%", border: "1px solid rgba(0,113,227,0.1)", position: "absolute" }} />
-              <div style={{ width: "200px", height: "200px", borderRadius: "50%", border: "1px solid rgba(0,113,227,0.2)", position: "absolute" }} />
-              <div style={{ width: "100px", height: "100px", borderRadius: "50%", border: "2px solid rgba(0,113,227,0.3)", position: "absolute" }} />
-              <div style={{ width: "300px", height: "300px", background: "conic-gradient(from 0deg, transparent 70%, rgba(0,113,227,0.15) 100%)", borderRadius: "50%", position: "absolute", animation: "spin 3s linear infinite" }} />
-              {isOverLimit && <div style={{ width: "12px", height: "12px", background: "#FF3B30", borderRadius: "50%", position: "absolute", top: "30%", left: "60%", boxShadow: "0 0 20px #FF3B30", animation: "live-pulse 1s infinite" }} />}
-              <div style={{ position: "absolute", top: "60%", left: "46%", transform: "translate(-50%,-50%)", width: "40px", height: "40px", background: "#2563eb", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(37,99,235,0.4)", zIndex: 2 }}>
-                <div style={{ width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderBottom: "16px solid white", transform: "translateY(-2px)" }} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.displayMode}</div>
+              <div style={{ display: "flex", background: "rgba(255,255,255,0.05)", borderRadius: "999px", padding: "2px" }}>
+                <button onClick={() => setViewMode("radar")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "radar" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "radar" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.radar}</button>
+                <button onClick={() => setViewMode("map")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "map" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "map" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.map}</button>
+                <button onClick={() => setViewMode("dashcam")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "dashcam" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "dashcam" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.dashcam}</button>
               </div>
-              <div style={{ position: "absolute", top: "1rem", left: "1rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", padding: "0.5rem 1rem", borderRadius: "980px", fontSize: "0.75rem", fontWeight: 600, border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.75)" }}>OBD-II Telemetry</div>
+            </div>
+            <div style={{ flex: 1, position: "relative", background: "rgba(0,113,227,0.02)", borderRadius: "16px", border: "1px solid rgba(0,113,227,0.1)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {viewMode === "radar" && (
+                <div style={{ width: "100%", height: "100%", position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ position: "absolute", top: 0, bottom: 0, left: "45%", width: "10px", background: "#2563eb", boxShadow: "0 0 30px #2563eb", filter: "blur(2px)", transform: "skew(-15deg)" }} />
+                  <div style={{ width: "300px", height: "300px", borderRadius: "50%", border: "1px solid rgba(0,113,227,0.1)", position: "absolute" }} />
+                  <div style={{ width: "200px", height: "200px", borderRadius: "50%", border: "1px solid rgba(0,113,227,0.2)", position: "absolute" }} />
+                  <div style={{ width: "100px", height: "100px", borderRadius: "50%", border: "2px solid rgba(0,113,227,0.3)", position: "absolute" }} />
+                  <div style={{ width: "300px", height: "300px", background: "conic-gradient(from 0deg, transparent 70%, rgba(0,113,227,0.15) 100%)", borderRadius: "50%", position: "absolute", animation: "spin 3s linear infinite" }} />
+                  {isOverLimit && <div style={{ width: "12px", height: "12px", background: "#FF3B30", borderRadius: "50%", position: "absolute", top: "30%", left: "60%", boxShadow: "0 0 20px #FF3B30", animation: "live-pulse 1s infinite" }} />}
+                  <div style={{ position: "absolute", top: "60%", left: "46%", transform: "translate(-50%,-50%)", width: "40px", height: "40px", background: "#2563eb", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 20px rgba(37,99,235,0.4)", zIndex: 2 }}>
+                    <div style={{ width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderBottom: "16px solid white", transform: "translateY(-2px)" }} />
+                  </div>
+                </div>
+              )}
+              {viewMode === "map" && (
+                <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=72.82%2C18.96%2C72.85%2C18.99&layer=mapnik" width="100%" height="100%" style={{ border: 0, filter: "invert(100%) hue-rotate(180deg) contrast(120%) opacity(0.8)" }} />
+              )}
+              {viewMode === "dashcam" && (
+                <div style={{ width: "100%", height: "100%", background: "#000", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ position: "absolute", top: "1rem", left: "1rem", color: "#FF3B30", fontWeight: 700, fontSize: "0.8rem", animation: "live-pulse 2s infinite" }}>● REC</div>
+                  <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.9rem", fontFamily: "'JetBrains Mono', monospace" }}>[ CAMERA FEED ]</div>
+                </div>
+              )}
+              <div style={{ position: "absolute", top: "1rem", right: "1rem", background: speedSource === "obd" ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", padding: "0.5rem 1rem", borderRadius: "980px", fontSize: "0.75rem", fontWeight: 600, border: `1px solid ${speedSource === "obd" ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.12)"}`, color: speedSource === "obd" ? "#10b981" : "rgba(255,255,255,0.75)" }}>
+                {speedSource === "obd" ? ct.obdTelemetry : ct.gpsTelemetry}
+              </div>
             </div>
           </div>
 
           <div style={{ display: "flex", gap: "1rem" }}>
             <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center", border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99,102,241,0.3)" })}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>Speed</div>
-              <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.04em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: isOverLimit ? "0 0 20px rgba(239,68,68,0.5)" : "0 0 20px rgba(255,255,255,0.1)" }}>{speed}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: "5px" }}>KM/H</div>
+              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.speed}</div>
+              <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: isOverLimit ? "0 0 20px rgba(239,68,68,0.5)" : "0 0 20px rgba(255,255,255,0.1)" }}>{speed}</div>
+              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
             </div>
             <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center" })}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>Limit</div>
-              <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.04em", color: "#ffffff", lineHeight: 1 }}>{limit}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: "5px" }}>KM/H</div>
+              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.limit}</div>
+              <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: "#ffffff", lineHeight: 1 }}>{limit}</div>
+              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
             </div>
           </div>
         </div>
@@ -200,14 +277,14 @@ export default function CarDisplayMode() {
           <div onClick={handleVoiceInput} style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", borderRadius: "18px", padding: "1.5rem", border: aiCompanionState === "listening" ? "1px solid #6366f1" : "1px solid rgba(99,102,241,0.3)", cursor: "pointer", position: "relative", overflow: "hidden", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}>
             {aiCompanionState === "listening" && <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "2px", background: "#6366f1", animation: "scan 2s linear infinite", boxShadow: "0 0 15px #6366f1" }} />}
             <div style={{ fontSize: "1.05rem", lineHeight: 1.6, color: "#ffffff", zIndex: 1, fontWeight: 400 }}>
-              <span style={{ color: "rgba(255,255,255,0.35)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.65rem", fontFamily: "'Space Grotesk', sans-serif" }}>LexDrive AI // </span><br />
+              <span style={{ color: "rgba(255,255,255,0.35)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.65rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>LexDrive AI // </span><br />
               <span style={{ color: aiCompanionState === "alert" ? "#f87171" : "#ffffff", textShadow: aiCompanionState === "alert" ? "0 0 10px rgba(239,68,68,0.5)" : "none" }}>{aiSpeechText}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 1 }}>
               <Waveform active={aiCompanionState === "listening" || aiCompanionState === "speaking"} />
               <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.75rem" }}>
                 {aiCompanionState === "listening" && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#FF3B30", animation: "live-pulse 1s infinite" }} />}
-                {aiCompanionState === "listening" ? "Listening..." : "Tap to Transmit"}
+                {aiCompanionState === "listening" ? ct.listening : ct.tapToTransmit}
               </div>
             </div>
           </div>
@@ -218,12 +295,12 @@ export default function CarDisplayMode() {
 
           {/* Analytics */}
           <div style={darkCard({ padding: "1.5rem" })}>
-            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Space Grotesk', sans-serif" }}>Driving Analytics</div>
+            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.drivingAnalytics}</div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>Safety Score</div>
+                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{ct.safetyScore}</div>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0.25rem 0", color: "#ffffff", letterSpacing: "-0.03em" }}>{drivingScore} / 100</div>
-                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{drivingScore >= 90 ? "Excellent 😇" : drivingScore >= 70 ? "Good 🛡️" : "Needs work ⚠️"}</div>
+                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{drivingScore >= 90 ? ct.excellent : drivingScore >= 70 ? ct.good : ct.needsWork}</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={{ width: "70px", height: "35px", borderTopLeftRadius: "35px", borderTopRightRadius: "35px", background: "conic-gradient(from 270deg at 50% 100%, #FF3B30 0deg, #FF9500 45deg, #34C759 90deg, transparent 90deg)", position: "relative" }}>
@@ -236,21 +313,21 @@ export default function CarDisplayMode() {
 
           {/* Violations */}
           <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", background: isOverLimit ? "rgba(239,68,68,0.06)" : "rgba(255,255,255,0.03)", border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99,102,241,0.3)" })}>
-            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#f87171" : "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Space Grotesk', sans-serif" }}>Active Law Violations</div>
+            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#f87171" : "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.violations}</div>
             {isOverLimit ? (
               <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", flex: 1 }}>
                 <div style={{ fontSize: "1.5rem", animation: "live-pulse 1s infinite" }}>🚨</div>
                 <div>
-                  <div style={{ fontWeight: 700, color: "#ff6b6b", fontSize: "1rem", marginBottom: "0.375rem" }}>Overspeeding Detected</div>
-                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.5 }}>Section 183 MVA. Fine ₹1,000–₹2,000. Slow down immediately.</div>
+                  <div style={{ fontWeight: 700, color: "#ff6b6b", fontSize: "1rem", marginBottom: "0.375rem" }}>{ct.overspeedTitle}</div>
+                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.5 }}>{ct.overspeedDesc}</div>
                 </div>
               </div>
             ) : (
               <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", flex: 1 }}>
                 <div style={{ fontSize: "1.5rem" }}>✅</div>
                 <div>
-                  <div style={{ fontWeight: 700, color: "#34C759", fontSize: "1rem", marginBottom: "0.375rem" }}>No Violations Detected</div>
-                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.5 }}>Perfect compliance. Scanning surroundings...</div>
+                  <div style={{ fontWeight: 700, color: "#34C759", fontSize: "1rem", marginBottom: "0.375rem" }}>{ct.noViolations}</div>
+                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.5 }}>{ct.noViolationsDesc}</div>
                 </div>
               </div>
             )}
@@ -258,12 +335,12 @@ export default function CarDisplayMode() {
 
           {/* Compliance */}
           <div style={darkCard({ padding: "1.5rem" })}>
-            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Space Grotesk', sans-serif" }}>Compliance Check //</div>
+            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.compliance}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {[
-                { label: "Seatbelts Mandatory", color: "#34C759" },
-                { label: "No Mobile Phones", color: "#34C759" },
-                { label: "Lane Discipline Enforced", color: "#FF9500" },
+                { label: ct.seatbelt, color: "#34C759" },
+                { label: ct.noPhone, color: "#34C759" },
+                { label: ct.laneDiscipline, color: "#FF9500" },
               ].map(({ label, color }, i, arr) => (
                 <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.07)" : "none", paddingBottom: i < arr.length - 1 ? "0.5rem" : 0 }}>
                   <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.875rem", fontWeight: 500 }}>{label}</span>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import finesData from "../data/fines.json";
 import { OBDManager, OBDStatus } from "../lib/obd";
@@ -27,7 +27,12 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const [riskAlert, setRiskAlert] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [lastKnownLocation, setLastKnownLocation] = useState<{ lat: number; lon: number } | null>(null);
-  const [appLanguage, setAppLanguage] = useState("en-IN");
+  const [appLanguage, setAppLanguage] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("LexDrive_language") || "en-IN";
+    }
+    return "en-IN";
+  });
   const [obdStatus, setObdStatus] = useState<OBDStatus>("disconnected");
   const [speedSource, setSpeedSource] = useState<"obd" | "gps">("gps");
   const [obdSupported, setObdSupported] = useState(false);
@@ -58,22 +63,66 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const fatigueAlertedRef = useRef<number>(0);
   const nearApproachAlertedRef = useRef(false);
   const touchWhileDrivingRef = useRef(false);
+  // Stable refs for values consumed inside triggerProactiveAlert (fixes stale closures)
+  const appLanguageRef = useRef(typeof window !== "undefined" ? (localStorage.getItem("LexDrive_language") || "en-IN") : "en-IN");
+  const roadContextRef = useRef<any>(null);
+  const weatherRef = useRef<{ condition: string; temp: number; isRaining: boolean } | null>(null);
+  const tripDurationMinutesRef = useRef(0);
 
   useEffect(() => { setObdSupported(OBDManager.isSupported()); }, []);
 
   useEffect(() => {
+    localStorage.setItem("LexDrive_language", appLanguage);
+    
+    if (typeof window !== 'undefined') {
+      const shortCode = appLanguage.split("-")[0];
+      // Set cookies for Google Translate
+      document.cookie = `googtrans=/en/${shortCode}; path=/`;
+      document.cookie = `googtrans=/en/${shortCode}; domain=${window.location.hostname}; path=/`;
+      
+      // Try to trigger the Google Translate widget with retries
+      const applyGTrans = (attempts = 0) => {
+        const gtSelect = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+        if (gtSelect) {
+          gtSelect.value = shortCode;
+          gtSelect.dispatchEvent(new Event('change'));
+        } else if (attempts < 10) {
+          // Widget not ready yet — retry after 300ms
+          setTimeout(() => applyGTrans(attempts + 1), 300);
+        }
+      };
+      applyGTrans();
+    }
+  }, [appLanguage]);
+
+  useEffect(() => {
     const saved = localStorage.getItem("LexDrive_violations");
     if (saved) setViolationHistory(JSON.parse(saved));
-    const savedLang = localStorage.getItem("LexDrive_language");
-    if (savedLang) setAppLanguage(savedLang);
   }, []);
 
   useEffect(() => { speedRef.current = speed; }, [speed]);
   useEffect(() => { limitRef.current = limit; }, [limit]);
+  useEffect(() => { appLanguageRef.current = appLanguage; }, [appLanguage]);
+  useEffect(() => { roadContextRef.current = roadContext; }, [roadContext]);
+  useEffect(() => { weatherRef.current = weather; }, [weather]);
+  useEffect(() => { tripDurationMinutesRef.current = tripDurationMinutes; }, [tripDurationMinutes]);
 
-  // ── Trip timer ──
+  // ── Trip timer & Wake Lock ──
   useEffect(() => {
+    let wakeLock: any = null;
+    
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await (navigator as any).wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.log('Wake Lock error:', err);
+      }
+    };
+
     if (isCarMode) {
+      requestWakeLock();
       tripStartRef.current = Date.now();
       seatbeltReminderDoneRef.current = false;
       fatigueAlertedRef.current = 0;
@@ -86,8 +135,15 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       if (tripTimerRef.current) clearInterval(tripTimerRef.current);
       tripStartRef.current = null;
       setTripDurationMinutes(0);
+      if (wakeLock) {
+        wakeLock.release().catch(console.error);
+        wakeLock = null;
+      }
     }
-    return () => { if (tripTimerRef.current) clearInterval(tripTimerRef.current); };
+    return () => { 
+      if (tripTimerRef.current) clearInterval(tripTimerRef.current); 
+      if (wakeLock) wakeLock.release().catch(console.error);
+    };
   }, [isCarMode]);
 
   // ── Phone touch detection while driving ──
@@ -112,9 +168,12 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       amount,
       status: "UNPAID",
     };
-    const updated = [newViolation, ...violationHistory];
-    setViolationHistory(updated);
-    localStorage.setItem("LexDrive_violations", JSON.stringify(updated));
+    // BUG FIX: use functional update to avoid stale violationHistory closure
+    setViolationHistory(prev => {
+      const updated = [newViolation, ...prev];
+      localStorage.setItem("LexDrive_violations", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const triggerProactiveAlert = async (
@@ -130,6 +189,11 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     setTimeout(() => { alertCooldownRef.current = false; }, 8000);
     try {
       const hour = new Date().getHours();
+      // BUG FIX: read from refs to avoid stale closure values
+      const lang = appLanguageRef.current;
+      const ctx = roadContextRef.current;
+      const wx = weatherRef.current;
+      const tripMins = tripDurationMinutesRef.current;
       const res = await fetch("/api/copilot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -137,11 +201,11 @@ export function DriveProvider({ children }: { children: ReactNode }) {
           trigger,
           speed: currentSpeed,
           limit: currentLimit,
-          language: appLanguage,
-          roadContext,
-          weather,
+          language: lang,
+          roadContext: ctx,
+          weather: wx,
           hour,
-          tripDurationMinutes,
+          tripDurationMinutes: tripMins,
           ...extra,
         }),
       });
@@ -150,12 +214,38 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       if (!reply) return;
       setAiAlert(reply);
       setTimeout(() => setAiAlert(""), 7000);
+      
+      const shortLang = lang.split('-')[0];
+      let played = false;
+
       if ("speechSynthesis" in window) {
-        if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(reply);
-        u.lang = appLanguage;
-        u.rate = 0.92;
-        window.speechSynthesis.speak(u);
+        const speak = () => {
+          if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+
+          const voices = window.speechSynthesis.getVoices();
+          const voice = voices.find(v => v.lang.startsWith(shortLang));
+          
+          if (voice || shortLang === "en") {
+            const u = new SpeechSynthesisUtterance(reply);
+            u.lang = lang; 
+            u.rate = 0.9;
+            if (voice) u.voice = voice;
+            window.speechSynthesis.speak(u);
+            played = true;
+          } else {
+            // Fallback to our internal Next.js proxy to avoid Google CORS & 403 errors
+            const safeReply = reply.slice(0, 200);
+            const ttsUrl = `/api/tts?text=${encodeURIComponent(safeReply)}&lang=${shortLang}`;
+            const audio = new Audio(ttsUrl);
+            audio.play().catch(() => { /* AutoPlay blocked by browser */ });
+          }
+        };
+
+        if (window.speechSynthesis.getVoices().length > 0) {
+          speak();
+        } else {
+          window.speechSynthesis.onvoiceschanged = () => speak();
+        }
       }
     } catch (e) {
       console.warn("Proactive alert failed:", e);
@@ -326,6 +416,27 @@ export function DriveProvider({ children }: { children: ReactNode }) {
         })
         .catch(console.error);
     }
+
+    // ── Weather Check (Every 5 minutes) ──
+    if (lat && lon && Date.now() - lastWeatherFetchRef.current > 300000) {
+      lastWeatherFetchRef.current = Date.now();
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.current_weather) {
+            const isRaining = data.current_weather.weathercode >= 51 && data.current_weather.weathercode <= 67;
+            setWeather({
+              condition: isRaining ? "Raining" : "Clear",
+              temp: data.current_weather.temperature,
+              isRaining: isRaining
+            });
+            if (isRaining && lastAlertTriggerRef.current !== "weather_rain") {
+              triggerProactiveAlert("weather", newSpeed, limitRef.current, { weather: "raining" });
+            }
+          }
+        })
+        .catch(console.error);
+    }
   };
 
   const connectOBD = async () => {
@@ -377,7 +488,15 @@ export function DriveProvider({ children }: { children: ReactNode }) {
             }
           }
         },
-        err => console.error("GPS Error:", err),
+        err => {
+          if (err.code === err.TIMEOUT) {
+            console.warn("GPS timeout - waiting for signal...");
+          } else if (err.code === err.PERMISSION_DENIED) {
+            console.warn("GPS permission denied by user.");
+          } else {
+            console.warn("GPS Error:", err.message);
+          }
+        },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
     }

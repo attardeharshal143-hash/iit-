@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useDriveContext } from "../context/DriveContext";
 
@@ -15,9 +15,13 @@ export default function GlobalCoPilot() {
 
   useEffect(() => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SR && !recognitionRef.current) {
-      const r = new SR(); r.lang = appLanguage; r.continuous = false; r.interimResults = false;
-      recognitionRef.current = r;
+    if (SR) {
+      if (!recognitionRef.current) {
+        const r = new SR(); r.lang = appLanguage; r.continuous = false; r.interimResults = false;
+        recognitionRef.current = r;
+      } else {
+        recognitionRef.current.lang = appLanguage;
+      }
     }
   }, [appLanguage]);
 

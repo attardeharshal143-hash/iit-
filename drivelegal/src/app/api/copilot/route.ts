@@ -29,6 +29,8 @@ export async function POST(req: Request) {
     const langMap: Record<string, string> = {
       "hi-IN": "Hindi (हिंदी)", "mr-IN": "Marathi (मराठी)",
       "kn-IN": "Kannada (ಕನ್ನಡ)", "en-IN": "English",
+      "bn-IN": "Bengali (বাংলা)", "gu-IN": "Gujarati (ગુજરાતી)",
+      "ta-IN": "Tamil (தமிழ்)", "te-IN": "Telugu (తెలుగు)",
     };
     const lang = langMap[language] || "English";
 
@@ -136,7 +138,7 @@ RULES:
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage },

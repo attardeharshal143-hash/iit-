@@ -1,11 +1,18 @@
 /* 
-   LexDrive AI - Premium Design System
-   Font: Inter (body) + Space Grotesk (display)
-   Light mode default
+   LexDrive AI — Font Stack
+   Display: Cabinet Grotesk (editorial, bold, fresh)
+   Body:    General Sans (geometric, warm, modern)
+   Mono:    JetBrains Mono (HUD / code)
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* Latin Modern Roman — Academic/Classic Serif headings */
+@import url('https://cdn.jsdelivr.net/gh/sugina-dev/latin-modern-web@1.0.1/style/latinmodern-roman.css');
+
+/* Fontshare — General Sans (body) */
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap');
+
+/* Google — JetBrains Mono (mono/HUD) */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /* -- Design Tokens -- */
 :root {
@@ -96,7 +103,7 @@ html {
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'General Sans', var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.6;
@@ -107,16 +114,18 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-family: 'Latin Modern Roman', serif;
   font-weight: 700;
+  font-style: italic;
   line-height: 1.15;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   color: var(--fg);
 }
 
 a { color: inherit; text-decoration: none; }
-button { font-family: inherit; }
-input, select, textarea { font-family: inherit; }
+button { font-family: 'General Sans', var(--font-inter), sans-serif; }
+input, select, textarea { font-family: 'General Sans', var(--font-inter), sans-serif; }
+code, pre, kbd { font-family: 'JetBrains Mono', var(--font-mono), monospace; }
 
 /* -- Typography Scale -- */
 .text-xs    { font-size: 0.75rem;  line-height: 1rem; }
@@ -494,10 +503,7 @@ input, select, textarea { font-family: inherit; }
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(37,99,235,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 5%,  rgba(124,58,237,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(37,99,235,0.04) 0%, transparent 60%);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -513,12 +519,13 @@ input, select, textarea { font-family: inherit; }
 
 /* -- Animations -- */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(60px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 .animate-fade-in-up {
-  animation: fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeInUp 1.2s cubic-bezier(0.19, 1, 0.22, 1) both;
   opacity: 0;
+  will-change: opacity, transform;
 }
 
 .delay-100 { animation-delay: 80ms; }
@@ -559,20 +566,21 @@ input, select, textarea { font-family: inherit; }
 /* -- Scroll Reveal -- */
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(60px) scale(0.96);
+  transition: opacity 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+              transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: opacity, transform;
 }
-.scroll-reveal.from-left  { transform: translateX(-40px); }
-.scroll-reveal.from-right { transform: translateX(40px); }
-.scroll-reveal.from-scale { transform: scale(0.94) translateY(16px); }
+.scroll-reveal.from-left  { transform: translateX(-60px) scale(0.96); }
+.scroll-reveal.from-right { transform: translateX(60px) scale(0.96); }
+.scroll-reveal.from-scale { transform: scale(0.85) translateY(40px); }
 .scroll-reveal.visible    { opacity: 1; transform: none; }
 
-.scroll-reveal.delay-1 { transition-delay: 0.08s; }
-.scroll-reveal.delay-2 { transition-delay: 0.16s; }
-.scroll-reveal.delay-3 { transition-delay: 0.24s; }
-.scroll-reveal.delay-4 { transition-delay: 0.32s; }
-.scroll-reveal.delay-5 { transition-delay: 0.40s; }
+.scroll-reveal.delay-1 { transition-delay: 0.05s; }
+.scroll-reveal.delay-2 { transition-delay: 0.10s; }
+.scroll-reveal.delay-3 { transition-delay: 0.15s; }
+.scroll-reveal.delay-4 { transition-delay: 0.20s; }
+.scroll-reveal.delay-5 { transition-delay: 0.25s; }
 
 /* -- Shimmer Button Effect -- */
 .shimmer-effect {
@@ -728,13 +736,13 @@ input, select, textarea { font-family: inherit; }
 
 /* -- Staggered Card Entrance -- */
 .scroll-reveal:nth-child(1)  { transition-delay: 0.00s; }
-.scroll-reveal:nth-child(2)  { transition-delay: 0.07s; }
-.scroll-reveal:nth-child(3)  { transition-delay: 0.14s; }
-.scroll-reveal:nth-child(4)  { transition-delay: 0.21s; }
-.scroll-reveal:nth-child(5)  { transition-delay: 0.28s; }
-.scroll-reveal:nth-child(6)  { transition-delay: 0.35s; }
-.scroll-reveal:nth-child(7)  { transition-delay: 0.42s; }
-.scroll-reveal:nth-child(8)  { transition-delay: 0.49s; }
+.scroll-reveal:nth-child(2)  { transition-delay: 0.05s; }
+.scroll-reveal:nth-child(3)  { transition-delay: 0.10s; }
+.scroll-reveal:nth-child(4)  { transition-delay: 0.15s; }
+.scroll-reveal:nth-child(5)  { transition-delay: 0.20s; }
+.scroll-reveal:nth-child(6)  { transition-delay: 0.25s; }
+.scroll-reveal:nth-child(7)  { transition-delay: 0.30s; }
+.scroll-reveal:nth-child(8)  { transition-delay: 0.35s; }
 
 /* -- Number Counter Pulse -- */
 @keyframes counter-pop {
@@ -780,20 +788,90 @@ input, select, textarea { font-family: inherit; }
   padding-right: 2px;
 }
 
-/* -- Parallax Background Particles -- */
-@keyframes drift-1 {
-  0%   { transform: translate(0, 0) scale(1); opacity: 0.15; }
-  25%  { transform: translate(80px, -40px) scale(1.2); opacity: 0.08; }
-  50%  { transform: translate(160px, 20px) scale(0.9); opacity: 0.12; }
-  75%  { transform: translate(60px, 60px) scale(1.1); opacity: 0.06; }
-  100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+/* -- Lidar Scan & Radar Background -- */
+.neural-highway {
+  position: fixed;
+  inset: 0;
+  z-index: 0; /* Base layer */
+  background: #06080c;
+  overflow: hidden;
+  pointer-events: none;
 }
-@keyframes drift-2 {
-  0%   { transform: translate(0, 0) scale(1); opacity: 0.12; }
-  33%  { transform: translate(-60px, 50px) scale(1.15); opacity: 0.07; }
-  66%  { transform: translate(-120px, -30px) scale(0.95); opacity: 0.14; }
-  100% { transform: translate(0, 0) scale(1); opacity: 0.12; }
+
+.lidar-beam {
+  position: absolute;
+  top: 0;
+  width: 4px; /* Thicker */
+  height: 100%;
+  background: linear-gradient(to bottom, 
+    transparent, 
+    #00e5ff 20%, 
+    #00e5ff 80%, 
+    transparent
+  );
+  opacity: 0.6; /* Brighter */
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.8);
+  animation: lidar-scan var(--speed) linear infinite;
 }
+
+@keyframes lidar-scan {
+  0% { transform: translateX(-10vw); opacity: 0; }
+  10% { opacity: 0.3; }
+  90% { opacity: 0.3; }
+  100% { transform: translateX(110vw); opacity: 0; }
+}
+
+.radar-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(0, 229, 255, 0.2);
+  border-radius: 50%;
+  animation: radar-ripple 4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+@keyframes radar-ripple {
+  0% { width: 0; height: 0; opacity: 1; }
+  100% { width: 1000px; height: 1000px; opacity: 0; border-width: 1px; }
+}
+
+.cyber-grid {
+  position: absolute;
+  bottom: -20%;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 229, 255, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.2) 1px, transparent 1px);
+  background-size: 80px 80px;
+  transform: perspective(400px) rotateX(60deg);
+  transform-origin: center bottom;
+  animation: grid-move 12s linear infinite;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+}
+
+/* -- Animated Glows -- */
+.neon-pulse {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  pointer-events: none;
+  animation: pulse-move 15s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-move {
+  0% { transform: translate(-10%, -10%) scale(1); }
+  100% { transform: translate(10%, 10%) scale(1.2); }
+}
+
 
 .bg-mesh::before,
 .bg-mesh::after {
@@ -939,3 +1017,102 @@ main {
   background-size: 400% 400%;
   animation: live-gradient 10s ease infinite;
 }
+
+/* ── Responsive: two-column landing sections ── */
+@media (max-width: 860px) {
+  #features > div,
+  #speed-advisor > div {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+  #speed-advisor > div > div:last-child {
+    aspect-ratio: 16/9 !important;
+  }
+}
+
+/* ════════════════════════════════════════
+   MOBILE RESPONSIVE — full layout
+   ════════════════════════════════════════ */
+
+/* ── Nav ── */
+@media (max-width: 768px) {
+  .nav-desktop-links { display: none !important; }
+  .nav-desktop-cta   { display: none !important; }
+  .nav-hamburger     { display: flex !important; }
+}
+
+/* ── Hero ── */
+@media (max-width: 768px) {
+  /* Reduce hero height on mobile */
+  section[style*="minHeight:\"92vh\""],
+  section[style*='minHeight:"92vh"'] {
+    min-height: 85vh !important;
+  }
+  /* Hero content padding */
+  .hero-content-mobile {
+    padding: 0 6% 4rem !important;
+  }
+}
+
+/* ── Four Engines — 2-col → 1-col ── */
+@media (max-width: 860px) {
+  .section-two-col {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+  .feature-cards-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+@media (max-width: 480px) {
+  .feature-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── How It Works — 3-col → 1-col ── */
+@media (max-width: 768px) {
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+}
+
+/* ── Speed Advisor — 2-col → 1-col ── */
+@media (max-width: 860px) {
+  .speed-advisor-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+}
+
+/* ── E-Challan form — stack on mobile ── */
+@media (max-width: 520px) {
+  .challan-form {
+    flex-direction: column !important;
+  }
+  .challan-form button {
+    width: 100% !important;
+    padding: 0.875rem !important;
+  }
+}
+
+/* ── Footer — stack on mobile ── */
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.25rem !important;
+  }
+}
+
+/* ── General section padding reduction on mobile ── */
+@media (max-width: 768px) {
+  section { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+  section[style*="padding:\"7rem"] { padding: 4rem 5% !important; }
+}
+
+/* ── Prevent horizontal overflow ── */
+* { max-width: 100%; }
+img, svg, video { max-width: 100%; }

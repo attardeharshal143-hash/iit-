@@ -4,12 +4,22 @@ import { useDriveContext } from "../../context/DriveContext";
 import finesData from "../../data/fines.json";
 import "../globals.css";
 import Robot3D from "../../components/Robot3D";
+import { carTranslations } from "../../lib/translations";
 
 export default function DrivePhoneMode() {
-  const { speed, limit, setIsCarMode, riskAlert, drivingScore, askCoPilot, appLanguage, obdStatus, speedSource, connectOBD, disconnectOBD, obdSupported, aiAlert, roadContext, weather, tripDurationMinutes } = useDriveContext();
+  const { speed, limit, isCarMode, setIsCarMode, obdStatus, connectOBD, disconnectOBD, speedSource, obdSupported, appLanguage, askCoPilot, aiAlert, lastKnownLocation, riskAlert, drivingScore, roadContext, weather, tripDurationMinutes } = useDriveContext();
   const [aiCompanionState, setAiCompanionState] = useState<"idle" | "listening" | "speaking" | "alert">("idle");
   const [aiSpeechText, setAiSpeechText] = useState(`"Speed is good. Scanning local jurisdictions."`);
   const recognitionRef = useRef<any>(null);
+  const [viewMode, setViewMode] = useState<"3d" | "map" | "dashcam">("3d");
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [dashcamActive, setDashcamActive] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const ct = carTranslations[appLanguage] || carTranslations["en-IN"];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isOverLimit = speed > limit;
   const overspeedAmount = Math.max(0, speed - limit);
@@ -23,38 +33,29 @@ export default function DrivePhoneMode() {
   // Initialize Speech Recognition once
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition && !recognitionRef.current) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = appLanguage;
-      recognition.interimResults = true;
-      recognitionRef.current = recognition;
+    if (SpeechRecognition) {
+      if (!recognitionRef.current) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = appLanguage;
+        recognition.interimResults = true;
+        recognitionRef.current = recognition;
+      } else {
+        recognitionRef.current.lang = appLanguage;
+      }
     }
   }, [appLanguage]);
 
-  // Auto-push speed alerts
+  // Listen to dynamic Llama 3.1 alerts from DriveContext
   useEffect(() => {
-    if (isOverLimit && speed > 0) {
+    if (aiAlert) {
       setAiCompanionState("alert");
-      setAiSpeechText(`"Speed limit reached. Slow down. Fine of ₹1,000 to ₹2,000 applies."`);
-      
-      // Auto-speak the violation
-      if ("speechSynthesis" in window) {
-         let text = "Speed limit reached. Slow down. Fine of 1500 rupees applies.";
-         if (appLanguage === "hi-IN") text = "गति सीमा पार हो गई है। कृपया गति कम करें। 1500 रुपये का जुर्माना लागू है।";
-         if (appLanguage === "mr-IN") text = "वेग मर्यादा ओलांडली आहे. कृपया वेग कमी करा. 1500 रुपये दंड लागू आहे.";
-         if (appLanguage === "kn-IN") text = "ವೇಗದ ಮಿತಿ ಮೀರಿದೆ. ನಿಧಾನವಾಗಿ. 1500 ರೂಪಾಯಿ ದಂಡ ವಿಧಿಸಲಾಗುತ್ತದೆ.";
-
-         const u = new SpeechSynthesisUtterance(text);
-         u.lang = appLanguage;
-         u.rate = 0.9;
-         u.onend = () => { setAiCompanionState("idle"); setAiSpeechText(`"Please maintain the speed limit."`); };
-         window.speechSynthesis.speak(u);
-      }
+      setAiSpeechText(`"${aiAlert}"`);
+      // DriveContext handles the actual speech synthesis.
     } else {
       setAiCompanionState("idle");
-      setAiSpeechText(`"Speed is good. No violations."`);
+      setAiSpeechText(isOverLimit ? `"Speed limit reached. Please slow down."` : `"Speed is good. No violations."`);
     }
-  }, [isOverLimit, limit, speed]);
+  }, [aiAlert, isOverLimit]);
 
   const handleVoiceInput = () => {
     if (aiCompanionState === "listening" || aiCompanionState === "speaking") return;
@@ -74,12 +75,38 @@ export default function DrivePhoneMode() {
         const reply = await askCoPilot(transcript);
         setAiSpeechText(`"${reply}"`);
         
+        const shortLang = appLanguage.split('-')[0];
+        let played = false;
+
         if ("speechSynthesis" in window) {
-          const u = new SpeechSynthesisUtterance(reply);
-          u.lang = appLanguage;
-          u.rate = 0.9;
-          u.onend = () => setAiCompanionState("idle");
-          window.speechSynthesis.speak(u);
+          const speak = () => {
+            const voices = window.speechSynthesis.getVoices();
+            const voice = voices.find(v => v.lang.startsWith(shortLang));
+            
+            if (voice || shortLang === "en") {
+              const u = new SpeechSynthesisUtterance(reply);
+              u.lang = appLanguage;
+              u.rate = 0.9;
+              if (voice) u.voice = voice;
+              u.onend = () => setAiCompanionState("idle");
+              window.speechSynthesis.speak(u);
+              played = true;
+            } else {
+              // Fallback to our internal Next.js proxy to avoid Google CORS & 403 errors
+              const safeReply = reply.slice(0, 200);
+              const ttsUrl = `/api/tts?text=${encodeURIComponent(safeReply)}&lang=${shortLang}`;
+              const audio = new Audio(ttsUrl);
+              audio.onended = () => setAiCompanionState("idle");
+              audio.onerror = () => setAiCompanionState("idle");
+              audio.play().catch(() => setAiCompanionState("idle"));
+            }
+          };
+
+          if (window.speechSynthesis.getVoices().length > 0) {
+            speak();
+          } else {
+            window.speechSynthesis.onvoiceschanged = () => speak();
+          }
         } else {
           setTimeout(() => setAiCompanionState("idle"), 3000);
         }
@@ -112,6 +139,31 @@ export default function DrivePhoneMode() {
     }
   };
 
+  // Dashcam Camera Setup
+  useEffect(() => {
+    if (viewMode === "dashcam" && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(stream => {
+          if (videoRef.current) videoRef.current.srcObject = stream;
+          setDashcamActive(true);
+        })
+        .catch(err => {
+          console.error("Camera access denied:", err);
+          setDashcamActive(false);
+          setViewMode("3d");
+        });
+    } else {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      setDashcamActive(false);
+    }
+  }, [viewMode]);
+
+  if (!mounted) return null;
+
   return (
     <main style={{ 
       minHeight: "100vh", 
@@ -125,15 +177,43 @@ export default function DrivePhoneMode() {
       overflow: "hidden"
     }}>
       
-      {/* Animated Plasma Background */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 40%)", zIndex: 0 }}></div>
+      {/* Dynamic Background Modes */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}>
+        {viewMode === "3d" && (
+          <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 40%)" }}></div>
+        )}
+        
+        {viewMode === "map" && lastKnownLocation && (
+          <iframe 
+            width="100%" 
+            height="100%" 
+            frameBorder="0" 
+            style={{ filter: "invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)", opacity: 0.6 }}
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${lastKnownLocation.lon - 0.02},${lastKnownLocation.lat - 0.02},${lastKnownLocation.lon + 0.02},${lastKnownLocation.lat + 0.02}&layer=mapnik&marker=${lastKnownLocation.lat},${lastKnownLocation.lon}`}
+          ></iframe>
+        )}
+
+        {viewMode === "dashcam" && (
+          <div style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}>
+            <video ref={videoRef} autoPlay playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.7 }} />
+            {/* AI Bounding Box Overlay Simulation */}
+            {dashcamActive && (
+              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }}>
+                <div style={{ position: "absolute", top: "20%", left: "30%", width: "100px", height: "100px", border: "2px solid #10b981", boxShadow: "0 0 15px #10b981", animation: "live-pulse 2s infinite" }}>
+                  <span style={{ position: "absolute", top: "-25px", left: "-2px", background: "#10b981", color: "#000", fontSize: "0.7rem", fontWeight: 800, padding: "2px 6px" }}>SPEED LIMIT 50 99%</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Main Content */}
       <div style={{ width: "100%", maxWidth: "400px", padding: "2rem 1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem", zIndex: 10 }}>
 
         {/* Title */}
-        <div style={{ textAlign: "center", fontSize: "1.25rem", fontWeight: 800, letterSpacing: "0.1em", color: "#ffffff", textTransform: "uppercase", fontFamily: "'Space Grotesk', sans-serif" }}>
-          LexDrive <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99, 102, 241, 0.5)" }}>Terminal</span>
+        <div style={{ textAlign: "center", fontSize: "1.25rem", fontWeight: 800, letterSpacing: "0.1em", color: "#ffffff", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>
+          LexDrive <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99, 102, 241, 0.5)" }}>{ct.terminal}</span>
         </div>
 
         {/* ── AI Proactive Alert Banner ── */}
@@ -182,14 +262,22 @@ export default function DrivePhoneMode() {
           gap: "0.5rem",
           boxShadow: "0 30px 60px rgba(0,0,0,0.3)"
         }}>
-          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Space Grotesk', sans-serif" }}>Current Speed</div>
-          <div style={{ fontSize: "6rem", fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.05em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: "0 0 30px rgba(255,255,255,0.1)" }}>{speed}</div>
+          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.currentSpeed}</div>
+          <div style={{ fontSize: "6rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.05em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: "0 0 30px rgba(255,255,255,0.1)" }}>{speed}</div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>km/h</span>
             <span style={{ fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.5rem", borderRadius: "20px", background: speedSource === "obd" ? "rgba(16,185,129,0.15)" : "rgba(99,102,241,0.15)", border: `1px solid ${speedSource === "obd" ? "#10b981" : "#6366f1"}`, color: speedSource === "obd" ? "#10b981" : "#818cf8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
               {speedSource === "obd" ? "OBD-II" : "GPS"}
             </span>
-          </div>        </div>
+          </div>
+        </div>
+
+        {/* View Toggles */}
+        <div style={{ display: "flex", background: "rgba(255,255,255,0.05)", borderRadius: "999px", padding: "4px" }}>
+          <button onClick={() => setViewMode("3d")} style={{ flex: 1, padding: "0.5rem", borderRadius: "999px", border: "none", background: viewMode === "3d" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "3d" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.radar}</button>
+          <button onClick={() => setViewMode("map")} style={{ flex: 1, padding: "0.5rem", borderRadius: "999px", border: "none", background: viewMode === "map" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "map" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.map}</button>
+          <button onClick={() => setViewMode("dashcam")} style={{ flex: 1, padding: "0.5rem", borderRadius: "999px", border: "none", background: viewMode === "dashcam" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "dashcam" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.dashcam}</button>
+        </div>
 
         {/* Speed Limit Card */}
         <div style={{ 
@@ -203,9 +291,9 @@ export default function DrivePhoneMode() {
           alignItems: "center",
           boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
         }}>
-          <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Space Grotesk', sans-serif" }}>Zone Limit</span>
+          <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.limit}</span>
           <div style={{ display: "flex", alignItems: "baseline", gap: "0.25rem" }}>
-            <span style={{ fontSize: "1.75rem", fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: "#ffffff" }}>{limit}</span>
+            <span style={{ fontSize: "1.75rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", color: "#ffffff" }}>{limit}</span>
             <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>KM/H</span>
           </div>
         </div>
@@ -222,8 +310,8 @@ export default function DrivePhoneMode() {
             padding: "1.25rem",
             boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
           }}>
-            <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem", fontFamily: "'Space Grotesk', sans-serif" }}>Safety Score</div>
-            <div style={{ fontSize: "2rem", fontWeight: 700, color: "#ffffff", fontFamily: "'Space Grotesk', sans-serif" }}>{drivingScore}</div>
+            <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.safetyScore}</div>
+            <div style={{ fontSize: "2rem", fontWeight: 700, color: "#ffffff", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{drivingScore}</div>
             <div style={{ width: "100%", height: "4px", background: "rgba(255,255,255,0.05)", borderRadius: "2px", marginTop: "0.5rem", overflow: "hidden" }}>
               <div style={{ width: `${drivingScore}%`, height: "100%", background: "#6366f1", boxShadow: "0 0 10px #6366f1" }}></div>
             </div>
@@ -238,9 +326,9 @@ export default function DrivePhoneMode() {
             padding: "1.25rem",
             boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
           }}>
-            <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem", fontFamily: "'Space Grotesk', sans-serif" }}>Trip Info</div>
+            <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "0.75rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>Trip Info</div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)" }}>Duration</span>
+              <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)" }}>{ct.tripInfo ?? "Trip Info"}</span>
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#ffffff" }}>{tripDurationMinutes}m</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -285,15 +373,15 @@ export default function DrivePhoneMode() {
             justifyContent: "center",
             boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
           }}>
-            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#ef4444" : "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.75rem", fontFamily: "'Space Grotesk', sans-serif", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#ef4444" : "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "0.75rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <div style={{ width: "8px", height: "8px", background: isOverLimit ? "#ef4444" : "#10b981", borderRadius: "50%", boxShadow: `0 0 10px ${isOverLimit ? "#ef4444" : "#10b981"}` }}></div>
-              Law Status
+              Law {ct.violations?.split(" ")[0] ?? "Status"}
             </div>
             <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#ffffff", lineHeight: 1.3 }}>
-              {isOverLimit ? "Speed Violation" : "Perfect Compliance"}
+              {isOverLimit ? ct.overspeedTitle : ct.noViolations}
             </div>
             <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", marginTop: "0.25rem" }}>
-              {isOverLimit ? "Slow down immediately" : "Scanning zone..."}
+              {isOverLimit ? ct.overspeedDesc?.split(".")[0] : (ct.noViolationsDesc ?? "Scanning zone...")}
             </div>
           </div>
         </div>
@@ -319,7 +407,7 @@ export default function DrivePhoneMode() {
             overflow: "hidden"
           }}>
           <div style={{ fontSize: "0.95rem", lineHeight: 1.5, color: "#ffffff" }}>
-            <span style={{ color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform:"uppercase", fontSize:"0.65rem", fontFamily: "'Space Grotesk', sans-serif" }}>LexDrive AI // </span>
+            <span style={{ color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.1em", textTransform:"uppercase", fontSize:"0.65rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>LexDrive AI // </span>
             {aiSpeechText}
           </div>
         </div>
@@ -344,11 +432,11 @@ export default function DrivePhoneMode() {
                 opacity: obdStatus === "connecting" ? 0.6 : 1,
               }}
             >
-              {obdStatus === "connected" ? "🔌 OBD-II Live" : obdStatus === "connecting" ? "Connecting…" : "Connect OBD-II"}
+              {obdStatus === "connected" ? `🔌 ${ct.obdLive}` : obdStatus === "connecting" ? ct.connecting : ct.connectObd}
             </button>
           )}
           <a href="/summary" style={{ flex: 1, padding: "1.25rem", background: "#ffffff", border: "none", borderRadius: "980px", color: "#0a0a0f", fontWeight: 700, textDecoration: "none", textAlign: "center", cursor: "pointer", boxShadow: "0 10px 30px rgba(0,0,0,0.3)", transition: "all 0.2s ease" }}>
-            End Trip
+            {ct.endTrip}
           </a>
         </div>
 
