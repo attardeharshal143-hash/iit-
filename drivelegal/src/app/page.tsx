@@ -379,7 +379,7 @@ export default function Home() {
                 <div style={{ position: "relative", zIndex: 1 }}>
                   <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#3b82f6", marginBottom: "0.5rem", letterSpacing: "0.1em" }}>STEP {step.num}</div>
                   <h3 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.75rem", letterSpacing: "-0.02em" }}>{step.title}</h3>
-                  <p style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>{step.desc}</p>
+                  <p style={{ fontSize: "0.9375rem", color: "rgba(255,255,255,0.95)", lineHeight: 1.7 }}>{step.desc}</p> // Increased from 0.8
                 </div>
               </div>
             ))}
@@ -472,7 +472,7 @@ export default function Home() {
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
           <p style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.18em", color: "#3b82f6", textTransform: "uppercase", marginBottom: "1rem" }}>{t.challan.tag}</p>
           <h2 className="scroll-reveal" style={{ fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "#ffffff", marginBottom: "1rem" }}>{t.challan.title}</h2>
-          <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "1rem", marginBottom: "2.5rem", lineHeight: 1.7 }}>{t.challan.desc}</p>
+          <p style={{ color: "rgba(255,255,255,0.95)", fontSize: "1.1rem", marginBottom: "2.5rem", lineHeight: 1.7, fontWeight: 500 }}>{t.challan.desc}</p> // Increased from 0.8
           <form onSubmit={handleChallanSearch} className="challan-form" style={{ display: "flex", gap: "0.75rem", maxWidth: 500, margin: "0 auto" }}>
             <input type="text" placeholder={t.challan.placeholder} value={plateQuery} onChange={e => setPlateQuery(e.target.value.toUpperCase())} style={{ flex: 1, padding: "0.875rem 1.25rem", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.06)", color: "#ffffff", fontWeight: 600, fontSize: "1rem", outline: "none" }} />
             <button type="submit" disabled={challanStatus === "checking"} style={{ padding: "0 1.75rem", borderRadius: "12px", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: "0.9375rem", border: "none", cursor: "pointer" }}
@@ -542,7 +542,7 @@ export default function Home() {
         <ThreeBackground variant="particles" color="#3b82f6" />
         <div className="scroll-reveal" style={{ maxWidth: 700, margin: "0 auto", position: "relative", zIndex: 1 }}>
           <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "#ffffff", marginBottom: "1.25rem", lineHeight: 1.1 }}>{t.finalCta.title}</h2>
-          <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.0625rem", marginBottom: "2.5rem", lineHeight: 1.7 }}>{t.finalCta.desc}</p>
+          <p style={{ color: "rgba(255,255,255,0.95)", fontSize: "1.125rem", marginBottom: "2.5rem", lineHeight: 1.7, fontWeight: 500 }}>{t.finalCta.desc}</p> // Increased from 0.8
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <a href="#" onClick={(e) => { e.preventDefault(); setShowVehicleModal(true); }} style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.875rem 2rem", background: "#3b82f6", color: "#fff", fontWeight: 700, fontSize: "1rem", borderRadius: "9999px", textDecoration: "none", transition: "all 0.2s ease" }}
               onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.transform = "translateY(-2px)"; }}
@@ -551,8 +551,9 @@ export default function Home() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
             </a>
             <a href="/finebook" style={{ display: "inline-flex", alignItems: "center", padding: "0.875rem 2rem", background: "transparent", color: "rgba(255,255,255,0.7)", fontWeight: 600, fontSize: "1rem", borderRadius: "9999px", border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", transition: "all 0.2s ease" }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}>
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.color = "rgba(255,255,255,0.85)"; }} // Increased from 0.7/0.2
+            >
               {t.nav.finebook}
             </a>
           </div>
@@ -565,17 +566,17 @@ export default function Home() {
         <div style={{ position: "absolute", top: 0, left: "5%", right: "5%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent)" }} />
         <div className="footer-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
           <span style={{ fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", fontWeight: 900, fontSize: "1.125rem", letterSpacing: "-0.04em", color: "rgba(255,255,255,0.8)" }}>LexDrive AI</span>
-          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.8125rem", fontWeight: 500, margin: 0 }}>© {new Date().getFullYear()} {t.footer.copyright}</p>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8125rem", fontWeight: 500, margin: 0 }}>© {new Date().getFullYear()} {t.footer.copyright}</p> // Increased from 0.3
           <div style={{ display: "flex", gap: "1.5rem" }}>
-            <a href="#" style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.8125rem", fontWeight: 500, textDecoration: "none", transition: "color 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.35)"; }}>{t.footer.platform}</a>
-            <a href="/finebook" style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.8125rem", fontWeight: 500, textDecoration: "none", transition: "color 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.35)"; }}>{t.footer.finebook}</a>
-            <a href="#speed-advisor" style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.8125rem", fontWeight: 500, textDecoration: "none", transition: "color 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.35)"; }}>{t.footer.speedAdvisor}</a>
+            <a href="#" style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8125rem", fontWeight: 500, textDecoration: "none", transition: "color 0.15s" }} // Increased from 0.35
+              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,0.95)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; }}>{t.footer.platform}</a>
+            <a href="/finebook" style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8125rem", fontWeight: 500, textDecoration: "none", transition: "color 0.15s" }} // Increased from 0.35
+              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,0.95)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; }}>{t.footer.finebook}</a>
+            <a href="#speed-advisor" style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8125rem", fontWeight: 500, textDecoration: "none", transition: "color 0.15s" }} // Increased from 0.35
+              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,0.95)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.65)"; }}>{t.footer.speedAdvisor}</a>
           </div>
         </div>
       </footer>

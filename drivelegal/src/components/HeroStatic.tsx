@@ -7,12 +7,6 @@ interface HeroStaticProps {
   onStartDriving: () => void;
 }
 
-const LEGAL_TAGS = [
-  "SEC 184", "₹2000", "MV ACT", "IPC 279",
-  "₹500", "SEC 177", "₹1000", "E-CHALLAN",
-  "AI SCAN", "RTO DATA", "DL CHECK", "CHALLAN",
-];
-
 export default function HeroStatic({ onStartDriving }: HeroStaticProps) {
   const { appLanguage } = useDriveContext();
   const t = translations[appLanguage as Language] || translations["en-IN"];
@@ -26,58 +20,60 @@ export default function HeroStatic({ onStartDriving }: HeroStaticProps) {
 
     let animFrame: number;
     let tick = 0;
-    let isVisible = false;
 
-    type Car = { progress: number; speed: number; fromNode: number; toNode: number; trail: {x:number,y:number}[] };
-    type Node = { x: number; y: number; pulse: number; size: number };
-    type Tag = { x: number; y: number; vy: number; label: string; opacity: number };
+    // â”€â”€ Data stream particles â”€â”€
+    type Particle = {
+      x: number; y: number;
+      vx: number; vy: number;
+      life: number; maxLife: number;
+      size: number; hue: number;
+    };
+    let particles: Particle[] = [];
 
-    let nodes: Node[] = [];
-    let edges: [number,number][] = [];
-    let cars: Car[] = [];
-    let tags: Tag[] = [];
+    // â”€â”€ Orbs (large glowing blobs) â”€â”€
+    type Orb = { x: number; y: number; r: number; phase: number; speed: number; hue: number };
+    let orbs: Orb[] = [];
+
+    // â”€â”€ Data lines (horizontal scan streaks) â”€â”€
+    type Line = { y: number; width: number; x: number; speed: number; opacity: number };
+    let lines: Line[] = [];
 
     const init = () => {
       const W = canvas.width, H = canvas.height;
-      const horizon = H * 0.55;
 
-      // Create network nodes (only in top 55% — above horizon)
-      nodes = Array.from({ length: 18 }, () => ({
-        x: W * 0.05 + Math.random() * W * 0.9,
-        y: H * 0.04 + Math.random() * horizon * 0.88,
-        pulse: Math.random() * Math.PI * 2,
-        size: 3 + Math.random() * 2,
-      }));
+      // 5 large aurora orbs
+      orbs = [
+        { x: W * 0.15, y: H * 0.35, r: W * 0.28, phase: 0,    speed: 0.0008, hue: 195 },
+        { x: W * 0.80, y: H * 0.25, r: W * 0.22, phase: 1.2,  speed: 0.0006, hue: 220 },
+        { x: W * 0.50, y: H * 0.70, r: W * 0.30, phase: 2.4,  speed: 0.0007, hue: 260 },
+        { x: W * 0.25, y: H * 0.75, r: W * 0.18, phase: 0.8,  speed: 0.0009, hue: 185 },
+        { x: W * 0.85, y: H * 0.65, r: W * 0.20, phase: 3.1,  speed: 0.0005, hue: 240 },
+      ];
 
-      // Build edges
-      edges = [];
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          if (Math.sqrt(dx*dx+dy*dy) < W * 0.30 && edges.length < 28) {
-            edges.push([i, j]);
-          }
-        }
-      }
-
-      // Cars with trails
-      cars = edges.slice(0, 12).map(([a,b]) => ({
-        progress: Math.random(),
-        speed: 0.003 + Math.random() * 0.004,
-        fromNode: a,
-        toNode: b,
-        trail: [],
-      }));
-
-      // Floating legal tags — left and right sides
-      tags = Array.from({ length: 12 }, (_, i) => ({
-        x: i < 6 ? 10 + Math.random() * W * 0.18 : W * 0.82 + Math.random() * W * 0.16,
+      // Horizontal data scan lines
+      lines = Array.from({ length: 8 }, () => ({
         y: Math.random() * H,
-        vy: -(0.2 + Math.random() * 0.3),
-        label: LEGAL_TAGS[i % LEGAL_TAGS.length],
-        opacity: 0.25 + Math.random() * 0.2,
+        width: 60 + Math.random() * 200,
+        x: -300,
+        speed: 1.5 + Math.random() * 2.5,
+        opacity: 0.15 + Math.random() * 0.25,
       }));
+
+      particles = [];
+    };
+
+    const spawnParticle = (W: number, H: number) => {
+      if (particles.length > 120) return;
+      particles.push({
+        x: Math.random() * W,
+        y: H + 10,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -(0.4 + Math.random() * 0.8),
+        life: 0,
+        maxLife: 180 + Math.random() * 120,
+        size: 1 + Math.random() * 2,
+        hue: 185 + Math.random() * 80,
+      });
     };
 
     const resize = () => {
@@ -88,224 +84,120 @@ export default function HeroStatic({ onStartDriving }: HeroStaticProps) {
     resize();
     window.addEventListener("resize", resize);
 
-    let drawLoop: (() => void) | null = null;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const wasVisible = isVisible;
-        isVisible = entry.isIntersecting;
-        if (!wasVisible && entry.isIntersecting) {
-          if (drawLoop) drawLoop(); // Restart animation
-        }
-      },
-      { threshold: 0.05 }
-    );
-    observer.observe(canvas);
-
-    // Glow helper
-    const setGlow = (color: string, blur: number) => {
-      ctx.shadowColor = color;
-      ctx.shadowBlur = blur;
-    };
-    const clearGlow = () => { ctx.shadowBlur = 0; };
-
     const draw = () => {
-      if (!isVisible) return;
       const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
       tick++;
 
-      const horizon = H * 0.55;
-      const cx = W / 2;
+      // Fade trail
+      ctx.fillStyle = "rgba(6,8,12,0.18)";
+      ctx.fillRect(0, 0, W, H);
 
-      // ════════════════════════════════════════
-      // 1. PERSPECTIVE ROAD GRID — BRIGHT NEON
-      // ════════════════════════════════════════
-      for (let i = 0; i < 14; i++) {
-        const p = ((i / 14) + (tick * 0.004)) % 1;
-        const ease = Math.pow(p, 2.0);
-        const y = horizon + ease * (H - horizon);
-        const hw = ease * W * 0.68;
-        const alpha = ease * 0.7;
-        setGlow("#00e5ff", ease * 12);
-        ctx.strokeStyle = `rgba(0,229,255,${alpha})`;
-        ctx.lineWidth = ease * 1.5 + 0.3;
+      // â”€â”€ 1. Aurora orbs â”€â”€
+      orbs.forEach(orb => {
+        orb.phase += orb.speed;
+        const ox = orb.x + Math.sin(orb.phase * 1.3) * W * 0.06;
+        const oy = orb.y + Math.cos(orb.phase) * H * 0.08;
+
+        const g = ctx.createRadialGradient(ox, oy, 0, ox, oy, orb.r);
+        g.addColorStop(0,   `hsla(${orb.hue},100%,75%,0.18)`); // Brighter
+        g.addColorStop(0.4, `hsla(${orb.hue},90%,60%,0.10)`); // Brighter
+        g.addColorStop(1,   `hsla(${orb.hue},80%,50%,0)`);
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.moveTo(cx - hw, y);
-        ctx.lineTo(cx + hw, y);
-        ctx.stroke();
-      }
-      clearGlow();
-
-      // Lane lines
-      for (let i = 0; i <= 8; i++) {
-        const frac = i / 8;
-        const bx = W * frac;
-        const isCenter = Math.abs(frac - 0.5) < 0.08;
-        const alpha = isCenter ? 0.55 : 0.18;
-        setGlow("#00e5ff", isCenter ? 10 : 4);
-        ctx.strokeStyle = `rgba(0,229,255,${alpha})`;
-        ctx.lineWidth = isCenter ? 1.8 : 0.7;
-        ctx.beginPath();
-        ctx.moveTo(cx, horizon);
-        ctx.lineTo(bx, H);
-        ctx.stroke();
-      }
-      clearGlow();
-
-      // Bright horizon glow line
-      setGlow("#00e5ff", 20);
-      const hGrad = ctx.createLinearGradient(0, 0, W, 0);
-      hGrad.addColorStop(0, "rgba(0,229,255,0)");
-      hGrad.addColorStop(0.5, "rgba(0,229,255,0.9)");
-      hGrad.addColorStop(1, "rgba(0,229,255,0)");
-      ctx.fillStyle = hGrad;
-      ctx.fillRect(0, horizon - 1, W, 2);
-      clearGlow();
-
-      // ════════════════════════════════════════
-      // 2. ROAD NETWORK — GLOWING NODES + EDGES
-      // ════════════════════════════════════════
-      // Draw edges
-      edges.forEach(([a, b]) => {
-        const na = nodes[a], nb = nodes[b];
-        const alpha = 0.22 + 0.1 * Math.sin(tick * 0.02 + na.pulse);
-        ctx.strokeStyle = `rgba(0,229,255,${alpha})`;
-        ctx.lineWidth = 0.8;
-        ctx.setLineDash([5, 10]);
-        ctx.beginPath();
-        ctx.moveTo(na.x, na.y);
-        ctx.lineTo(nb.x, nb.y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      });
-
-      // Draw nodes with glow
-      nodes.forEach(node => {
-        const pulse = 0.5 + 0.5 * Math.sin(tick * 0.05 + node.pulse);
-
-        // Outer halo
-        setGlow("#00e5ff", 20);
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.size + 4 + pulse * 5, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0,229,255,${0.25 * pulse})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        clearGlow();
-
-        // Core dot
-        setGlow("#00e5ff", 15);
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0,229,255,${0.7 + 0.3 * pulse})`;
+        ctx.arc(ox, oy, orb.r, 0, Math.PI * 2);
         ctx.fill();
-        clearGlow();
       });
 
-      // ════════════════════════════════════════
-      // 3. CARS WITH GLOWING TRAILS
-      // ════════════════════════════════════════
-      cars.forEach(car => {
-        car.progress += car.speed;
-        if (car.progress > 1) {
-          car.progress = 0;
-          car.trail = [];
-          // Pick a new edge
-          const newEdge = edges[Math.floor(Math.random() * edges.length)];
-          car.fromNode = newEdge[0];
-          car.toNode = newEdge[1];
+      // â”€â”€ 2. Floating particles â”€â”€
+      if (tick % 3 === 0) spawnParticle(W, H);
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life++;
+        const progress = p.life / p.maxLife;
+        const alpha = progress < 0.2
+          ? progress / 0.2 * 0.9 // Increased from 0.7
+          : progress > 0.8
+          ? (1 - progress) / 0.2 * 0.9 // Increased from 0.7
+          : 0.9; // Increased from 0.7
+
+        ctx.shadowColor = `hsla(${p.hue},100%,75%,0.95)`; // Brighter shadow
+        ctx.shadowBlur = 10; // Increased blur
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue},100%,75%,${alpha})`;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        if (p.life >= p.maxLife || p.y < -10) particles.splice(i, 1);
+      });
+
+      // â”€â”€ 3. Horizontal data scan lines â”€â”€
+      lines.forEach(line => {
+        line.x += line.speed;
+        if (line.x > W + 300) {
+          line.x = -300;
+          line.y = Math.random() * H;
+          line.width = 100 + Math.random() * 300; // Longer lines
+          line.opacity = 0.25 + Math.random() * 0.35; // Brighter
         }
-
-        const na = nodes[car.fromNode], nb = nodes[car.toNode];
-        if (!na || !nb) return;
-
-        const x = na.x + (nb.x - na.x) * car.progress;
-        const y = na.y + (nb.y - na.y) * car.progress;
-
-        car.trail.push({ x, y });
-        if (car.trail.length > 18) car.trail.shift();
-
-        // Draw trail
-        car.trail.forEach((pt, i) => {
-          const a = (i / car.trail.length) * 0.6;
-          ctx.beginPath();
-          ctx.arc(pt.x, pt.y, 1.5, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0,229,255,${a})`;
-          ctx.fill();
-        });
-
-        // Draw car dot
-        setGlow("#00e5ff", 18);
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fillStyle = "#00e5ff";
-        ctx.fill();
-        clearGlow();
+        const lg = ctx.createLinearGradient(line.x, 0, line.x + line.width, 0);
+        lg.addColorStop(0,   "rgba(0,229,255,0)");
+        lg.addColorStop(0.3, `rgba(0,229,255,${line.opacity})`);
+        lg.addColorStop(0.7, `rgba(0,229,255,${line.opacity})`);
+        lg.addColorStop(1,   "rgba(0,229,255,0)");
+        ctx.fillStyle = lg;
+        ctx.fillRect(line.x, line.y - 0.5, line.width, 1);
       });
 
-      // ════════════════════════════════════════
-      // 4. BRIGHT LIDAR SWEEP
-      // ════════════════════════════════════════
-      const beamX = ((tick * 2.5) % (W + 200)) - 100;
-      const beamGrad = ctx.createLinearGradient(beamX - 80, 0, beamX + 80, 0);
-      beamGrad.addColorStop(0, "rgba(0,229,255,0)");
-      beamGrad.addColorStop(0.4, "rgba(0,229,255,0.08)");
-      beamGrad.addColorStop(0.5, "rgba(0,229,255,0.35)");
-      beamGrad.addColorStop(0.6, "rgba(0,229,255,0.08)");
-      beamGrad.addColorStop(1, "rgba(0,229,255,0)");
-      ctx.fillStyle = beamGrad;
-      ctx.fillRect(beamX - 80, 0, 160, H);
+      // â”€â”€ 4. Subtle grid overlay (very faint) â”€â”€
+      if (tick % 2 === 0) {
+        ctx.strokeStyle = "rgba(0,229,255,0.025)";
+        ctx.lineWidth = 0.5;
+        const gridSize = 80;
+        for (let gx = 0; gx < W; gx += gridSize) {
+          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+        }
+        for (let gy = 0; gy < H; gy += gridSize) {
+          ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+        }
+      }
 
-      // Bright beam edge line
-      setGlow("#00e5ff", 15);
-      ctx.strokeStyle = "rgba(0,229,255,0.8)";
-      ctx.lineWidth = 1.5;
+      // â”€â”€ 5. Corner bracket accents â”€â”€
+      const bSize = 28;
+      const corners = [
+        [20, 20, 1, 1], [W - 20, 20, -1, 1],
+        [20, H - 20, 1, -1], [W - 20, H - 20, -1, -1],
+      ];
+      ctx.strokeStyle = "rgba(0,229,255,0.65)"; // Brighter brackets
+      ctx.lineWidth = 2.0;
+      corners.forEach(([x, y, sx, sy]) => {
+        ctx.beginPath();
+        ctx.moveTo(x + sx * bSize, y);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x, y + sy * bSize);
+        ctx.stroke();
+      });
+
+      // â”€â”€ 6. Pulsing center ring â”€â”€
+      const pulse = 0.5 + 0.5 * Math.sin(tick * 0.025);
+      const ringR = 180 + pulse * 30;
+      const rg = ctx.createRadialGradient(W/2, H/2, ringR - 2, W/2, H/2, ringR + 2);
+      rg.addColorStop(0, "rgba(0,229,255,0)");
+      rg.addColorStop(0.5, `rgba(0,229,255,${0.12 * pulse})`); // Brighter ring
+      rg.addColorStop(1, "rgba(0,229,255,0)");
+      ctx.fillStyle = rg;
       ctx.beginPath();
-      ctx.moveTo(beamX, 0);
-      ctx.lineTo(beamX, H);
-      ctx.stroke();
-      clearGlow();
-
-      // ════════════════════════════════════════
-      // 5. FLOATING LEGAL TAGS — GLOWING TEXT
-      // ════════════════════════════════════════
-      ctx.font = `700 11px 'JetBrains Mono', monospace`;
-      tags.forEach(tag => {
-        tag.y += tag.vy;
-        if (tag.y < -20) {
-          tag.y = H + 10;
-          tag.label = LEGAL_TAGS[Math.floor(Math.random() * LEGAL_TAGS.length)];
-        }
-        setGlow("#00e5ff", 8);
-        ctx.fillStyle = `rgba(0,229,255,${tag.opacity})`;
-        ctx.fillText(tag.label, tag.x, tag.y);
-        clearGlow();
-      });
-
-      // ════════════════════════════════════════
-      // 6. RADAR RIPPLES FROM HORIZON
-      // ════════════════════════════════════════
-      [0, 100, 200].forEach((offset, i) => {
-        const r = ((tick * 1.2 + offset) % 320);
-        const a = Math.max(0, 0.5 - r / 640);
-        const color = i % 2 === 0 ? "0,229,255" : "124,58,237";
-        setGlow(`rgb(${color})`, 12);
-        ctx.beginPath();
-        ctx.arc(cx, horizon, r, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(${color},${a})`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        clearGlow();
-      });
+      ctx.arc(W/2, H/2, ringR, 0, Math.PI * 2);
+      ctx.fill();
 
       animFrame = requestAnimationFrame(draw);
     };
 
-    drawLoop = draw;
     draw();
+
     return () => {
       cancelAnimationFrame(animFrame);
-      observer.disconnect();
       window.removeEventListener("resize", resize);
     };
   }, []);
@@ -325,13 +217,14 @@ export default function HeroStatic({ onStartDriving }: HeroStaticProps) {
     }}>
       <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }} />
 
-      {/* Light vignette only at far edges — let the animation breathe */}
+      {/* Soft center vignette to keep text readable */}
       <div style={{
         position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none",
-        background: "radial-gradient(ellipse 90% 80% at 50% 50%, transparent 50%, rgba(6,8,12,0.5) 100%)"
+        background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(6,8,12,0.55) 0%, transparent 100%)"
       }} />
 
       <div style={{ maxWidth: "900px", position: "relative", zIndex: 10 }}>
+        {/* Eyebrow badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: "10px",
           marginBottom: "2.5rem",
@@ -355,13 +248,15 @@ export default function HeroStatic({ onStartDriving }: HeroStaticProps) {
           {t.hero.title.split(".")[0]}.<br />
           <span style={{
             background: "linear-gradient(90deg, #00e5ff, #3b82f6 50%, #a78bfa)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text"
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            paddingRight: "0.15em", marginRight: "-0.15em" // Prevent italic clipping
           }}>{t.hero.title.split(".")[1]}</span>
         </h1>
 
         <p style={{
-          fontSize: "clamp(1.125rem, 2vw, 1.35rem)", color: "rgba(255,255,255,0.55)",
-          maxWidth: "600px", margin: "0 auto 3.5rem", lineHeight: 1.6, fontWeight: 500
+          fontSize: "clamp(1.125rem, 2vw, 1.35rem)", color: "rgba(255,255,255,0.92)", // Increased from 0.55
+          maxWidth: "600px", margin: "0 auto 3.5rem", lineHeight: 1.6, fontWeight: 500,
+          textShadow: "0 2px 4px rgba(0,0,0,0.3)" // Added subtle shadow for legibility
         }}>{t.hero.desc}</p>
 
         <div style={{ display: "flex", gap: "1.25rem", justifyContent: "center", flexWrap: "wrap" }}>
@@ -385,10 +280,10 @@ export default function HeroStatic({ onStartDriving }: HeroStaticProps) {
           }}
             onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; }}
             onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}>
-            {t.nav.finebook} →
+            {t.nav.finebook} â†’
           </a>
         </div>
       </div>
     </section>
   );
-}
+}

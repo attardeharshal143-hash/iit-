@@ -139,7 +139,8 @@ export default function DrivePhoneMode() {
 
   return (
     <main style={{ 
-      minHeight: "100vh", 
+      height: "100dvh",
+      maxHeight: "100dvh",
       background: "#0a0a0f", 
       color: "#ffffff", 
       display: "flex", 
@@ -181,19 +182,21 @@ export default function DrivePhoneMode() {
         )}
       </div>
 
-      {/* Main Content */}
-      <div style={{ width: "100%", maxWidth: "400px", padding: "2rem 1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem", zIndex: 10 }}>
+      {/* ── Main Content — no scroll ── */}
+      <div style={{ width:"100%", maxWidth:"420px", height:"100dvh", padding:"0.75rem 1rem", display:"flex", flexDirection:"column", gap:"0.5rem", zIndex:10, boxSizing:"border-box" }}>
 
-        {/* Title */}
-        <div style={{ textAlign: "center", fontSize: "1.25rem", fontWeight: 800, letterSpacing: "0.1em", color: "#ffffff", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>
-          LexDrive <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99, 102, 241, 0.5)" }}>{ct.terminal}</span>
+        {/* Title Only */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width: "100%", flexShrink:0 }}>
+          <div style={{ fontSize:"1.1rem", fontWeight:800, letterSpacing:"0.12em", color:"#ffffff", textTransform:"uppercase", fontFamily:"'Latin Modern Roman',serif", fontStyle:"italic" }}>
+            LexDrive <span style={{ color:"#818cf8" }}>{ct.terminal}</span>
+          </div>
         </div>
 
-        {/* ── AI Proactive Alert Banner ── */}
+        {/* AI Alert — only when active */}
         {aiAlert && (
-          <div style={{ width:"100%", background: isOverLimit ? "rgba(239, 68, 68, 0.15)" : "rgba(99, 102, 241, 0.15)", border:`1px solid ${isOverLimit ? "#ef4444" : "#6366f1"}`, borderRadius:"16px", padding:"0.875rem 1rem", display:"flex", alignItems:"flex-start", gap:"0.625rem", animation:"fadeInUp 0.3s ease" }}>
-            <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{isOverLimit ? "🚨" : "🤖"}</span>
-            <p style={{ fontSize:"0.9rem", fontWeight:600, color: "#ffffff", lineHeight:1.5, margin:0 }}>{aiAlert}</p>
+          <div style={{ flexShrink:0, background: isOverLimit ? "rgba(239,68,68,0.15)" : "rgba(99,102,241,0.15)", border:`1px solid ${isOverLimit ? "#ef4444" : "#6366f1"}`, borderRadius:"12px", padding:"0.5rem 0.875rem", display:"flex", alignItems:"center", gap:"0.5rem" }}>
+            <span style={{ fontSize:"1rem", flexShrink:0 }}>{isOverLimit ? "🚨" : "🤖"}</span>
+            <p style={{ fontSize:"0.78rem", fontWeight:600, color:"#ffffff", lineHeight:1.35, margin:0 }}>{aiAlert}</p>
           </div>
         )}
 
@@ -226,19 +229,19 @@ export default function DrivePhoneMode() {
         <div style={{ 
           background: "rgba(255,255,255,0.03)", 
           backdropFilter: "blur(40px)", 
-          borderRadius: "32px", 
-          padding: "2.5rem 1.5rem", 
+          borderRadius: "24px", 
+          padding: "1.25rem 1.5rem", 
           border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99, 102, 241, 0.3)",
           display: "flex", 
           flexDirection: "column", 
           alignItems: "center", 
-          gap: "0.5rem",
-          boxShadow: "0 30px 60px rgba(0,0,0,0.3)"
+          gap: "0.25rem",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.25)"
         }}>
-          <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.currentSpeed}</div>
-          <div style={{ fontSize: "6rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.05em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: "0 0 30px rgba(255,255,255,0.1)" }}>{speed}</div>
+          <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.currentSpeed}</div>
+          <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.05em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: "0 0 30px rgba(255,255,255,0.1)" }}>{speed}</div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>km/h</span>
+            <span style={{ fontSize: "1rem", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>km/h</span>
             <span style={{ fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.5rem", borderRadius: "20px", background: speedSource === "obd" ? "rgba(16,185,129,0.15)" : "rgba(99,102,241,0.15)", border: `1px solid ${speedSource === "obd" ? "#10b981" : "#6366f1"}`, color: speedSource === "obd" ? "#10b981" : "#818cf8", textTransform: "uppercase", letterSpacing: "0.05em" }}>
               {speedSource === "obd" ? "OBD-II" : "GPS"}
             </span>

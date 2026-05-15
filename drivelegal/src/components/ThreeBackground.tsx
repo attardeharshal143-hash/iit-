@@ -109,11 +109,11 @@ export default function ThreeBackground({
             const a = nodes[i], b = nodes[j];
             const dx = a.x - b.x, dy = a.y - b.y;
             const dist2 = dx * dx + dy * dy;
-            if (dist2 < 22500) {
-              const alpha = (1 - Math.sqrt(dist2) / 150) * 0.4;
+            if (dist2 < 25600) { // Slightly larger range (160px instead of 150px)
+              const alpha = (1 - Math.sqrt(dist2) / 160) * 0.65; // Increased from 0.4
               ctx.beginPath();
               ctx.strokeStyle = `rgba(${c},${alpha})`;
-              ctx.lineWidth = 0.8;
+              ctx.lineWidth = 1.2; // Increased from 0.8
               ctx.moveTo(a.x, a.y);
               ctx.lineTo(b.x, b.y);
               ctx.stroke();
@@ -129,36 +129,36 @@ export default function ThreeBackground({
           const a = nodes[p.from], b = nodes[p.to];
           const px = a.x + (b.x - a.x) * p.t;
           const py = a.y + (b.y - a.y) * p.t;
-          const glowAlpha = Math.sin(p.t * Math.PI) * 0.9;
+          const glowAlpha = Math.sin(p.t * Math.PI) * 1.0; // Increased from 0.9
 
           // Glow halo
-          const grad = ctx.createRadialGradient(px, py, 0, px, py, 8);
+          const grad = ctx.createRadialGradient(px, py, 0, px, py, 12); // Increased from 8
           grad.addColorStop(0, `rgba(${c},${glowAlpha})`);
           grad.addColorStop(1, `rgba(${c},0)`);
           ctx.beginPath();
-          ctx.arc(px, py, 8, 0, Math.PI * 2);
+          ctx.arc(px, py, 12, 0, Math.PI * 2);
           ctx.fillStyle = grad;
           ctx.fill();
 
           // Core dot
           ctx.beginPath();
-          ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2); // Increased from 2.5
           ctx.fillStyle = `rgba(255,255,255,${glowAlpha})`;
           ctx.fill();
         }
 
         // Draw nodes
         for (const n of nodes) {
-          n.pulsePhase += 0.03;
+          n.pulsePhase += 0.04; // Slightly faster
           const pulse = Math.sin(n.pulsePhase) * 0.5 + 0.5;
-          const r = n.size + pulse * 1.5;
-          const alpha = 0.5 + pulse * 0.5;
+          const r = n.size + pulse * 2.0; // Increased from 1.5
+          const alpha = 0.7 + pulse * 0.3; // Increased from 0.5
 
           // Outer ring
           ctx.beginPath();
-          ctx.arc(n.x, n.y, r + 3, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(${c},${alpha * 0.3})`;
-          ctx.lineWidth = 1;
+          ctx.arc(n.x, n.y, r + 4, 0, Math.PI * 2); // Increased from +3
+          ctx.strokeStyle = `rgba(${c},${alpha * 0.5})`; // Increased from 0.3
+          ctx.lineWidth = 1.5; // Increased from 1
           ctx.stroke();
 
           // Core
@@ -169,8 +169,8 @@ export default function ThreeBackground({
 
           // White highlight
           ctx.beginPath();
-          ctx.arc(n.x, n.y, r * 0.4, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,255,255,${alpha * 0.8})`;
+          ctx.arc(n.x, n.y, r * 0.45, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${alpha * 0.95})`; // Increased from 0.8
           ctx.fill();
 
           n.x += n.vx; n.y += n.vy;
@@ -208,7 +208,7 @@ export default function ThreeBackground({
 
         const horizon = H * 0.42;
         const vp = { x: W / 2, y: horizon };
-        const pulseIntensity = 0.3 + Math.sin(glowPulse) * 0.15;
+        const pulseIntensity = 0.45 + Math.sin(glowPulse) * 0.25; // Increased from 0.3 + 0.15
 
         // Horizontal grid lines with gradient color
         for (let i = 0; i < 18; i++) {
@@ -218,7 +218,7 @@ export default function ThreeBackground({
           const spread = (y - horizon) / (H - horizon);
           const x0 = vp.x - spread * W * 0.78;
           const x1 = vp.x + spread * W * 0.78;
-          const alpha = (0.08 + spread * 0.5) * (i === 0 ? 0 : 1);
+          const alpha = (0.15 + spread * 0.6) * (i === 0 ? 0 : 1); // Increased from 0.08 + 0.5
 
           const lineGrad = ctx.createLinearGradient(x0, y, x1, y);
           lineGrad.addColorStop(0, `rgba(${c},0)`);
@@ -240,10 +240,10 @@ export default function ThreeBackground({
           const t = i / VLINES;
           const xBottom = W * t * 1.6 - W * 0.3;
           const distFromCenter = Math.abs(t - 0.5) * 2;
-          const alpha = (0.5 - distFromCenter * 0.3) * pulseIntensity * 1.5;
+          const alpha = (0.7 - distFromCenter * 0.4) * pulseIntensity * 1.6; // Increased from 0.5 - 0.3
           ctx.beginPath();
           ctx.strokeStyle = `rgba(${c},${alpha})`;
-          ctx.lineWidth = distFromCenter < 0.1 ? 2 : 1;
+          ctx.lineWidth = distFromCenter < 0.1 ? 2.5 : 1.2; // Thicker center
           ctx.moveTo(vp.x, vp.y);
           ctx.lineTo(xBottom, H);
           ctx.stroke();
@@ -263,12 +263,12 @@ export default function ThreeBackground({
         ctx.lineDashOffset = 0;
 
         // Pulsing horizon glow
-        const horizonGlow = ctx.createLinearGradient(0, horizon - 60, 0, horizon + 100);
+        const horizonGlow = ctx.createLinearGradient(0, horizon - 80, 0, horizon + 120); // Wider glow
         horizonGlow.addColorStop(0, `rgba(${c},0)`);
-        horizonGlow.addColorStop(0.5, `rgba(${c},${pulseIntensity})`);
+        horizonGlow.addColorStop(0.5, `rgba(${c},${pulseIntensity * 1.2})`); // Brighter
         horizonGlow.addColorStop(1, `rgba(${c},0)`);
         ctx.fillStyle = horizonGlow;
-        ctx.fillRect(0, horizon - 60, W, 160);
+        ctx.fillRect(0, horizon - 80, W, 200);
 
         // Wide horizon beam
         const beamGrad = ctx.createRadialGradient(W / 2, horizon, 0, W / 2, horizon, W * 0.6);
@@ -280,8 +280,8 @@ export default function ThreeBackground({
         // Speed streaks in upper half
         for (const s of streaks) {
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(${c},${s.alpha * 0.5})`;
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = `rgba(${c},${s.alpha * 0.75})`; // Brighter streaks
+          ctx.lineWidth = 1.5;
           const spread = (s.y - horizon) / (H - horizon + 1);
           ctx.moveTo(s.x, s.y);
           ctx.lineTo(s.x + s.len * spread, s.y);
@@ -338,7 +338,7 @@ export default function ThreeBackground({
 
         // Subtle background radial
         const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
-        bgGrad.addColorStop(0, `rgba(${c},0.04)`);
+        bgGrad.addColorStop(0, `rgba(${c},0.08)`); // Increased from 0.04
         bgGrad.addColorStop(1, `rgba(${c},0)`);
         ctx.fillStyle = bgGrad;
         ctx.beginPath();
@@ -352,14 +352,14 @@ export default function ThreeBackground({
           // Glow ring
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(${c},0.06)`;
+          ctx.strokeStyle = `rgba(${c},0.12)`; // Increased from 0.06
           ctx.lineWidth = 6;
           ctx.stroke();
           // Sharp ring
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(${c},0.28)`;
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = `rgba(${c},0.45)`; // Increased from 0.28
+          ctx.lineWidth = 1.2; // Thicker
           ctx.stroke();
 
           ctx.fillStyle = `rgba(${c},0.4)`;
@@ -395,12 +395,12 @@ export default function ThreeBackground({
 
         // Sweep beam — smooth gradient fan
         angle += 0.020;
-        const sweepLen = Math.PI * 0.6;
-        const SEGS = 20;
+        const sweepLen = Math.PI * 0.7; // Wider
+        const SEGS = 30; // Smoother
         for (let s = 0; s < SEGS; s++) {
           const startA = angle - sweepLen * (s / SEGS);
           const endA = angle - sweepLen * ((s + 1) / SEGS);
-          const alpha = (1 - s / SEGS) * 0.5;
+          const alpha = (1 - s / SEGS) * 0.65; // Brighter
           ctx.beginPath();
           ctx.moveTo(cx, cy);
           ctx.arc(cx, cy, maxR, startA, endA, true);

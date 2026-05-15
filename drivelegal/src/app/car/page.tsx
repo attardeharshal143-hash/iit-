@@ -154,14 +154,14 @@ export default function CarDisplayMode() {
 
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", position: "relative", zIndex: 10 }}>
-        <div style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", fontWeight: 700, letterSpacing: "0.1em" }}>
+        <div style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)", fontWeight: 700, letterSpacing: "0.1em" }}> // Increased from 0.5
           TEMP: <span style={{ color: "#ffffff" }}>{weather ? `${weather.temp}°C` : "—"}</span>
         </div>
-        <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.05em", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>
+        <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.05em", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", paddingRight: "0.1em" }}> // Added padding-right
           LEXDRIVE <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99,102,241,0.5)" }}>{ct.terminal}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-          <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", fontWeight: 700, letterSpacing: "0.1em" }}>
+          <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)", fontWeight: 700, letterSpacing: "0.1em" }}> // Increased from 0.5
             TIME: <span style={{ color: "#ffffff" }}>{currentTime}</span>
           </span>
           {obdSupported && (
@@ -215,7 +215,7 @@ export default function CarDisplayMode() {
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div style={darkCard({ flex: 1, padding: "1.25rem", display: "flex", flexDirection: "column", overflow: "hidden" })}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.displayMode}</div>
+            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.displayMode}</div> // Increased from 0.4
               <div style={{ display: "flex", background: "rgba(255,255,255,0.05)", borderRadius: "999px", padding: "2px" }}>
                 <button onClick={() => setViewMode("radar")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "radar" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "radar" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.radar}</button>
                 <button onClick={() => setViewMode("map")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "map" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "map" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.map}</button>
@@ -253,14 +253,14 @@ export default function CarDisplayMode() {
 
           <div style={{ display: "flex", gap: "1rem" }}>
             <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center", border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99,102,241,0.3)" })}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.speed}</div>
+              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.speed}</div> // Increased from 0.4
               <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: isOverLimit ? "0 0 20px rgba(239,68,68,0.5)" : "0 0 20px rgba(255,255,255,0.1)" }}>{speed}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
+              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
             </div>
             <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center" })}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.limit}</div>
+              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.limit}</div> // Increased from 0.4
               <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: "#ffffff", lineHeight: 1 }}>{limit}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
+              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
             </div>
           </div>
         </div>
@@ -277,12 +277,12 @@ export default function CarDisplayMode() {
           <div onClick={handleVoiceInput} style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", borderRadius: "18px", padding: "1.5rem", border: aiCompanionState === "listening" ? "1px solid #6366f1" : "1px solid rgba(99,102,241,0.3)", cursor: "pointer", position: "relative", overflow: "hidden", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}>
             {aiCompanionState === "listening" && <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "2px", background: "#6366f1", animation: "scan 2s linear infinite", boxShadow: "0 0 15px #6366f1" }} />}
             <div style={{ fontSize: "1.05rem", lineHeight: 1.6, color: "#ffffff", zIndex: 1, fontWeight: 400 }}>
-              <span style={{ color: "rgba(255,255,255,0.35)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.65rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>LexDrive AI // </span><br />
+              <span style={{ color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.65rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>LexDrive AI // </span><br /> // Increased from 0.35
               <span style={{ color: aiCompanionState === "alert" ? "#f87171" : "#ffffff", textShadow: aiCompanionState === "alert" ? "0 0 10px rgba(239,68,68,0.5)" : "none" }}>{aiSpeechText}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 1 }}>
               <Waveform active={aiCompanionState === "listening" || aiCompanionState === "speaking"} />
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <div style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.75rem" }}> // Increased from 0.45
                 {aiCompanionState === "listening" && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#FF3B30", animation: "live-pulse 1s infinite" }} />}
                 {aiCompanionState === "listening" ? ct.listening : ct.tapToTransmit}
               </div>
@@ -295,12 +295,12 @@ export default function CarDisplayMode() {
 
           {/* Analytics */}
           <div style={darkCard({ padding: "1.5rem" })}>
-            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.drivingAnalytics}</div>
+            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.drivingAnalytics}</div> // Increased from 0.4
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{ct.safetyScore}</div>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0.25rem 0", color: "#ffffff", letterSpacing: "-0.03em" }}>{drivingScore} / 100</div>
-                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{drivingScore >= 90 ? ct.excellent : drivingScore >= 70 ? ct.good : ct.needsWork}</div>
+                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.8)", fontWeight: 500 }}>{drivingScore >= 90 ? ct.excellent : drivingScore >= 70 ? ct.good : ct.needsWork}</div> // Increased from 0.45
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={{ width: "70px", height: "35px", borderTopLeftRadius: "35px", borderTopRightRadius: "35px", background: "conic-gradient(from 270deg at 50% 100%, #FF3B30 0deg, #FF9500 45deg, #34C759 90deg, transparent 90deg)", position: "relative" }}>
@@ -313,7 +313,7 @@ export default function CarDisplayMode() {
 
           {/* Violations */}
           <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", background: isOverLimit ? "rgba(239,68,68,0.06)" : "rgba(255,255,255,0.03)", border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99,102,241,0.3)" })}>
-            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#f87171" : "rgba(255,255,255,0.4)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.violations}</div>
+            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#fca5a5" : "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.violations}</div> // Increased from 0.4
             {isOverLimit ? (
               <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", flex: 1 }}>
                 <div style={{ fontSize: "1.5rem", animation: "live-pulse 1s infinite" }}>🚨</div>
@@ -335,7 +335,7 @@ export default function CarDisplayMode() {
 
           {/* Compliance */}
           <div style={darkCard({ padding: "1.5rem" })}>
-            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.compliance}</div>
+            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "rgba(255,255,255,0.75)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.compliance}</div> // Increased from 0.4
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {[
                 { label: ct.seatbelt, color: "#34C759" },

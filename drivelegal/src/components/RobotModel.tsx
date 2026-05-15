@@ -231,7 +231,7 @@ function RobotStructure({ state }: { state: RobotState }) {
             <group key={i} position={[ax, 0.88, 0]} rotation={[0, 0, ax < 0 ? 0.28 : -0.28]}>
               <mesh>
                 <capsuleGeometry args={[0.055, 0.38, 8, 10]} />
-                <meshStandardMaterial color={pal.accent} roughness={0.2} metalness={0.4} emissive={pal.emissive} emissiveIntensity={1.5} />
+                <meshStandardMaterial color={pal.accent} roughness={0.2} metalness={0.4} emissive={pal.emissive} emissiveIntensity={3.0} /> // Increased from 1.5
               </mesh>
               {/* Tip orb */}
               <mesh position={[0, 0.26, 0]}>
@@ -257,7 +257,7 @@ function RobotStructure({ state }: { state: RobotState }) {
           {/* Chest port ring */}
           <mesh position={[0, 0.48, 0.88]} rotation={[Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.22, 0.04, 12, 32]} />
-            <meshStandardMaterial color={pal.accent} roughness={0.2} metalness={0.5} emissive={pal.emissive} emissiveIntensity={2} />
+            <meshStandardMaterial color={pal.accent} roughness={0.2} metalness={0.5} emissive={pal.emissive} emissiveIntensity={4.0} /> // Increased from 2.0
           </mesh>
           {/* Chest screen inset */}
           <mesh position={[0, 0.48, 0.88]}>
@@ -320,12 +320,12 @@ export default function RobotCanvas({ state }: { state: RobotState }) {
       style={{ background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
     >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[6, 10, 6]}  intensity={1.6} color="#ffffff" />
-      <directionalLight position={[-5, 4, 3]}  intensity={0.7} color="#bae6fd" />
-      <pointLight position={[0, 2, 4.5]} intensity={2.2} color={pal.glow} distance={12} />
+      <ambientLight intensity={0.8} /> // Increased from 0.5
+      <directionalLight position={[6, 10, 6]}  intensity={2.2} color="#ffffff" /> // Increased from 1.6
+      <directionalLight position={[-5, 4, 3]}  intensity={1.0} color="#bae6fd" /> // Increased from 0.7
+      <pointLight position={[0, 2, 4.5]} intensity={3.5} color={pal.glow} distance={12} /> // Increased from 2.2
       {/* Rim light from behind for depth */}
-      <pointLight position={[0, 1, -4]}  intensity={0.6} color={pal.accent} distance={10} />
+      <pointLight position={[0, 1, -4]}  intensity={1.2} color={pal.accent} distance={10} /> // Increased from 0.6
 
       <RobotStructure state={state} />
     </Canvas>
