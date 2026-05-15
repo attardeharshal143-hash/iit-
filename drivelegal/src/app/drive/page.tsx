@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useDriveContext } from "../../context/DriveContext";
-import finesData from "../../data/fines.json";
 import "../globals.css";
 import Robot3D from "../../components/Robot3D";
 import { carTranslations } from "../../lib/translations";
+import { speak, createRecognition } from "../../lib/tts";
 
 export default function DrivePhoneMode() {
   const { speed, limit, isCarMode, setIsCarMode, obdStatus, connectOBD, disconnectOBD, speedSource, obdSupported, appLanguage, askCoPilot, aiAlert, lastKnownLocation, riskAlert, drivingScore, roadContext, weather, tripDurationMinutes } = useDriveContext();
@@ -22,7 +22,6 @@ export default function DrivePhoneMode() {
   }, []);
 
   const isOverLimit = speed > limit;
-  const overspeedAmount = Math.max(0, speed - limit);
 
   // Activate drive context
   useEffect(() => {
@@ -30,19 +29,13 @@ export default function DrivePhoneMode() {
     return () => setIsCarMode(false);
   }, [setIsCarMode]);
 
-  // Initialize Speech Recognition once
+  // ── Speech Recognition — recreate on language change ──
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      if (!recognitionRef.current) {
-        const recognition = new SpeechRecognition();
-        recognition.lang = appLanguage;
-        recognition.interimResults = true;
-        recognitionRef.current = recognition;
-      } else {
-        recognitionRef.current.lang = appLanguage;
-      }
+    // Abort any active recognition before recreating
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch {}
     }
+    recognitionRef.current = createRecognition(appLanguage);
   }, [appLanguage]);
 
   // Listen to dynamic Llama 3.1 alerts from DriveContext
@@ -50,93 +43,73 @@ export default function DrivePhoneMode() {
     if (aiAlert) {
       setAiCompanionState("alert");
       setAiSpeechText(`"${aiAlert}"`);
-      // DriveContext handles the actual speech synthesis.
+      // DriveContext already handles TTS via the shared speak() utility
     } else {
       setAiCompanionState("idle");
-      setAiSpeechText(isOverLimit ? `"Speed limit reached. Please slow down."` : `"Speed is good. No violations."`);
+      const ct2 = carTranslations[appLanguage] || carTranslations["en-IN"];
+      setAiSpeechText(isOverLimit
+        ? `"${ct2.overspeedTitle}"`
+        : `"Speed is good. No violations."`);
     }
-  }, [aiAlert, isOverLimit]);
+  }, [aiAlert, isOverLimit, appLanguage]);
 
   const handleVoiceInput = () => {
     if (aiCompanionState === "listening" || aiCompanionState === "speaking") return;
-    const recognition = recognitionRef.current;
-    
-    if (!recognition) {
+
+    // If no recognition support, show error
+    if (!recognitionRef.current) {
       setAiSpeechText(`"Speech recognition not supported in this browser."`);
       return;
     }
-    
+
+    const recognition = recognitionRef.current;
+
     recognition.onresult = async (e: any) => {
-      const transcript = e.results[0][0].transcript;
+      // Use the last result (most confident)
+      const result = e.results[e.results.length - 1];
+      const transcript = result[0].transcript;
       setAiSpeechText(`"You: ${transcript}"`);
-      
-      if (e.results[0].isFinal) {
+
+      if (result.isFinal) {
         setAiCompanionState("speaking");
         const reply = await askCoPilot(transcript);
         setAiSpeechText(`"${reply}"`);
-        
-        const shortLang = appLanguage.split('-')[0];
-        let played = false;
-
-        if ("speechSynthesis" in window) {
-          const speak = () => {
-            const voices = window.speechSynthesis.getVoices();
-            const voice = voices.find(v => v.lang.startsWith(shortLang));
-            
-            if (voice || shortLang === "en") {
-              const u = new SpeechSynthesisUtterance(reply);
-              u.lang = appLanguage;
-              u.rate = 0.9;
-              if (voice) u.voice = voice;
-              u.onend = () => setAiCompanionState("idle");
-              window.speechSynthesis.speak(u);
-              played = true;
-            } else {
-              // Fallback to our internal Next.js proxy to avoid Google CORS & 403 errors
-              const safeReply = reply.slice(0, 200);
-              const ttsUrl = `/api/tts?text=${encodeURIComponent(safeReply)}&lang=${shortLang}`;
-              const audio = new Audio(ttsUrl);
-              audio.onended = () => setAiCompanionState("idle");
-              audio.onerror = () => setAiCompanionState("idle");
-              audio.play().catch(() => setAiCompanionState("idle"));
-            }
-          };
-
-          if (window.speechSynthesis.getVoices().length > 0) {
-            speak();
-          } else {
-            window.speechSynthesis.onvoiceschanged = () => speak();
-          }
-        } else {
-          setTimeout(() => setAiCompanionState("idle"), 3000);
-        }
+        speak(reply, appLanguage, () => setAiCompanionState("idle"));
       }
     };
 
     recognition.onerror = (e: any) => {
       console.warn("Microphone error:", e.error);
       setAiCompanionState("alert");
-      if (e.error === "not-allowed") {
-        setAiSpeechText(`"Mic blocked! Please allow microphone access in your browser."`);
-      } else if (e.error === "audio-capture") {
-        setAiSpeechText(`"No microphone detected! Please check your hardware."`);
-      } else {
-        setAiSpeechText(`"Microphone error (${e.error}). Please try again."`);
-      }
+      const msgs: Record<string, string> = {
+        "not-allowed":     "Mic blocked! Allow microphone access in browser settings.",
+        "audio-capture":   "No microphone detected. Check your hardware.",
+        "network":         "Network error. Check your connection.",
+        "no-speech":       "No speech detected. Please try again.",
+        "aborted":         "",
+        "service-not-allowed": "Speech service not allowed. Try Chrome or Edge.",
+      };
+      const msg = msgs[e.error] || `Microphone error (${e.error}). Please try again.`;
+      if (msg) setAiSpeechText(`"${msg}"`);
       setTimeout(() => setAiCompanionState("idle"), 4000);
     };
 
     recognition.onend = () => {
-       setAiCompanionState(prev => prev === "listening" ? "idle" : prev);
+      setAiCompanionState(prev => prev === "listening" ? "idle" : prev);
     };
 
-    try {
-      recognition.start();
-      setAiCompanionState("listening");
-      setAiSpeechText(`"Listening..."`);
-    } catch (e) {
-      console.warn("Recognition already started");
-    }
+    // Abort any previous session before starting a new one
+    try { recognition.abort(); } catch {}
+    setTimeout(() => {
+      try {
+        recognition.start();
+        setAiCompanionState("listening");
+        setAiSpeechText(`"${(carTranslations[appLanguage] || carTranslations["en-IN"]).listening}"`);
+      } catch (err) {
+        console.warn("Recognition start failed:", err);
+        setAiCompanionState("idle");
+      }
+    }, 100);
   };
 
   // Dashcam Camera Setup

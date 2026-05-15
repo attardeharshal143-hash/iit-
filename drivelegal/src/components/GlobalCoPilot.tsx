@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useDriveContext } from "../context/DriveContext";
+import { speak, createRecognition } from "../lib/tts";
 
 export default function GlobalCoPilot() {
   const { askCoPilot, isChatOpen, setIsChatOpen, appLanguage } = useDriveContext();
@@ -13,16 +14,12 @@ export default function GlobalCoPilot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
+  // Recreate recognition whenever language changes
   useEffect(() => {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SR) {
-      if (!recognitionRef.current) {
-        const r = new SR(); r.lang = appLanguage; r.continuous = false; r.interimResults = false;
-        recognitionRef.current = r;
-      } else {
-        recognitionRef.current.lang = appLanguage;
-      }
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch {}
     }
+    recognitionRef.current = createRecognition(appLanguage);
   }, [appLanguage]);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages, isChatOpen]);
@@ -37,16 +34,41 @@ export default function GlobalCoPilot() {
     const reply = await askCoPilot(msg);
     setIsThinking(false);
     setMessages(p => [...p, { role:"ai", text:reply }]);
+    // Speak the AI reply in the selected language
+    speak(reply, appLanguage);
   };
 
   const startListening = () => {
     const r = recognitionRef.current;
-    if (!r) return;
+    if (!r) {
+      alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
+      return;
+    }
+    // Abort any previous session
+    try { r.abort(); } catch {}
+
     r.onstart = () => setIsListening(true);
     r.onend = () => setIsListening(false);
-    r.onerror = () => setIsListening(false);
-    r.onresult = (e: any) => handleSend(undefined, e.results[0][0].transcript);
-    try { r.start(); } catch {}
+    r.onerror = (e: any) => {
+      setIsListening(false);
+      const msgs: Record<string, string> = {
+        "not-allowed": "Microphone access denied. Please allow it in browser settings.",
+        "audio-capture": "No microphone found. Please check your hardware.",
+        "network": "Network error during speech recognition.",
+        "no-speech": "No speech detected. Please try again.",
+      };
+      if (msgs[e.error]) {
+        setMessages(p => [...p, { role:"ai", text: msgs[e.error] }]);
+      }
+    };
+    r.onresult = (e: any) => {
+      const transcript = e.results[e.results.length - 1][0].transcript;
+      handleSend(undefined, transcript);
+    };
+
+    setTimeout(() => {
+      try { r.start(); } catch (err) { console.warn("Recognition start failed:", err); }
+    }, 100);
   };
 
   if (!isChatOpen) return null;

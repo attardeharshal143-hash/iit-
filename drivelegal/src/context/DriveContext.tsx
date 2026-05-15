@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import finesData from "../data/fines.json";
 import { OBDManager, OBDStatus } from "../lib/obd";
+import { speak } from "../lib/tts";
 
 interface DriveContextType {
   speed: number; limit: number; isCarMode: boolean; setIsCarMode: (val: boolean) => void;
@@ -214,39 +215,9 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       if (!reply) return;
       setAiAlert(reply);
       setTimeout(() => setAiAlert(""), 7000);
-      
-      const shortLang = lang.split('-')[0];
-      let played = false;
 
-      if ("speechSynthesis" in window) {
-        const speak = () => {
-          if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-
-          const voices = window.speechSynthesis.getVoices();
-          const voice = voices.find(v => v.lang.startsWith(shortLang));
-          
-          if (voice || shortLang === "en") {
-            const u = new SpeechSynthesisUtterance(reply);
-            u.lang = lang; 
-            u.rate = 0.9;
-            if (voice) u.voice = voice;
-            window.speechSynthesis.speak(u);
-            played = true;
-          } else {
-            // Fallback to our internal Next.js proxy to avoid Google CORS & 403 errors
-            const safeReply = reply.slice(0, 200);
-            const ttsUrl = `/api/tts?text=${encodeURIComponent(safeReply)}&lang=${shortLang}`;
-            const audio = new Audio(ttsUrl);
-            audio.play().catch(() => { /* AutoPlay blocked by browser */ });
-          }
-        };
-
-        if (window.speechSynthesis.getVoices().length > 0) {
-          speak();
-        } else {
-          window.speechSynthesis.onvoiceschanged = () => speak();
-        }
-      }
+      // Use the shared TTS utility — handles voice loading, language matching, and fallback
+      speak(reply, lang);
     } catch (e) {
       console.warn("Proactive alert failed:", e);
     }
