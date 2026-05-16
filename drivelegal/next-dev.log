@@ -1,0 +1,1650 @@
+
+> drivelegal@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.17.1.190:3000
+- Environments: .env.local
+✓ Ready in 17.2s
+
+○ Compiling /summary ...
+ GET / 200 in 10.5s (next.js: 5.2s, application-code: 5.3s)
+ GET /car 200 in 10.6s (next.js: 8.4s, application-code: 2.2s)
+ GET /summary 200 in 10.9s (next.js: 9.1s, application-code: 1822ms)
+ GET /car 200 in 10.4s (next.js: 8.7s, application-code: 1646ms)
+ GET /summary 200 in 10.5s (next.js: 8.9s, application-code: 1607ms)
+ GET /summary 200 in 10.3s (next.js: 8.8s, application-code: 1574ms)
+ GET /summary 200 in 10.4s (next.js: 8.8s, application-code: 1633ms)
+ GET /summary 200 in 5.8s (next.js: 32ms, application-code: 5.8s)
+ GET /summary 200 in 7.6s (next.js: 110ms, application-code: 7.5s)
+ GET /summary 200 in 7.6s (next.js: 240ms, application-code: 7.3s)
+ GET /summary 200 in 7.6s (next.js: 816ms, application-code: 6.7s)
+ GET / 200 in 7.6s (next.js: 2.2s, application-code: 5.4s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:466:21)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 2.1s
+ GET /car 200 in 6.0s (next.js: 2.7s, application-code: 3.3s)
+✓ Compiled in 2.2s
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] GPS timeout - waiting for signal... (src/context/DriveContext.tsx:464:21)
+ POST /api/roadcontext 200 in 3.9s (next.js: 3.2s, application-code: 766ms)
+ GET /car 200 in 1093ms (next.js: 48ms, application-code: 1045ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 847ms (next.js: 45ms, application-code: 801ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 1093ms (next.js: 241ms, application-code: 852ms)
+✓ Compiled in 922ms
+✓ Compiled in 850ms
+ POST /api/roadcontext 200 in 736ms (next.js: 53ms, application-code: 683ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 922ms (next.js: 106ms, application-code: 816ms)
+ POST /api/roadcontext 200 in 502ms (next.js: 14ms, application-code: 488ms)
+✓ Compiled in 2.3s
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 1043ms (next.js: 40ms, application-code: 1003ms)
+ GET /car 200 in 3.0s (next.js: 1116ms, application-code: 1932ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:443:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 1969ms (next.js: 10ms, application-code: 1958ms)
+ GET /car 200 in 1569ms (next.js: 100ms, application-code: 1469ms)
+ GET /car 200 in 728ms (next.js: 41ms, application-code: 687ms)
+ GET /car 200 in 487ms (next.js: 22ms, application-code: 465ms)
+ GET /car 200 in 1048ms (next.js: 361ms, application-code: 686ms)
+ GET /car 200 in 143ms (next.js: 14ms, application-code: 130ms)
+ POST /api/roadcontext 200 in 2.9s (next.js: 163ms, application-code: 2.7s)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 3.8s (next.js: 76ms, application-code: 3.8s)
+ POST /api/roadcontext 200 in 525ms (next.js: 7ms, application-code: 518ms)
+ GET /car 200 in 965ms (next.js: 405ms, application-code: 560ms)
+ GET /car 200 in 149ms (next.js: 13ms, application-code: 136ms)
+ GET /car 200 in 1324ms (next.js: 658ms, application-code: 665ms)
+ GET /car 200 in 171ms (next.js: 12ms, application-code: 160ms)
+ GET /car 200 in 1373ms (next.js: 914ms, application-code: 459ms)
+ GET /car 200 in 153ms (next.js: 13ms, application-code: 139ms)
+ POST /api/roadcontext 200 in 618ms (next.js: 93ms, application-code: 525ms)
+ POST /api/copilot 200 in 686ms (next.js: 155ms, application-code: 532ms)
+ POST /api/roadcontext 200 in 505ms (next.js: 8ms, application-code: 497ms)
+ POST /api/roadcontext 200 in 554ms (next.js: 9ms, application-code: 545ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 809ms (next.js: 149ms, application-code: 660ms)
+ POST /api/roadcontext 200 in 520ms (next.js: 10ms, application-code: 511ms)
+ POST /api/roadcontext 200 in 530ms (next.js: 11ms, application-code: 518ms)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 10ms, application-code: 7.1s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.0s (next.js: 9ms, application-code: 7.0s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.0s (next.js: 11ms, application-code: 7.0s)
+Ola Maps failed, falling back to OSM Overpass. Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:18:24)
+  16 |       try {
+  17 |         const olaEndpoint = `https://api.olamaps.io/routing/v1/speed-limits?lat=${lat}&lng...
+> 18 |         const olaRes = await fetch(olaEndpoint, {
+     |                        ^
+  19 |           method: "GET",
+  20 |           headers: { "Accept": "application/json" },
+  21 |           signal: AbortSignal.timeout(4000) // 4s timeout — fail fast to OSM {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.0s (next.js: 6ms, application-code: 7.0s)
+Speed Limit API Error: TypeError: fetch failed
+    at async POST (src\app\api\speedlimit\route.ts:40:20)
+  38 |     const osmEndpoint = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent...
+  39 |     
+> 40 |     const osmRes = await fetch(osmEndpoint);
+     |                    ^
+  41 |     if (osmRes.ok) {
+  42 |       const text = await osmRes.text();
+  43 |       try { {
+  [cause]: Error [ConnectTimeoutError]: Connect Timeout Error (attempted addresses: 162.55.144.139:443, 65.109.112.52:443, timeout: 10000ms)
+      at ignore-listed frames {
+    code: 'UND_ERR_CONNECT_TIMEOUT'
+  }
+}
+ POST /api/speedlimit 500 in 15.5s (next.js: 6ms, application-code: 15.5s)
+ POST /api/roadcontext 200 in 504ms (next.js: 7ms, application-code: 496ms)
+ POST /api/roadcontext 200 in 514ms (next.js: 10ms, application-code: 504ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 642ms (next.js: 11ms, application-code: 631ms)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 16ms, application-code: 7.0s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 11ms, application-code: 7.1s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 11ms, application-code: 7.1s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 11ms, application-code: 7.0s)
+ POST /api/roadcontext 200 in 527ms (next.js: 11ms, application-code: 516ms)
+ POST /api/roadcontext 200 in 531ms (next.js: 12ms, application-code: 518ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 629ms (next.js: 8ms, application-code: 621ms)
+ POST /api/roadcontext 200 in 508ms (next.js: 10ms, application-code: 499ms)
+ POST /api/roadcontext 200 in 503ms (next.js: 15ms, application-code: 488ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 675ms (next.js: 14ms, application-code: 661ms)
+ POST /api/roadcontext 200 in 514ms (next.js: 14ms, application-code: 500ms)
+ POST /api/roadcontext 200 in 517ms (next.js: 14ms, application-code: 504ms)
+ POST /api/roadcontext 200 in 511ms (next.js: 13ms, application-code: 498ms)
+ POST /api/roadcontext 200 in 504ms (next.js: 14ms, application-code: 491ms)
+ POST /api/roadcontext 200 in 519ms (next.js: 15ms, application-code: 504ms)
+ POST /api/roadcontext 200 in 507ms (next.js: 9ms, application-code: 498ms)
+ POST /api/roadcontext 200 in 518ms (next.js: 8ms, application-code: 510ms)
+ POST /api/roadcontext 200 in 554ms (next.js: 8ms, application-code: 547ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 690ms (next.js: 11ms, application-code: 679ms)
+ POST /api/roadcontext 200 in 525ms (next.js: 11ms, application-code: 514ms)
+ POST /api/roadcontext 200 in 512ms (next.js: 9ms, application-code: 503ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 655ms (next.js: 18ms, application-code: 637ms)
+ POST /api/roadcontext 200 in 562ms (next.js: 13ms, application-code: 549ms)
+ POST /api/roadcontext 200 in 713ms (next.js: 10ms, application-code: 703ms)
+ POST /api/roadcontext 200 in 493ms (next.js: 10ms, application-code: 483ms)
+ POST /api/roadcontext 200 in 499ms (next.js: 10ms, application-code: 489ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 668ms (next.js: 9ms, application-code: 659ms)
+ POST /api/roadcontext 200 in 575ms (next.js: 13ms, application-code: 562ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 757ms (next.js: 12ms, application-code: 745ms)
+ POST /api/roadcontext 200 in 519ms (next.js: 11ms, application-code: 507ms)
+ POST /api/roadcontext 200 in 811ms (next.js: 11ms, application-code: 799ms)
+[browser] Weather fetch failed: TimeoutError: signal timed out
+TimeoutError: signal timed out (src/context/DriveContext.tsx:253:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 765ms (next.js: 21ms, application-code: 744ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 567ms (next.js: 33ms, application-code: 535ms)
+ GET / 200 in 962ms (next.js: 689ms, application-code: 273ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET / 200 in 292ms (next.js: 13ms, application-code: 279ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET / 200 in 363ms (next.js: 17ms, application-code: 347ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 170ms (next.js: 18ms, application-code: 152ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 567ms (next.js: 20ms, application-code: 547ms)
+ POST /api/copilot 200 in 421ms (next.js: 9ms, application-code: 412ms)
+ POST /api/copilot 200 in 370ms (next.js: 20ms, application-code: 350ms)
+ POST /api/copilot 200 in 428ms (next.js: 14ms, application-code: 415ms)
+ POST /api/copilot 200 in 492ms (next.js: 24ms, application-code: 469ms)
+ POST /api/copilot 200 in 405ms (next.js: 14ms, application-code: 391ms)
+ POST /api/copilot 200 in 416ms (next.js: 16ms, application-code: 400ms)
+✓ Compiled in 565ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 2.4s (next.js: 869ms, application-code: 1558ms)
+ GET /car 200 in 2.4s (next.js: 1187ms, application-code: 1241ms)
+ GET /car 200 in 405ms (next.js: 31ms, application-code: 374ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:443:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 2.0s (next.js: 10ms, application-code: 2.0s)
+ GET /car 200 in 1598ms (next.js: 97ms, application-code: 1501ms)
+ GET /car 200 in 1360ms (next.js: 55ms, application-code: 1306ms)
+ GET /car 200 in 1122ms (next.js: 463ms, application-code: 659ms)
+ POST /api/roadcontext 200 in 1051ms (next.js: 384ms, application-code: 666ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 1374ms (next.js: 512ms, application-code: 862ms)
+ GET /car 200 in 817ms (next.js: 23ms, application-code: 794ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 597ms (next.js: 33ms, application-code: 564ms)
+ POST /api/copilot 200 in 3.2s (next.js: 1998ms, application-code: 1169ms)
+ GET /car 200 in 886ms (next.js: 499ms, application-code: 387ms)
+ GET /car 200 in 480ms (next.js: 9ms, application-code: 472ms)
+ POST /api/roadcontext 200 in 1406ms (next.js: 755ms, application-code: 650ms)
+ POST /api/copilot 200 in 1494ms (next.js: 647ms, application-code: 847ms)
+✓ Compiled in 831ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 394ms (next.js: 204ms, application-code: 190ms)
+ GET /car 200 in 2.3s (next.js: 1133ms, application-code: 1190ms)
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 1011ms (next.js: 17ms, application-code: 994ms)
+ GET /car 200 in 572ms (next.js: 26ms, application-code: 546ms)
+ GET /car 200 in 487ms (next.js: 17ms, application-code: 470ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:444:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 1139ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 3.2s (next.js: 1126ms, application-code: 2.0s)
+ GET /car 200 in 1737ms (next.js: 178ms, application-code: 1559ms)
+ GET /car 200 in 646ms (next.js: 35ms, application-code: 611ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:466:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 736ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 5.7s (next.js: 1273ms, application-code: 4.4s)
+ GET /car 200 in 4.0s (next.js: 234ms, application-code: 3.8s)
+ GET /car 200 in 1737ms (next.js: 112ms, application-code: 1625ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:466:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 3.5s (next.js: 2.0s, application-code: 1444ms)
+✓ Compiled in 673ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 3.2s (next.js: 2.3s, application-code: 928ms)
+ GET /car 200 in 3.2s (next.js: 1440ms, application-code: 1756ms)
+ GET /car 200 in 615ms (next.js: 24ms, application-code: 591ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:450:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 728ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 3.3s (next.js: 1289ms, application-code: 1995ms)
+ GET /car 200 in 3.2s (next.js: 1551ms, application-code: 1682ms)
+ GET /car 200 in 527ms (next.js: 51ms, application-code: 476ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:450:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 1142ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1610ms (next.js: 1172ms, application-code: 438ms)
+✓ Compiled in 628ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1697ms (next.js: 967ms, application-code: 730ms)
+ POST /api/roadcontext 200 in 603ms (next.js: 87ms, application-code: 516ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 739ms (next.js: 59ms, application-code: 680ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 575ms (next.js: 4ms, application-code: 570ms)
+✓ Compiled in 716ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 2.1s (next.js: 852ms, application-code: 1272ms)
+ GET /car 200 in 2.3s (next.js: 1252ms, application-code: 1073ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:458:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1645ms (next.js: 834ms, application-code: 811ms)
+ GET /car 200 in 1035ms (next.js: 484ms, application-code: 551ms)
+✓ Compiled in 429ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1534ms (next.js: 1010ms, application-code: 524ms)
+✓ Compiled in 794ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 1807ms (next.js: 965ms, application-code: 843ms)
+ GET /car 200 in 1915ms (next.js: 1318ms, application-code: 597ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:492:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1201ms (next.js: 651ms, application-code: 550ms)
+✓ Compiled in 550ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1732ms (next.js: 1236ms, application-code: 495ms)
+ GET /car 200 in 379ms (next.js: 11ms, application-code: 368ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 738ms (next.js: 131ms, application-code: 607ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 875ms (next.js: 225ms, application-code: 650ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 736ms (next.js: 31ms, application-code: 705ms)
+ POST /api/roadcontext 200 in 548ms (next.js: 18ms, application-code: 530ms)
+ POST /api/roadcontext 200 in 527ms (next.js: 13ms, application-code: 514ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 697ms (next.js: 28ms, application-code: 669ms)
+ GET /car 200 in 515ms (next.js: 20ms, application-code: 495ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 631ms (next.js: 18ms, application-code: 614ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 1012ms (next.js: 28ms, application-code: 984ms)
+ GET /summary 200 in 1225ms (next.js: 540ms, application-code: 685ms)
+ GET / 200 in 1187ms (next.js: 422ms, application-code: 765ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 177ms (next.js: 36ms, application-code: 141ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 950ms (next.js: 285ms, application-code: 665ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 1000ms (next.js: 67ms, application-code: 933ms)
+ GET /car 200 in 661ms (next.js: 26ms, application-code: 635ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 596ms (next.js: 34ms, application-code: 562ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 769ms (next.js: 19ms, application-code: 750ms)
+ POST /api/roadcontext 200 in 537ms (next.js: 8ms, application-code: 530ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 765ms (next.js: 12ms, application-code: 753ms)
+ GET /car 200 in 395ms (next.js: 32ms, application-code: 363ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 604ms (next.js: 54ms, application-code: 550ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 749ms (next.js: 91ms, application-code: 658ms)
+ POST /api/copilot 200 in 853ms (next.js: 321ms, application-code: 533ms)
+ POST /api/copilot 200 in 436ms (next.js: 14ms, application-code: 422ms)
+ POST /api/copilot 200 in 515ms (next.js: 40ms, application-code: 474ms)
+ POST /api/copilot 200 in 470ms (next.js: 37ms, application-code: 433ms)
+ POST /api/copilot 200 in 447ms (next.js: 27ms, application-code: 419ms)
+ POST /api/copilot 200 in 412ms (next.js: 23ms, application-code: 389ms)
+ POST /api/copilot 200 in 567ms (next.js: 48ms, application-code: 519ms)
+ POST /api/roadcontext 200 in 584ms (next.js: 32ms, application-code: 552ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 687ms (next.js: 73ms, application-code: 614ms)
+ GET /car 200 in 515ms (next.js: 18ms, application-code: 498ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 601ms (next.js: 23ms, application-code: 578ms)
+ POST /api/roadcontext 200 in 543ms (next.js: 38ms, application-code: 505ms)
+Overpass API returned status 406
+ POST /api/speedlimit 200 in 707ms (next.js: 71ms, application-code: 635ms)
+ POST /api/copilot 200 in 1046ms (next.js: 36ms, application-code: 1010ms)
+ GET /car 200 in 618ms (next.js: 443ms, application-code: 175ms)
+ POST /api/speedlimit 200 in 1178ms (next.js: 248ms, application-code: 930ms)
+ GET /car 200 in 532ms (next.js: 317ms, application-code: 215ms)
+ POST /api/copilot 200 in 1891ms (next.js: 142ms, application-code: 1750ms)
+ GET /car 200 in 107ms (next.js: 14ms, application-code: 93ms)
+ GET /car 200 in 107ms (next.js: 8ms, application-code: 98ms)
+ POST /api/speedlimit 200 in 1216ms (next.js: 151ms, application-code: 1065ms)
+ POST /api/roadcontext 200 in 1407ms (next.js: 426ms, application-code: 981ms)
+ GET /drive 200 in 320ms (next.js: 110ms, application-code: 210ms)
+ POST /api/speedlimit 200 in 997ms (next.js: 5ms, application-code: 992ms)
+ POST /api/roadcontext 200 in 1143ms (next.js: 4ms, application-code: 1139ms)
+ GET /drive 200 in 499ms (next.js: 66ms, application-code: 434ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:492:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 546ms (next.js: 15ms, application-code: 531ms)
+ GET /car 200 in 450ms (next.js: 36ms, application-code: 414ms)
+[browser] Camera access denied: NotAllowedError: Permission denied (src/app/drive/page.tsx:124:19)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:492:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:492:15)
+ GET /drive 200 in 3.8s (next.js: 272ms, application-code: 3.6s)
+ GET /car 200 in 3.0s (next.js: 304ms, application-code: 2.7s)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 2.0s (next.js: 143ms, application-code: 1900ms)
+ POST /api/speedlimit 200 in 2.1s (next.js: 520ms, application-code: 1576ms)
+ POST /api/copilot 200 in 1719ms (next.js: 68ms, application-code: 1651ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:492:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET / 200 in 1533ms (next.js: 204ms, application-code: 1329ms)
+ POST /api/roadcontext 200 in 1325ms (next.js: 58ms, application-code: 1267ms)
+ POST /api/speedlimit 200 in 1317ms (next.js: 162ms, application-code: 1156ms)
+ POST /api/roadcontext 200 in 946ms (next.js: 67ms, application-code: 879ms)
+ POST /api/speedlimit 200 in 968ms (next.js: 100ms, application-code: 868ms)
+ POST /api/speedlimit 200 in 1070ms (next.js: 149ms, application-code: 921ms)
+ GET /car 200 in 1429ms (next.js: 30ms, application-code: 1399ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 1386ms
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /car 200 in 3.5s (next.js: 2.8s, application-code: 688ms)
+ GET /car 200 in 3.7s (next.js: 1871ms, application-code: 1866ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 2.2s (next.js: 926ms, application-code: 1246ms)
+✓ Compiled in 525ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 2.1s (next.js: 1398ms, application-code: 679ms)
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload when ./src/context/DriveContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] GPS timeout - waiting for signal... (src/context/DriveContext.tsx:489:17)
+ GET /car 200 in 9.9s (next.js: 1137ms, application-code: 8.8s)
+ GET /car 200 in 10.1s (next.js: 335ms, application-code: 9.7s)
+ GET /car 200 in 5.8s (next.js: 134ms, application-code: 5.6s)
+ GET /car 200 in 3.8s (next.js: 1963ms, application-code: 1853ms)
+ GET /car 200 in 4.0s (next.js: 494ms, application-code: 3.5s)
+ GET /car 200 in 1162ms (next.js: 84ms, application-code: 1078ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 1053ms (next.js: 203ms, application-code: 850ms)
+ POST /api/roadcontext 200 in 5.5s (next.js: 2.6s, application-code: 2.9s)
+ POST /api/copilot 200 in 1085ms (next.js: 681ms, application-code: 404ms)
+ POST /api/copilot 200 in 731ms (next.js: 24ms, application-code: 707ms)
+ POST /api/speedlimit 200 in 1830ms (next.js: 547ms, application-code: 1283ms)
+ POST /api/roadcontext 200 in 1911ms (next.js: 117ms, application-code: 1794ms)
+ POST /api/copilot 200 in 1333ms (next.js: 108ms, application-code: 1225ms)
+ POST /api/roadcontext 200 in 2.2s (next.js: 50ms, application-code: 2.1s)
+ POST /api/speedlimit 200 in 2.2s (next.js: 62ms, application-code: 2.1s)
+ GET /drive 200 in 6.4s (next.js: 1178ms, application-code: 5.2s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+ POST /api/roadcontext 200 in 2.6s (next.js: 180ms, application-code: 2.5s)
+ POST /api/speedlimit 200 in 2.7s (next.js: 44ms, application-code: 2.6s)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 155ms
+Ola Maps failed, falling back to OSM Overpass. Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:36:24)
+  34 |       try {
+  35 |         const olaEndpoint = `https://api.olamaps.io/routing/v1/speed-limits?lat=${lat}&lng...
+> 36 |         const olaRes = await fetch(olaEndpoint, {
+     |                        ^
+  37 |           method: "GET",
+  38 |           headers: { "Accept": "application/json" },
+  39 |           signal: AbortSignal.timeout(4000) // 4s timeout — fail fast to OSM {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 14.3s (next.js: 4.4s, application-code: 9.9s)
+✓ Compiled in 1ms
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 18.4s (next.js: 3.7s, application-code: 14.6s)
+ GET /summary 200 in 42s (next.js: 13.6s, application-code: 28.5s)
+ GET /drive 200 in 14.2s (next.js: 3.2s, application-code: 11.0s)
+ GET /summary 200 in 15.8s (next.js: 336ms, application-code: 15.5s)
+ GET /summary 200 in 15.8s (next.js: 471ms, application-code: 15.3s)
+ GET /summary 200 in 15.8s (next.js: 541ms, application-code: 15.3s)
+ GET /car 200 in 8.7s (next.js: 2.7s, application-code: 6.0s)
+ GET /drive 200 in 5.9s (next.js: 1934ms, application-code: 3.9s)
+ GET /car 200 in 5.9s (next.js: 3.6s, application-code: 2.2s)
+ GET /summary 200 in 7.0s (next.js: 244ms, application-code: 6.8s)
+ GET /summary 200 in 3.0s (next.js: 164ms, application-code: 2.8s)
+ GET /summary 200 in 3.0s (next.js: 194ms, application-code: 2.8s)
+ GET /summary 200 in 2.1s (next.js: 96ms, application-code: 2.0s)
+ GET /summary 200 in 2.1s (next.js: 269ms, application-code: 1869ms)
+ GET /summary 200 in 2.4s (next.js: 397ms, application-code: 2.0s)
+ GET /summary 200 in 2.1s (next.js: 72ms, application-code: 2.0s)
+ GET /summary 200 in 2.0s (next.js: 124ms, application-code: 1901ms)
+ GET /summary 200 in 1648ms (next.js: 42ms, application-code: 1606ms)
+ GET /car 200 in 1299ms (next.js: 97ms, application-code: 1202ms)
+ GET /summary 200 in 1413ms (next.js: 329ms, application-code: 1085ms)
+ GET /car 200 in 667ms (next.js: 111ms, application-code: 557ms)
+ GET / 200 in 1536ms (next.js: 649ms, application-code: 887ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /drive 200 in 619ms (next.js: 47ms, application-code: 572ms)
+ GET /drive 200 in 881ms (next.js: 86ms, application-code: 795ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 1225ms (next.js: 365ms, application-code: 860ms)
+ POST /api/copilot 200 in 685ms (next.js: 127ms, application-code: 559ms)
+ POST /api/roadcontext 200 in 1497ms (next.js: 233ms, application-code: 1265ms)
+ GET /summary 200 in 829ms (next.js: 32ms, application-code: 797ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET / 200 in 348ms (next.js: 16ms, application-code: 332ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /drive 200 in 2.9s (next.js: 12ms, application-code: 2.9s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /drive 200 in 258ms (next.js: 12ms, application-code: 246ms)
+ GET /finebook 200 in 1280ms (next.js: 401ms, application-code: 879ms)
+ GET / 200 in 273ms (next.js: 20ms, application-code: 254ms)
+ GET / 200 in 240ms (next.js: 7ms, application-code: 234ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 1362ms (next.js: 4ms, application-code: 1358ms)
+ POST /api/speedlimit 200 in 1103ms (next.js: 13ms, application-code: 1090ms)
+ POST /api/speedlimit 200 in 922ms (next.js: 23ms, application-code: 899ms)
+ POST /api/speedlimit 200 in 755ms (next.js: 17ms, application-code: 739ms)
+ POST /api/speedlimit 200 in 1986ms (next.js: 7ms, application-code: 1979ms)
+ GET /car 200 in 308ms (next.js: 16ms, application-code: 292ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /drive 200 in 249ms (next.js: 15ms, application-code: 233ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.0s (next.js: 92ms, application-code: 6.9s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 45ms, application-code: 7.0s)
+ GET /drive 200 in 250ms (next.js: 163ms, application-code: 88ms)
+ GET /car 200 in 106ms (next.js: 38ms, application-code: 67ms)
+ GET /car 200 in 56ms (next.js: 5ms, application-code: 51ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ POST /api/speedlimit 200 in 1318ms (next.js: 452ms, application-code: 866ms)
+ POST /api/roadcontext 200 in 1565ms (next.js: 294ms, application-code: 1270ms)
+ POST /api/copilot 200 in 198ms (next.js: 114ms, application-code: 85ms)
+ POST /api/speedlimit 200 in 845ms (next.js: 31ms, application-code: 814ms)
+ GET /summary 200 in 952ms (next.js: 359ms, application-code: 593ms)
+ GET /summary 200 in 347ms (next.js: 13ms, application-code: 334ms)
+ GET / 200 in 451ms (next.js: 63ms, application-code: 388ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /summary 200 in 2.2s (next.js: 560ms, application-code: 1590ms)
+ GET /car 200 in 2.2s (next.js: 1252ms, application-code: 898ms)
+ GET / 200 in 858ms (next.js: 369ms, application-code: 489ms)
+ GET /car 200 in 294ms (next.js: 31ms, application-code: 263ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 1784ms (next.js: 651ms, application-code: 1134ms)
+ POST /api/roadcontext 200 in 2.0s (next.js: 1060ms, application-code: 959ms)
+ POST /api/copilot 200 in 726ms (next.js: 223ms, application-code: 502ms)
+ GET /car 200 in 570ms (next.js: 336ms, application-code: 234ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /summary 200 in 379ms (next.js: 63ms, application-code: 316ms)
+ GET /car 200 in 199ms (next.js: 20ms, application-code: 179ms)
+ GET /summary 200 in 2.9s (next.js: 938ms, application-code: 1932ms)
+ GET /car 200 in 2.9s (next.js: 1949ms, application-code: 934ms)
+✓ Compiled in 1075ms
+ GET /car 200 in 1194ms (next.js: 752ms, application-code: 442ms)
+ GET /car 200 in 1028ms (next.js: 25ms, application-code: 1003ms)
+ GET /summary 200 in 187ms (next.js: 54ms, application-code: 133ms)
+ POST /api/speedlimit 200 in 3.8s (next.js: 548ms, application-code: 3.2s)
+ POST /api/roadcontext 200 in 3.8s (next.js: 394ms, application-code: 3.5s)
+ GET /car 200 in 380ms (next.js: 19ms, application-code: 361ms)
+ POST /api/speedlimit 200 in 1557ms (next.js: 55ms, application-code: 1502ms)
+✓ Compiled in 3.2s
+ GET /car 200 in 1664ms (next.js: 855ms, application-code: 809ms)
+ GET /car 200 in 560ms (next.js: 415ms, application-code: 144ms)
+ POST /api/speedlimit 200 in 2.5s (next.js: 274ms, application-code: 2.3s)
+ POST /api/roadcontext 200 in 2.6s (next.js: 401ms, application-code: 2.2s)
+ GET /car 200 in 1357ms (next.js: 188ms, application-code: 1169ms)
+ GET /car 200 in 2.1s (next.js: 114ms, application-code: 1956ms)
+ GET /summary 200 in 2.1s (next.js: 474ms, application-code: 1600ms)
+ GET /summary 200 in 1074ms (next.js: 286ms, application-code: 789ms)
+ POST /api/speedlimit 200 in 1332ms (next.js: 467ms, application-code: 865ms)
+ POST /api/roadcontext 200 in 1523ms (next.js: 22ms, application-code: 1501ms)
+ POST /api/speedlimit 200 in 1103ms (next.js: 95ms, application-code: 1008ms)
+ GET /car 200 in 2.5s (next.js: 1401ms, application-code: 1090ms)
+ GET /car 200 in 635ms (next.js: 359ms, application-code: 276ms)
+ GET /summary 200 in 681ms (next.js: 167ms, application-code: 515ms)
+✓ Compiled in 1235ms
+ GET /car 200 in 3.2s (next.js: 1676ms, application-code: 1528ms)
+ GET /summary 200 in 3.3s (next.js: 2.1s, application-code: 1203ms)
+ GET /car 200 in 1414ms (next.js: 148ms, application-code: 1266ms)
+ POST /api/roadcontext 200 in 1587ms (next.js: 711ms, application-code: 876ms)
+ POST /api/speedlimit 200 in 1618ms (next.js: 334ms, application-code: 1284ms)
+ POST /api/speedlimit 200 in 890ms (next.js: 38ms, application-code: 852ms)
+ POST /api/roadcontext 200 in 944ms (next.js: 43ms, application-code: 901ms)
+ GET /car 200 in 1534ms (next.js: 1029ms, application-code: 504ms)
+ GET /car 200 in 3.3s (next.js: 18ms, application-code: 3.2s)
+ GET /summary 200 in 3.3s (next.js: 581ms, application-code: 2.7s)
+ GET /drive 200 in 1736ms (next.js: 951ms, application-code: 785ms)
+ POST /api/speedlimit 200 in 2.5s (next.js: 1584ms, application-code: 963ms)
+ GET /drive 200 in 134ms (next.js: 8ms, application-code: 126ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 853ms (next.js: 11ms, application-code: 842ms)
+ POST /api/roadcontext 200 in 1341ms (next.js: 144ms, application-code: 1197ms)
+ GET /drive 200 in 323ms (next.js: 10ms, application-code: 313ms)
+ POST /api/copilot 200 in 1319ms (next.js: 111ms, application-code: 1208ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 830ms (next.js: 26ms, application-code: 804ms)
+ POST /api/speedlimit 200 in 1005ms (next.js: 134ms, application-code: 871ms)
+ POST /api/roadcontext 200 in 1205ms (next.js: 52ms, application-code: 1153ms)
+ GET /drive 200 in 2.1s (next.js: 32ms, application-code: 2.1s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+ GET /car 200 in 1816ms (next.js: 17ms, application-code: 1799ms)
+ POST /api/speedlimit 200 in 929ms (next.js: 48ms, application-code: 881ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /drive 200 in 651ms (next.js: 16ms, application-code: 635ms)
+ GET /car 200 in 499ms (next.js: 18ms, application-code: 481ms)
+ GET /drive 200 in 2.1s (next.js: 30ms, application-code: 2.0s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 4.9s (next.js: 262ms, application-code: 4.6s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /drive 200 in 812ms (next.js: 16ms, application-code: 796ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+✓ Compiled in 265ms
+ GET /car 200 in 3.0s (next.js: 716ms, application-code: 2.3s)
+ GET /drive 200 in 3.1s (next.js: 2.1s, application-code: 981ms)
+✓ Compiled in 583ms
+ GET /car 200 in 1996ms (next.js: 782ms, application-code: 1213ms)
+ GET /drive 200 in 2.1s (next.js: 1673ms, application-code: 401ms)
+✓ Compiled in 2s
+ GET /drive 200 in 25.2s (next.js: 1985ms, application-code: 23.2s)
+ GET /car 200 in 19.9s (next.js: 13.4s, application-code: 6.5s)
+ GET /drive 200 in 19.8s (next.js: 14.3s, application-code: 5.5s)
+ POST /api/roadcontext 200 in 5.0s (next.js: 669ms, application-code: 4.3s)
+ GET /drive 200 in 5.1s (next.js: 1251ms, application-code: 3.8s)
+ GET /car 200 in 5.1s (next.js: 1826ms, application-code: 3.3s)
+ GET /car 200 in 7.7s (next.js: 2.2s, application-code: 5.5s)
+ POST /api/speedlimit 200 in 8.9s (next.js: 1152ms, application-code: 7.8s)
+ GET /car 200 in 7.4s (next.js: 139ms, application-code: 7.2s)
+ GET /drive 200 in 6.8s (next.js: 467ms, application-code: 6.3s)
+ GET /car 200 in 1616ms (next.js: 11ms, application-code: 1605ms)
+ GET /drive 200 in 1379ms (next.js: 359ms, application-code: 1020ms)
+ POST /api/roadcontext 200 in 1692ms (next.js: 11ms, application-code: 1680ms)
+ POST /api/speedlimit 200 in 5.8s (next.js: 32ms, application-code: 5.8s)
+ POST /api/speedlimit 200 in 1170ms (next.js: 108ms, application-code: 1062ms)
+ POST /api/roadcontext 200 in 2.4s (next.js: 31ms, application-code: 2.4s)
+ POST /api/roadcontext 200 in 3.9s (next.js: 47ms, application-code: 3.8s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.8s (next.js: 66ms, application-code: 7.7s)
+ POST /api/roadcontext 200 in 2.2s (next.js: 64ms, application-code: 2.1s)
+[browser] Weather fetch failed: TimeoutError: signal timed out
+TimeoutError: signal timed out (src/context/DriveContext.tsx:268:15)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.4s (next.js: 113ms, application-code: 7.3s)
+ POST /api/speedlimit 200 in 1731ms (next.js: 149ms, application-code: 1581ms)
+ POST /api/roadcontext 200 in 1090ms (next.js: 25ms, application-code: 1065ms)
+ POST /api/speedlimit 200 in 3.4s (next.js: 117ms, application-code: 3.3s)
+ POST /api/roadcontext 200 in 2.6s (next.js: 35ms, application-code: 2.6s)
+ POST /api/speedlimit 200 in 5.8s (next.js: 82ms, application-code: 5.8s)
+ POST /api/speedlimit 200 in 1029ms (next.js: 22ms, application-code: 1007ms)
+✓ Compiled in 331ms
+ GET /car 200 in 3.1s (next.js: 2.0s, application-code: 1052ms)
+ GET /car 200 in 806ms (next.js: 54ms, application-code: 752ms)
+ GET /drive 200 in 551ms (next.js: 135ms, application-code: 416ms)
+ POST /api/roadcontext 200 in 1708ms (next.js: 488ms, application-code: 1220ms)
+ GET /drive 200 in 124ms (next.js: 14ms, application-code: 110ms)
+✓ Compiled in 461ms
+ GET /drive 200 in 2.6s (next.js: 636ms, application-code: 1968ms)
+ GET /car 200 in 2.6s (next.js: 1546ms, application-code: 1089ms)
+ GET /car 200 in 832ms (next.js: 16ms, application-code: 816ms)
+ GET /car 200 in 193ms (next.js: 28ms, application-code: 166ms)
+ POST /api/roadcontext 200 in 1284ms (next.js: 216ms, application-code: 1067ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 8.0s (next.js: 184ms, application-code: 7.8s)
+ POST /api/speedlimit 200 in 931ms (next.js: 31ms, application-code: 900ms)
+ POST /api/roadcontext 200 in 1105ms (next.js: 5ms, application-code: 1099ms)
+ GET /drive 200 in 308ms (next.js: 27ms, application-code: 281ms)
+ GET /car 200 in 1625ms (next.js: 111ms, application-code: 1514ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 1769ms (next.js: 825ms, application-code: 945ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 8.1s (next.js: 186ms, application-code: 7.9s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 8.2s (next.js: 63ms, application-code: 8.1s)
+ POST /api/speedlimit 200 in 1587ms (next.js: 87ms, application-code: 1500ms)
+ POST /api/roadcontext 200 in 2.3s (next.js: 27ms, application-code: 2.3s)
+ POST /api/speedlimit 200 in 953ms (next.js: 78ms, application-code: 875ms)
+ POST /api/speedlimit 200 in 2.2s (next.js: 68ms, application-code: 2.1s)
+ POST /api/roadcontext 200 in 2.2s (next.js: 46ms, application-code: 2.2s)
+ GET /car 200 in 538ms (next.js: 27ms, application-code: 511ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 420ms (next.js: 13ms, application-code: 407ms)
+ POST /api/speedlimit 200 in 2.1s (next.js: 77ms, application-code: 2.1s)
+ POST /api/roadcontext 200 in 4.0s (next.js: 30ms, application-code: 3.9s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.5s (next.js: 18ms, application-code: 6.5s)
+✓ Compiled in 989ms
+ GET /car 200 in 2.0s (next.js: 1163ms, application-code: 840ms)
+ GET /drive 200 in 2.1s (next.js: 1606ms, application-code: 483ms)
+✓ Compiled in 695ms
+ GET /drive 200 in 1618ms (next.js: 616ms, application-code: 1002ms)
+ GET /car 200 in 1625ms (next.js: 1454ms, application-code: 171ms)
+✓ Compiled in 181ms
+ GET /drive 200 in 360ms (next.js: 245ms, application-code: 116ms)
+ GET /car 200 in 1316ms (next.js: 643ms, application-code: 673ms)
+✓ Compiled in 0ms
+[browser] Weather fetch failed: TimeoutError: signal timed out
+TimeoutError: signal timed out (src/context/DriveContext.tsx:268:15)
+ GET /drive 200 in 971ms (next.js: 712ms, application-code: 259ms)
+ GET /car 200 in 1355ms (next.js: 885ms, application-code: 471ms)
+ GET /car 200 in 1733ms (next.js: 168ms, application-code: 1565ms)
+ GET /drive 200 in 1322ms (next.js: 32ms, application-code: 1290ms)
+ GET /car 200 in 1215ms (next.js: 47ms, application-code: 1168ms)
+ GET /drive 200 in 543ms (next.js: 20ms, application-code: 523ms)
+ GET /car 200 in 599ms (next.js: 37ms, application-code: 562ms)
+ GET /drive 200 in 364ms (next.js: 60ms, application-code: 305ms)
+ GET /drive 200 in 500ms (next.js: 184ms, application-code: 316ms)
+ POST /api/speedlimit 200 in 2.6s (next.js: 785ms, application-code: 1816ms)
+ POST /api/speedlimit 200 in 2.8s (next.js: 832ms, application-code: 1952ms)
+ GET /car 200 in 1023ms (next.js: 30ms, application-code: 994ms)
+ GET /car 200 in 882ms (next.js: 67ms, application-code: 815ms)
+ POST /api/roadcontext 200 in 3.2s (next.js: 535ms, application-code: 2.7s)
+ POST /api/roadcontext 200 in 1015ms (next.js: 70ms, application-code: 945ms)
+ POST /api/speedlimit 200 in 2.6s (next.js: 29ms, application-code: 2.6s)
+ POST /api/roadcontext 200 in 2.5s (next.js: 29ms, application-code: 2.5s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.5s (next.js: 10ms, application-code: 6.5s)
+ POST /api/speedlimit 200 in 1067ms (next.js: 66ms, application-code: 1000ms)
+ POST /api/roadcontext 200 in 1736ms (next.js: 13ms, application-code: 1723ms)
+ POST /api/speedlimit 200 in 3.0s (next.js: 26ms, application-code: 3.0s)
+ GET /car 200 in 620ms (next.js: 67ms, application-code: 553ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 1036ms (next.js: 22ms, application-code: 1014ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.8s (next.js: 16ms, application-code: 6.8s)
+ POST /api/roadcontext 200 in 457ms (next.js: 69ms, application-code: 388ms)
+ POST /api/speedlimit 200 in 310ms (next.js: 15ms, application-code: 295ms)
+ GET /car 200 in 339ms (next.js: 57ms, application-code: 282ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 1079ms (next.js: 37ms, application-code: 1042ms)
+ POST /api/copilot 200 in 1010ms (next.js: 248ms, application-code: 762ms)
+ POST /api/roadcontext 200 in 1520ms (next.js: 84ms, application-code: 1436ms)
+ POST /api/speedlimit 200 in 900ms (next.js: 83ms, application-code: 817ms)
+ POST /api/roadcontext 200 in 1067ms (next.js: 30ms, application-code: 1037ms)
+ POST /api/roadcontext 200 in 869ms (next.js: 16ms, application-code: 853ms)
+ POST /api/speedlimit 200 in 882ms (next.js: 17ms, application-code: 865ms)
+✓ Compiled in 418ms
+ GET /car 200 in 2.5s (next.js: 1755ms, application-code: 769ms)
+ GET /car 200 in 2.6s (next.js: 1976ms, application-code: 597ms)
+ GET /car 200 in 442ms (next.js: 48ms, application-code: 394ms)
+ POST /api/speedlimit 200 in 1937ms (next.js: 566ms, application-code: 1371ms)
+✓ Compiled in 0ms
+ GET /car 200 in 1610ms (next.js: 1398ms, application-code: 212ms)
+ GET /car 200 in 455ms (next.js: 7ms, application-code: 448ms)
+ GET /car 200 in 173ms (next.js: 22ms, application-code: 151ms)
+ GET /drive 200 in 171ms (next.js: 86ms, application-code: 86ms)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 8.1s (next.js: 957ms, application-code: 7.1s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 8.5s (next.js: 409ms, application-code: 8.1s)
+✓ Compiled in 256ms
+ GET /car 200 in 4.2s (next.js: 2.9s, application-code: 1224ms)
+ GET /car 200 in 932ms (next.js: 186ms, application-code: 746ms)
+ GET /car 200 in 904ms (next.js: 272ms, application-code: 632ms)
+ POST /api/speedlimit 200 in 1857ms (next.js: 916ms, application-code: 941ms)
+ GET /car 200 in 342ms (next.js: 12ms, application-code: 330ms)
+ POST /api/roadcontext 200 in 1202ms (next.js: 183ms, application-code: 1019ms)
+ GET /drive 200 in 390ms (next.js: 132ms, application-code: 259ms)
+ GET /drive 200 in 202ms (next.js: 52ms, application-code: 150ms)
+ POST /api/roadcontext 200 in 1127ms (next.js: 33ms, application-code: 1094ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 8.8s (next.js: 13ms, application-code: 8.8s)
+ POST /api/speedlimit 200 in 5.5s (next.js: 30ms, application-code: 5.5s)
+ GET /car 200 in 799ms (next.js: 49ms, application-code: 750ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 1623ms (next.js: 174ms, application-code: 1449ms)
+ POST /api/speedlimit 200 in 3.4s (next.js: 281ms, application-code: 3.1s)
+ POST /api/roadcontext 200 in 6.1s (next.js: 297ms, application-code: 5.8s)
+ POST /api/speedlimit 200 in 1380ms (next.js: 28ms, application-code: 1352ms)
+ POST /api/roadcontext 200 in 5.6s (next.js: 14ms, application-code: 5.6s)
+ POST /api/speedlimit 200 in 947ms (next.js: 34ms, application-code: 913ms)
+ POST /api/roadcontext 200 in 1034ms (next.js: 92ms, application-code: 943ms)
+ POST /api/speedlimit 200 in 739ms (next.js: 37ms, application-code: 703ms)
+ POST /api/roadcontext 200 in 2.6s (next.js: 19ms, application-code: 2.6s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.5s (next.js: 13ms, application-code: 7.5s)
+ POST /api/roadcontext 200 in 1080ms (next.js: 47ms, application-code: 1033ms)
+ POST /api/speedlimit 200 in 971ms (next.js: 36ms, application-code: 935ms)
+ POST /api/roadcontext 200 in 1628ms (next.js: 33ms, application-code: 1595ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.5s (next.js: 37ms, application-code: 6.4s)
+ POST /api/speedlimit 200 in 2.1s (next.js: 28ms, application-code: 2.1s)
+ POST /api/speedlimit 200 in 815ms (next.js: 13ms, application-code: 801ms)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.1s (next.js: 16ms, application-code: 7.0s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.9s (next.js: 19ms, application-code: 6.9s)
+ POST /api/speedlimit 200 in 1396ms (next.js: 36ms, application-code: 1360ms)
+ POST /api/roadcontext 200 in 1757ms (next.js: 36ms, application-code: 1722ms)
+ POST /api/speedlimit 200 in 4.6s (next.js: 10ms, application-code: 4.6s)
+ POST /api/roadcontext 200 in 5.6s (next.js: 8ms, application-code: 5.6s)
+ POST /api/speedlimit 200 in 1199ms (next.js: 45ms, application-code: 1154ms)
+ POST /api/roadcontext 200 in 1702ms (next.js: 76ms, application-code: 1626ms)
+✓ Compiled in 1191ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 2.1s (next.js: 1762ms, application-code: 388ms)
+ GET /car 200 in 106ms (next.js: 6ms, application-code: 100ms)
+ GET /car 200 in 130ms (next.js: 13ms, application-code: 117ms)
+ GET /car 200 in 517ms (next.js: 12ms, application-code: 505ms)
+ POST /api/speedlimit 200 in 1305ms (next.js: 465ms, application-code: 840ms)
+ POST /api/roadcontext 200 in 1341ms (next.js: 275ms, application-code: 1066ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1783ms (next.js: 23ms, application-code: 1760ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 380ms (next.js: 28ms, application-code: 352ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 1613ms (next.js: 135ms, application-code: 1478ms)
+ POST /api/roadcontext 200 in 2.3s (next.js: 34ms, application-code: 2.3s)
+ POST /api/copilot 200 in 1724ms (next.js: 349ms, application-code: 1375ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.2s (next.js: 302ms, application-code: 6.9s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.2s (next.js: 79ms, application-code: 7.2s)
+ POST /api/roadcontext 200 in 1352ms (next.js: 36ms, application-code: 1316ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.5s (next.js: 220ms, application-code: 7.3s)
+✓ Compiled in 55ms
+ GET /car 200 in 491ms (next.js: 284ms, application-code: 208ms)
+ GET /car 200 in 137ms (next.js: 6ms, application-code: 131ms)
+ GET /car 200 in 80ms (next.js: 6ms, application-code: 73ms)
+ GET /car 200 in 208ms (next.js: 6ms, application-code: 202ms)
+ GET /car 200 in 394ms (next.js: 9ms, application-code: 385ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 1223ms (next.js: 184ms, application-code: 1039ms)
+ POST /api/speedlimit 200 in 1410ms (next.js: 282ms, application-code: 1128ms)
+ POST /api/copilot 200 in 669ms (next.js: 118ms, application-code: 551ms)
+ GET /car 200 in 495ms (next.js: 23ms, application-code: 471ms)
+ POST /api/speedlimit 200 in 2.3s (next.js: 4ms, application-code: 2.3s)
+ POST /api/roadcontext 200 in 2.8s (next.js: 20ms, application-code: 2.8s)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/roadcontext 200 in 2.6s (next.js: 8ms, application-code: 2.6s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 7.0s (next.js: 7ms, application-code: 7.0s)
+ POST /api/speedlimit 200 in 1215ms (next.js: 40ms, application-code: 1175ms)
+ GET /car 200 in 353ms (next.js: 23ms, application-code: 330ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 821ms (next.js: 8ms, application-code: 813ms)
+ POST /api/roadcontext 200 in 1293ms (next.js: 234ms, application-code: 1059ms)
+ POST /api/copilot 200 in 796ms (next.js: 18ms, application-code: 778ms)
+ GET /car 200 in 464ms (next.js: 32ms, application-code: 432ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/copilot 200 in 460ms (next.js: 60ms, application-code: 400ms)
+ POST /api/roadcontext 200 in 1418ms (next.js: 36ms, application-code: 1382ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.6s (next.js: 63ms, application-code: 6.5s)
+✓ Compiled in 417ms
+ GET /car 200 in 2.5s (next.js: 1399ms, application-code: 1107ms)
+ GET /car 200 in 478ms (next.js: 116ms, application-code: 361ms)
+ GET /car 200 in 224ms (next.js: 23ms, application-code: 202ms)
+ GET /car 200 in 898ms (next.js: 18ms, application-code: 880ms)
+✓ Compiled in 37ms
+ GET /car 200 in 2.8s (next.js: 1387ms, application-code: 1440ms)
+ GET /car 200 in 888ms (next.js: 66ms, application-code: 822ms)
+ GET /car 200 in 595ms (next.js: 68ms, application-code: 527ms)
+ GET /car 200 in 950ms (next.js: 29ms, application-code: 921ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 156ms (next.js: 12ms, application-code: 143ms)
+ POST /api/speedlimit 200 in 1006ms (next.js: 238ms, application-code: 769ms)
+ POST /api/roadcontext 200 in 1059ms (next.js: 135ms, application-code: 924ms)
+ POST /api/roadcontext 200 in 916ms (next.js: 5ms, application-code: 910ms)
+ POST /api/speedlimit 200 in 923ms (next.js: 20ms, application-code: 902ms)
+ POST /api/roadcontext 200 in 813ms (next.js: 28ms, application-code: 786ms)
+ POST /api/speedlimit 200 in 883ms (next.js: 33ms, application-code: 850ms)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.9s (next.js: 23ms, application-code: 6.9s)
+Road context error: The operation was aborted due to timeout
+ POST /api/roadcontext 200 in 7.0s (next.js: 9ms, application-code: 7.0s)
+✓ Compiled in 572ms
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ GET /car 200 in 1005ms (next.js: 862ms, application-code: 143ms)
+ GET /car 200 in 102ms (next.js: 11ms, application-code: 91ms)
+ GET /car 200 in 63ms (next.js: 6ms, application-code: 57ms)
+ POST /api/roadcontext 200 in 907ms (next.js: 123ms, application-code: 784ms)
+ POST /api/speedlimit 200 in 803ms (next.js: 79ms, application-code: 724ms)
+ GET /car 200 in 328ms (next.js: 10ms, application-code: 318ms)
+ GET /car 200 in 148ms (next.js: 8ms, application-code: 140ms)
+[browser] GPS permission denied by user. (src/context/DriveContext.tsx:513:15)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 749ms (next.js: 24ms, application-code: 725ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+ POST /api/speedlimit 200 in 862ms (next.js: 74ms, application-code: 788ms)
+ POST /api/roadcontext 200 in 1175ms (next.js: 23ms, application-code: 1152ms)
+ POST /api/roadcontext 200 in 3.0s (next.js: 5ms, application-code: 3.0s)
+ POST /api/speedlimit 200 in 3.1s (next.js: 30ms, application-code: 3.0s)
+ GET /car 200 in 669ms (next.js: 455ms, application-code: 214ms)
+ GET /car 200 in 141ms (next.js: 7ms, application-code: 134ms)
+ GET /car 200 in 73ms (next.js: 6ms, application-code: 67ms)
+ GET /drive 200 in 861ms (next.js: 477ms, application-code: 384ms)
+ POST /api/speedlimit 200 in 1120ms (next.js: 280ms, application-code: 840ms)
+ POST /api/roadcontext 200 in 1628ms (next.js: 165ms, application-code: 1463ms)
+ POST /api/roadcontext 200 in 4.0s (next.js: 11ms, application-code: 4.0s)
+Speed Limit API Error: Error [TimeoutError]: The operation was aborted due to timeout
+    at async POST (src\app\api\speedlimit\route.ts:56:20)
+  54 |     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
+  55 |     const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags...
+> 56 |     const osmRes = await fetchOverpass(query);
+     |                    ^
+  57 |     if (osmRes.ok) {
+  58 |       const text = await osmRes.text();
+  59 |       try { {
+  code: 23,
+  INDEX_SIZE_ERR: 1,
+  DOMSTRING_SIZE_ERR: 2,
+  HIERARCHY_REQUEST_ERR: 3,
+  WRONG_DOCUMENT_ERR: 4,
+  INVALID_CHARACTER_ERR: 5,
+  NO_DATA_ALLOWED_ERR: 6,
+  NO_MODIFICATION_ALLOWED_ERR: 7,
+  NOT_FOUND_ERR: 8,
+  NOT_SUPPORTED_ERR: 9,
+  INUSE_ATTRIBUTE_ERR: 10,
+  INVALID_STATE_ERR: 11,
+  SYNTAX_ERR: 12,
+  INVALID_MODIFICATION_ERR: 13,
+  NAMESPACE_ERR: 14,
+  INVALID_ACCESS_ERR: 15,
+  VALIDATION_ERR: 16,
+  TYPE_MISMATCH_ERR: 17,
+  SECURITY_ERR: 18,
+  NETWORK_ERR: 19,
+  ABORT_ERR: 20,
+  URL_MISMATCH_ERR: 21,
+  QUOTA_EXCEEDED_ERR: 22,
+  TIMEOUT_ERR: 23,
+  INVALID_NODE_TYPE_ERR: 24,
+  DATA_CLONE_ERR: 25
+}
+ POST /api/speedlimit 500 in 6.5s (next.js: 5ms, application-code: 6.5s)
+✓ Compiled in 1788ms
+ GET /car 200 in 1498ms (next.js: 496ms, application-code: 1002ms)
+ GET /car 200 in 1497ms (next.js: 632ms, application-code: 866ms)
+ GET /car 200 in 770ms (next.js: 41ms, application-code: 728ms)
+ GET /car 200 in 603ms (next.js: 27ms, application-code: 576ms)
+ GET /car 200 in 489ms (next.js: 25ms, application-code: 464ms)
+ GET /car 200 in 481ms (next.js: 88ms, application-code: 392ms)
+ GET /car 200 in 419ms (next.js: 119ms, application-code: 301ms)
+ GET /car 200 in 375ms (next.js: 116ms, application-code: 259ms)
+ GET /car 200 in 86ms (next.js: 10ms, application-code: 76ms)
+ GET /car 200 in 92ms (next.js: 8ms, application-code: 84ms)
+ GET /car 200 in 80ms (next.js: 9ms, application-code: 71ms)
+ GET /car 200 in 77ms (next.js: 10ms, application-code: 67ms)
+ GET /car 200 in 251ms (next.js: 5ms, application-code: 246ms)
+ POST /api/roadcontext 200 in 4.1s (next.js: 292ms, application-code: 3.8s)
+ POST /api/speedlimit 200 in 4.1s (next.js: 423ms, application-code: 3.7s)
+ POST /api/speedlimit 200 in 943ms (next.js: 60ms, application-code: 882ms)
+ GET /summary 200 in 922ms (next.js: 415ms, application-code: 507ms)
+ GET / 200 in 1133ms (next.js: 497ms, application-code: 636ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.

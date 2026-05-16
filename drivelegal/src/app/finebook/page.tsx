@@ -131,23 +131,23 @@ export default function Finebook() {
       <div className="bg-mesh" />
 
       {/* NAV */}
-      <nav style={{ position:"sticky",top:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",height:64,background:"var(--nav-bg)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid var(--nav-border)" }}>
-        <a href="/" style={{ display:"flex",alignItems:"center",gap:"0.625rem" }}>
+      <nav className="finebook-nav" style={{ position:"sticky",top:0,zIndex:100,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 5%",height:64,background:"var(--nav-bg)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid var(--nav-border)" }}>
+        <a href="/" className="finebook-brand" style={{ display:"flex",alignItems:"center",gap:"0.625rem" }}>
           <div style={{ width:34,height:34,borderRadius:"var(--radius-md)",background:"linear-gradient(135deg,var(--brand),var(--violet))",display:"flex",alignItems:"center",justifyContent:"center" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
           <span style={{ fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic", fontWeight:700,fontSize:"1.125rem",letterSpacing:"-0.03em",color:"var(--fg)" }}>LexDrive <span style={{ color:"var(--brand)" }}>AI</span></span>
         </a>
-        <div style={{ display:"flex",gap:"2rem" }}>
+        <div className="finebook-nav-links" style={{ display:"flex",gap:"2rem" }}>
           <a href="/" className="nav-link">Home</a>
           <a href="/finebook" className="nav-link" style={{ color:"var(--brand)" }}>Finebook</a>
           <a href="/summary" className="nav-link">Summary</a>
         </div>
-        <a href="#" onClick={(e) => { e.preventDefault(); setShowVehicleModal(true); }} className="btn-primary" style={{ padding:"0.5rem 1.25rem",fontSize:"0.875rem" }}>Start Driving</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); setShowVehicleModal(true); }} className="btn-primary finebook-nav-cta" style={{ padding:"0.5rem 1.25rem",fontSize:"0.875rem" }}>Start Driving</a>
       </nav>
 
       {/* HEADER */}
-      <section style={{ maxWidth:1000,margin:"0 auto",padding:"4rem 5% 2rem",textAlign:"center" }}>
+      <section className="finebook-header" style={{ maxWidth:1000,margin:"0 auto",padding:"4rem 5% 2rem",textAlign:"center" }}>
         <div className="badge badge-violet animate-fade-in-up" style={{ marginBottom:"1.25rem" }}>Traffic Law Education + Fine Database</div>
         <h1 className="animate-fade-in-up delay-100" style={{ fontSize:"clamp(2.25rem,5vw,3.5rem)",fontWeight:800,letterSpacing:"-0.05em",marginBottom:"1rem" }}>
           Know the law.<br /><span className="text-gradient-accent">Avoid the fine.</span>
@@ -157,7 +157,7 @@ export default function Finebook() {
         </p>
 
         {/* Tab switcher */}
-        <div className="animate-fade-in-up delay-300" style={{ display:"inline-flex",background:"var(--bg-subtle)",borderRadius:"var(--radius-full)",padding:"0.25rem",border:"1px solid var(--border)" }}>
+        <div className="finebook-tabs animate-fade-in-up delay-300" style={{ display:"inline-flex",background:"var(--bg-subtle)",borderRadius:"var(--radius-full)",padding:"0.25rem",border:"1px solid var(--border)" }}>
           <button onClick={() => setActiveTab("learn")} style={{ padding:"0.625rem 1.5rem",borderRadius:"var(--radius-full)",border:"none",fontWeight:600,fontSize:"0.9rem",cursor:"pointer",transition:"all 0.2s ease",background: activeTab==="learn" ? "var(--bg-white)" : "transparent",color: activeTab==="learn" ? "var(--fg)" : "var(--fg-muted)",boxShadow: activeTab==="learn" ? "var(--shadow-sm)" : "none" }}>
             📚 Learn the Laws
           </button>
@@ -169,9 +169,9 @@ export default function Finebook() {
 
       {/* ── LEARN TAB ── */}
       {activeTab === "learn" && (
-        <section style={{ maxWidth:1000,margin:"0 auto",padding:"0 5% 5rem" }}>
+        <section className="finebook-section" style={{ maxWidth:1000,margin:"0 auto",padding:"0 5% 5rem" }}>
           {/* Stats bar */}
-          <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"1rem",marginBottom:"2.5rem" }}>
+          <div className="finebook-stats-grid" style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"1rem",marginBottom:"2.5rem" }}>
             {[
               { label:"Laws covered", value:"12", color:"var(--brand)" },
               { label:"MV Act sections", value:"15+", color:"var(--violet)" },
@@ -190,8 +190,8 @@ export default function Finebook() {
             {lawCards.map(law => (
               <div key={law.id} className="card" style={{ overflow:"hidden",cursor:"pointer" }} onClick={() => setExpandedLaw(expandedLaw === law.id ? null : law.id)}>
                 {/* Card header */}
-                <div style={{ padding:"1.25rem 1.5rem",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"1rem" }}>
-                  <div style={{ display:"flex",alignItems:"center",gap:"1rem" }}>
+                <div className="finebook-law-header" style={{ padding:"1.25rem 1.5rem",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"1rem" }}>
+                  <div className="finebook-law-title-row" style={{ display:"flex",alignItems:"center",gap:"1rem" }}>
                     <div style={{ width:44,height:44,borderRadius:"var(--radius-md)",background:law.bg,border:`1px solid ${law.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.25rem",flexShrink:0 }}>
                       {law.icon}
                     </div>
@@ -200,7 +200,7 @@ export default function Finebook() {
                       <div style={{ fontSize:"0.8rem",color:"var(--fg-muted)",marginTop:"0.125rem",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>{law.section}</div>
                     </div>
                   </div>
-                  <div style={{ display:"flex",alignItems:"center",gap:"0.75rem",flexShrink:0 }}>
+                  <div className="finebook-law-meta" style={{ display:"flex",alignItems:"center",gap:"0.75rem",flexShrink:0 }}>
                     <span style={{ fontSize:"0.8rem",fontWeight:700,color:law.color,background:law.bg,border:`1px solid ${law.border}`,padding:"0.25rem 0.75rem",borderRadius:"var(--radius-full)" }}>
                       {law.fines[0].split(":")[1]?.trim() || law.fines[0]}
                     </span>
@@ -242,7 +242,7 @@ export default function Finebook() {
           </div>
 
           {/* CTA to fines tab */}
-          <div style={{ marginTop:"3rem",textAlign:"center",padding:"3rem",background:"linear-gradient(135deg,var(--brand) 0%,var(--violet) 100%)",borderRadius:"var(--radius-2xl)",color:"#fff" }}>
+          <div className="finebook-cta-panel" style={{ marginTop:"3rem",textAlign:"center",padding:"3rem",background:"linear-gradient(135deg,var(--brand) 0%,var(--violet) 100%)",borderRadius:"var(--radius-2xl)",color:"#fff" }}>
             <h3 style={{ fontSize:"1.5rem",fontWeight:800,letterSpacing:"-0.04em",marginBottom:"0.75rem" }}>Want to see all fines by state?</h3>
             <p style={{ opacity:0.85,marginBottom:"1.5rem",fontSize:"0.9375rem" }}>Browse 80+ violations across India, USA, UK, UAE, Australia and Germany.</p>
             <button onClick={() => setActiveTab("fines")} style={{ padding:"0.75rem 2rem",background:"#fff",color:"var(--brand)",borderRadius:"var(--radius-full)",fontWeight:700,fontSize:"0.9375rem",border:"none",cursor:"pointer" }}>
@@ -254,28 +254,28 @@ export default function Finebook() {
 
       {/* ── FINES TAB ── */}
       {activeTab === "fines" && (
-        <section style={{ maxWidth:1000,margin:"0 auto",padding:"0 5% 5rem" }}>
+        <section className="finebook-section" style={{ maxWidth:1000,margin:"0 auto",padding:"0 5% 5rem" }}>
           {/* Filters */}
-          <div className="card" style={{ padding:"1.25rem",display:"flex",gap:"1rem",alignItems:"center",flexWrap:"wrap",marginBottom:"1.5rem" }}>
+          <div className="card finebook-filters" style={{ padding:"1.25rem",display:"flex",gap:"1rem",alignItems:"center",flexWrap:"wrap",marginBottom:"1.5rem" }}>
             <div style={{ flex:"1 1 260px",position:"relative" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--fg-faint)" strokeWidth="2" style={{ position:"absolute",left:"0.875rem",top:"50%",transform:"translateY(-50%)" }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" placeholder="Search... e.g. 'helmet' or 'above 5000'" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="input" style={{ paddingLeft:"2.75rem" }} />
             </div>
-            <div style={{ display:"flex",gap:"0.5rem",flexWrap:"wrap",alignItems:"center" }}>
+            <div className="finebook-filter-controls" style={{ display:"flex",gap:"0.5rem",flexWrap:"wrap",alignItems:"center" }}>
               {["All Vehicles","Two-Wheeler","Four-Wheeler"].map(t => (
                 <button key={t} onClick={() => setActiveFilter(t)} style={{ padding:"0.5rem 0.875rem",borderRadius:"var(--radius-full)",fontSize:"0.8125rem",fontWeight:600,cursor:"pointer",border: activeFilter===t ? "1.5px solid var(--brand)" : "1px solid var(--border)",background: activeFilter===t ? "var(--brand-light)" : "var(--bg-white)",color: activeFilter===t ? "var(--brand)" : "var(--fg-muted)",transition:"all 0.15s ease" }}>{t}</button>
               ))}
-              <select value={countryFilter} onChange={e => { setCountryFilter(e.target.value); setStateFilter("All States"); }} style={{ padding:"0.5rem 0.875rem",borderRadius:"var(--radius-full)",fontSize:"0.8125rem",fontWeight:600,border:"1px solid var(--border)",background:"var(--bg-white)",color:"var(--fg)",outline:"none",cursor:"pointer" }}>
+              <select className="finebook-select" value={countryFilter} onChange={e => { setCountryFilter(e.target.value); setStateFilter("All States"); }} style={{ padding:"0.5rem 0.875rem",borderRadius:"var(--radius-full)",fontSize:"0.8125rem",fontWeight:600,border:"1px solid var(--border)",background:"var(--bg-white)",color:"var(--fg)",outline:"none",cursor:"pointer" }}>
                 {uniqueCountries.map(c => <option key={c as string} value={c as string}>{c as string}</option>)}
               </select>
-              <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ padding:"0.5rem 0.875rem",borderRadius:"var(--radius-full)",fontSize:"0.8125rem",fontWeight:600,border:"1px solid var(--border)",background:"var(--bg-white)",color:"var(--fg)",outline:"none",cursor:"pointer" }}>
+              <select className="finebook-select" value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{ padding:"0.5rem 0.875rem",borderRadius:"var(--radius-full)",fontSize:"0.8125rem",fontWeight:600,border:"1px solid var(--border)",background:"var(--bg-white)",color:"var(--fg)",outline:"none",cursor:"pointer" }}>
                 {uniqueStates.map(s => <option key={s as string} value={s as string}>{s as string}</option>)}
               </select>
             </div>
           </div>
 
           {/* Stats */}
-          <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"1rem",marginBottom:"1.5rem" }}>
+          <div className="finebook-stats-grid" style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"1rem",marginBottom:"1.5rem" }}>
             {[
               { label:"Total Violations", value: finesData.length, color:"var(--brand)" },
               { label:"Jurisdictions", value: new Set(finesData.map(f => f.state)).size, color:"var(--violet)" },
@@ -290,7 +290,7 @@ export default function Finebook() {
           </div>
 
           {/* Table */}
-          <div className="card" style={{ overflow:"hidden",padding:0 }}>
+          <div className="card finebook-table-card" style={{ overflow:"hidden",padding:0 }}>
             <table className="data-table">
               <thead>
                 <tr>
@@ -304,17 +304,17 @@ export default function Finebook() {
               <tbody>
                 {filteredFines.map(fine => (
                   <tr key={fine.id}>
-                    <td>
+                    <td data-label="Violation">
                       <div style={{ fontWeight:600,color:"var(--fg)",marginBottom: (fine as any).consequence ? "0.25rem" : 0 }}>{fine.violation}</div>
                       {(fine as any).consequence && <div style={{ fontSize:"0.8rem",color:"var(--danger)",fontWeight:500 }}>{(fine as any).consequence}</div>}
                     </td>
-                    <td>
+                    <td data-label="Section / Rule">
                       <div style={{ fontWeight:600,fontSize:"0.875rem",color:"var(--fg-secondary)",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>{fine.section}</div>
                       <div style={{ fontSize:"0.75rem",color:"var(--fg-faint)",marginTop:"0.125rem" }}>{fine.state === "All India" ? "Parivahan Verified" : `${fine.state} Traffic Police`}</div>
                     </td>
-                    <td><span className="chip chip-gray">{fine.vehicle}</span></td>
-                    <td><span className="chip chip-blue">{fine.state}</span></td>
-                    <td style={{ textAlign:"right",fontWeight:800,fontSize:"1rem",color:"var(--fg)",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>
+                    <td data-label="Vehicle"><span className="chip chip-gray">{fine.vehicle}</span></td>
+                    <td data-label="State"><span className="chip chip-blue">{fine.state}</span></td>
+                    <td data-label="Fine" style={{ textAlign:"right",fontWeight:800,fontSize:"1rem",color:"var(--fg)",fontFamily:"'Latin Modern Roman', serif", fontStyle: "italic" }}>
                       {currencySymbol((fine as any).currency)}{(fine as any).amount.toLocaleString("en-IN")}
                     </td>
                   </tr>

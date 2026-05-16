@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
 import { isRateLimited, getClientIp } from '../../../lib/rateLimit';
 
+const fetchOverpass = (query: string, timeoutMs = 6000) => {
+  const body = new URLSearchParams({ data: query });
+  return fetch("https://overpass-api.de/api/interpreter", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      "Accept": "application/json",
+      "User-Agent": "LexDriveAI/1.0",
+    },
+    body,
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+};
+
 export async function POST(req: Request) {
   // 60 requests per minute per IP (called frequently during driving)
   if (isRateLimited(getClientIp(req), { limit: 60, windowMs: 60_000 })) {
@@ -9,6 +23,10 @@ export async function POST(req: Request) {
 
   try {
     const { lat, lon } = await req.json();
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      return NextResponse.json({ source: "InvalidLocation", limit: null }, { status: 400 });
+    }
+
     const olaKey = process.env.OLA_MAPS_API_KEY;
 
     // 1. Attempt to use Ola Maps API if key exists
@@ -34,10 +52,8 @@ export async function POST(req: Request) {
     }
 
     // 2. Fallback to OpenStreetMap (Overpass API) to ensure the hackathon demo never fails
-    const query = `[out:json];way(around:50,${lat},${lon})["maxspeed"];out tags;`;
-    const osmEndpoint = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-    
-    const osmRes = await fetch(osmEndpoint);
+    const query = `[out:json][timeout:6];way(around:75,${lat},${lon})["maxspeed"];out tags 5;`;
+    const osmRes = await fetchOverpass(query);
     if (osmRes.ok) {
       const text = await osmRes.text();
       try {

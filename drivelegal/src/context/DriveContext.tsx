@@ -6,14 +6,19 @@ import { speak } from "../lib/tts";
 
 interface DriveContextType {
   speed: number; limit: number; isCarMode: boolean; setIsCarMode: (val: boolean) => void;
+  speedLimitSource: string; speedLimitStatus: "idle" | "detecting" | "live" | "default" | "error";
   fines: typeof finesData; askCoPilot: (query: string) => Promise<string>;
   isChatOpen: boolean; setIsChatOpen: (val: boolean) => void; riskAlert: string;
   lastKnownLocation: { lat: number; lon: number } | null;
+  currentLocationName: string;
   drivingScore: number; maxSpeedReached: number; alertsTriggered: number;
   violationHistory: any[]; addViolation: (type: string, amount: number) => void;
   setViolationHistory: (val: any[]) => void; appLanguage: string; setAppLanguage: (val: string) => void;
   obdStatus: OBDStatus; speedSource: "obd" | "gps";
   connectOBD: () => Promise<void>; disconnectOBD: () => Promise<void>; obdSupported: boolean;
+  gpsStatus: "idle" | "requesting" | "active" | "denied" | "unavailable" | "timeout";
+  gpsError: string;
+  requestGPS: () => void;
   aiAlert: string; roadContext: any;
   weather: { condition: string; temp: number; isRaining: boolean } | null;
   tripDurationMinutes: number;
@@ -24,10 +29,13 @@ const DriveContext = createContext<DriveContextType | undefined>(undefined);
 export function DriveProvider({ children }: { children: ReactNode }) {
   const [speed, setSpeed] = useState(0);
   const [limit, setLimit] = useState(50);
+  const [speedLimitSource, setSpeedLimitSource] = useState("Default");
+  const [speedLimitStatus, setSpeedLimitStatus] = useState<"idle" | "detecting" | "live" | "default" | "error">("idle");
   const [isCarMode, setIsCarMode] = useState(false);
   const [riskAlert, setRiskAlert] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [lastKnownLocation, setLastKnownLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [currentLocationName, setCurrentLocationName] = useState("");
   const [appLanguage, setAppLanguage] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("LexDrive_language") || "en-IN";
@@ -37,6 +45,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const [obdStatus, setObdStatus] = useState<OBDStatus>("disconnected");
   const [speedSource, setSpeedSource] = useState<"obd" | "gps">("gps");
   const [obdSupported, setObdSupported] = useState(false);
+  const [gpsStatus, setGpsStatus] = useState<"idle" | "requesting" | "active" | "denied" | "unavailable" | "timeout">("idle");
+  const [gpsError, setGpsError] = useState("");
   const obdRef = useRef<OBDManager | null>(null);
   const [drivingScore, setDrivingScore] = useState(100);
   const [maxSpeedReached, setMaxSpeedReached] = useState(0);
@@ -54,6 +64,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const alertCooldownRef = useRef(false);
   const lastContextFetchRef = useRef(0);
   const lastWeatherFetchRef = useRef(0);
+  const lastSpeedLimitFetchRef = useRef(0);
+  const lastReverseGeocodeFetchRef = useRef(0);
   const speedRef = useRef(0);
   const limitRef = useRef(50);
   const tripStartRef = useRef<number | null>(null);
@@ -68,6 +80,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   const appLanguageRef = useRef(typeof window !== "undefined" ? (localStorage.getItem("LexDrive_language") || "en-IN") : "en-IN");
   const roadContextRef = useRef<any>(null);
   const weatherRef = useRef<{ condition: string; temp: number; isRaining: boolean } | null>(null);
+  const lastKnownLocationRef = useRef<{ lat: number; lon: number } | null>(null);
+  const gpsStatusRef = useRef<"idle" | "requesting" | "active" | "denied" | "unavailable" | "timeout">("idle");
   const tripDurationMinutesRef = useRef(0);
 
   useEffect(() => { setObdSupported(OBDManager.isSupported()); }, []);
@@ -106,6 +120,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   useEffect(() => { appLanguageRef.current = appLanguage; }, [appLanguage]);
   useEffect(() => { roadContextRef.current = roadContext; }, [roadContext]);
   useEffect(() => { weatherRef.current = weather; }, [weather]);
+  useEffect(() => { lastKnownLocationRef.current = lastKnownLocation; }, [lastKnownLocation]);
+  useEffect(() => { gpsStatusRef.current = gpsStatus; }, [gpsStatus]);
   useEffect(() => { tripDurationMinutesRef.current = tripDurationMinutes; }, [tripDurationMinutes]);
 
   // ── Trip timer & Wake Lock ──
@@ -194,6 +210,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const lang = appLanguageRef.current;
       const ctx = roadContextRef.current;
       const wx = weatherRef.current;
+      const location = lastKnownLocationRef.current;
+      const gps = gpsStatusRef.current;
       const tripMins = tripDurationMinutesRef.current;
       const res = await fetch("/api/copilot", {
         method: "POST",
@@ -205,6 +223,8 @@ export function DriveProvider({ children }: { children: ReactNode }) {
           language: lang,
           roadContext: ctx,
           weather: wx,
+          location,
+          gpsStatus: gps,
           hour,
           tripDurationMinutes: tripMins,
           ...extra,
@@ -277,10 +297,81 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const fetchSpeedLimit = async (lat: number, lon: number) => {
+    const now = Date.now();
+    if (now - lastSpeedLimitFetchRef.current < 15_000) return;
+    lastSpeedLimitFetchRef.current = now;
+    setSpeedLimitStatus("detecting");
+
+    try {
+      const res = await fetch("/api/speedlimit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat, lon }),
+      });
+      const data = await res.json();
+      const source = typeof data.source === "string" && data.source ? data.source : "Unknown";
+      const parsedLimit = typeof data.limit === "number" ? data.limit : parseInt(String(data.limit), 10);
+
+      setSpeedLimitSource(source);
+      if (!res.ok) {
+        setSpeedLimitStatus("error");
+        return;
+      }
+
+      if (Number.isFinite(parsedLimit) && parsedLimit > 0) {
+        const nextLimit = Math.round(parsedLimit);
+        setSpeedLimitStatus("live");
+        if (nextLimit !== limitRef.current) {
+          limitRef.current = nextLimit;
+          setLimit(nextLimit);
+          triggerProactiveAlert("new_limit", speedRef.current, nextLimit, { newLimit: nextLimit });
+        }
+      } else {
+        setSpeedLimitStatus("default");
+      }
+    } catch (e) {
+      setSpeedLimitStatus("error");
+      console.warn("Speed limit fetch failed:", e);
+    }
+  };
+
+  const fetchLocationName = async (lat: number, lon: number) => {
+    const now = Date.now();
+    if (now - lastReverseGeocodeFetchRef.current < 60_000) return;
+    lastReverseGeocodeFetchRef.current = now;
+
+    try {
+      const url = new URL("https://nominatim.openstreetmap.org/reverse");
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("lat", String(lat));
+      url.searchParams.set("lon", String(lon));
+      url.searchParams.set("zoom", "16");
+      url.searchParams.set("addressdetails", "1");
+      const res = await fetch(url, { headers: { "User-Agent": "LexDriveAI/1.0" } });
+      if (!res.ok) return;
+      const data = await res.json();
+      const address = data.address || {};
+      const parts = [
+        data.name,
+        address.road,
+        address.suburb || address.neighbourhood || address.city_district,
+        address.city || address.town || address.village,
+        address.state,
+      ].filter(Boolean);
+      const label = Array.from(new Set(parts)).join(", ") || data.display_name || "";
+      if (label) setCurrentLocationName(label);
+    } catch (e) {
+      console.warn("Reverse geocode failed:", e);
+    }
+  };
+
   const handleSpeedUpdate = (newSpeed: number, lat?: number, lon?: number) => {
     if (lat && lon) {
       setLastKnownLocation({ lat, lon });
       fetchRoadContext(lat, lon);
+      fetchSpeedLimit(lat, lon);
+      fetchLocationName(lat, lon);
     }
 
     // ── Seatbelt reminder on first movement ──
@@ -372,22 +463,6 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       triggerProactiveAlert("night_driving", newSpeed, limitRef.current, { hour });
     }
 
-    if (lat && lon && Math.random() > 0.8) {
-      fetch("/api/speedlimit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lat, lon }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data.limit && data.limit !== limitRef.current) {
-            setLimit(data.limit);
-            triggerProactiveAlert("new_limit", speedRef.current, data.limit, { newLimit: data.limit });
-          }
-        })
-        .catch(console.error);
-    }
-
     // ── Weather Check (Every 5 minutes) ──
     if (lat && lon && Date.now() - lastWeatherFetchRef.current > 300000) {
       lastWeatherFetchRef.current = Date.now();
@@ -427,14 +502,58 @@ export function DriveProvider({ children }: { children: ReactNode }) {
     setObdStatus("disconnected");
   };
 
+  const handleGpsError = (err: GeolocationPositionError) => {
+    if (err.code === err.TIMEOUT) {
+      setGpsStatus("timeout");
+      setGpsError("GPS signal is taking too long. Move near a window or outdoors, then try again.");
+      console.warn("GPS timeout - waiting for signal...");
+    } else if (err.code === err.PERMISSION_DENIED) {
+      setGpsStatus("denied");
+      setGpsError("Location access is blocked. Enable location permission for this site in your browser.");
+      console.warn("GPS permission denied by user.");
+    } else {
+      setGpsStatus("unavailable");
+      setGpsError(err.message || "GPS is unavailable on this device or browser.");
+      console.warn("GPS Error:", err.message);
+    }
+  };
+
+  const requestGPS = () => {
+    if (!("geolocation" in navigator)) {
+      setGpsStatus("unavailable");
+      setGpsError("GPS is not supported in this browser.");
+      return;
+    }
+
+    setGpsStatus("requesting");
+    setGpsError("");
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const kmh = position.coords.speed != null ? position.coords.speed * 3.6 : speedRef.current;
+        setGpsStatus("active");
+        setGpsError("");
+        setSpeedSource("gps");
+        handleSpeedUpdate(kmh, lat, lon);
+      },
+      handleGpsError,
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
+    );
+  };
+
   useEffect(() => {
     if (!isCarMode) return;
     let watchId: number;
     if ("geolocation" in navigator) {
+      setGpsStatus("requesting");
+      setGpsError("");
       watchId = navigator.geolocation.watchPosition(
         position => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
+          setGpsStatus("active");
+          setGpsError("");
           if (obdStatus !== "connected") {
             const raw = position.coords.speed;
             const kmh = raw != null ? raw * 3.6 : 0;
@@ -442,34 +561,16 @@ export function DriveProvider({ children }: { children: ReactNode }) {
             handleSpeedUpdate(kmh, lat, lon);
           } else {
             setLastKnownLocation({ lat, lon });
-            if (Math.random() > 0.8) {
-              fetch("/api/speedlimit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ lat, lon }),
-              })
-                .then(r => r.json())
-                .then(data => {
-                  if (data.limit && data.limit !== limitRef.current) {
-                    setLimit(data.limit);
-                    triggerProactiveAlert("new_limit", speedRef.current, data.limit, { newLimit: data.limit });
-                  }
-                })
-                .catch(console.error);
-            }
+            fetchRoadContext(lat, lon);
+            fetchSpeedLimit(lat, lon);
           }
         },
-        err => {
-          if (err.code === err.TIMEOUT) {
-            console.warn("GPS timeout - waiting for signal...");
-          } else if (err.code === err.PERMISSION_DENIED) {
-            console.warn("GPS permission denied by user.");
-          } else {
-            console.warn("GPS Error:", err.message);
-          }
-        },
-        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+        handleGpsError,
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
       );
+    } else {
+      setGpsStatus("unavailable");
+      setGpsError("GPS is not supported in this browser.");
     }
     return () => { if (watchId) navigator.geolocation.clearWatch(watchId); };
   }, [isCarMode, obdStatus]);
@@ -479,7 +580,17 @@ export function DriveProvider({ children }: { children: ReactNode }) {
       const res = await fetch("/api/copilot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: query, speed, limit, language: appLanguage, weather, hour: new Date().getHours() }),
+        body: JSON.stringify({
+          message: query,
+          speed,
+          limit,
+          language: appLanguage,
+          weather,
+          roadContext,
+          location: lastKnownLocation,
+          gpsStatus,
+          hour: new Date().getHours(),
+        }),
       });
       const data = await res.json();
       return data.reply || "I could not process that request.";
@@ -491,10 +602,11 @@ export function DriveProvider({ children }: { children: ReactNode }) {
   return (
     <DriveContext.Provider value={{
       speed, limit, isCarMode, setIsCarMode, fines: finesData, askCoPilot,
-      riskAlert, lastKnownLocation, drivingScore, maxSpeedReached, alertsTriggered,
+      speedLimitSource, speedLimitStatus,
+      riskAlert, lastKnownLocation, currentLocationName, drivingScore, maxSpeedReached, alertsTriggered,
       isChatOpen, setIsChatOpen, violationHistory, addViolation, setViolationHistory,
       appLanguage, setAppLanguage, obdStatus, speedSource, connectOBD, disconnectOBD,
-      obdSupported, aiAlert, roadContext, weather, tripDurationMinutes,
+      obdSupported, gpsStatus, gpsError, requestGPS, aiAlert, roadContext, weather, tripDurationMinutes,
     }}>
       {children}
     </DriveContext.Provider>

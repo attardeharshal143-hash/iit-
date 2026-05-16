@@ -1,6 +1,40 @@
 import { NextResponse } from 'next/server';
 import { isRateLimited, getClientIp } from '../../../lib/rateLimit';
 
+type LocationPayload = { lat: number; lon: number } | null;
+
+async function reverseGeocode(location: LocationPayload) {
+  if (!location?.lat || !location?.lon) return "";
+
+  try {
+    const url = new URL("https://nominatim.openstreetmap.org/reverse");
+    url.searchParams.set("format", "jsonv2");
+    url.searchParams.set("lat", String(location.lat));
+    url.searchParams.set("lon", String(location.lon));
+    url.searchParams.set("zoom", "16");
+    url.searchParams.set("addressdetails", "1");
+
+    const res = await fetch(url, {
+      headers: { "User-Agent": "LexDriveAI/1.0" },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return "";
+    const data = await res.json();
+    const address = data.address || {};
+    const parts = [
+      data.name,
+      address.road,
+      address.suburb || address.neighbourhood || address.city_district,
+      address.city || address.town || address.village,
+      address.state,
+      address.country,
+    ].filter(Boolean);
+    return Array.from(new Set(parts)).join(", ") || data.display_name || "";
+  } catch {
+    return "";
+  }
+}
+
 export async function POST(req: Request) {
   if (isRateLimited(getClientIp(req), { limit: 60, windowMs: 60_000 })) {
     return NextResponse.json({ reply: "Too many requests. Please wait a moment." }, { status: 429 });
@@ -13,6 +47,8 @@ export async function POST(req: Request) {
       speed = 0, limit = 50,
       language = "en-IN",
       roadContext = null,
+      location = null,
+      gpsStatus = "idle",
       weather = null,
       hour = new Date().getHours(),
       tripDurationMinutes = 0,
@@ -23,9 +59,6 @@ export async function POST(req: Request) {
       severity = "medium",
     } = body;
 
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) return NextResponse.json({ reply: "No API key configured." });
-
     const langMap: Record<string, string> = {
       "hi-IN": "Hindi (हिंदी)", "mr-IN": "Marathi (मराठी)",
       "kn-IN": "Kannada (ಕನ್ನಡ)", "en-IN": "English",
@@ -33,6 +66,34 @@ export async function POST(req: Request) {
       "ta-IN": "Tamil (தமிழ்)", "te-IN": "Telugu (తెలుగు)",
     };
     const lang = langMap[language] || "English";
+    const locationName = await reverseGeocode(location);
+    const locationSummary = location
+      ? `${locationName ? `${locationName}. ` : ""}Coordinates: ${Number(location.lat).toFixed(5)}, ${Number(location.lon).toFixed(5)}.`
+      : "";
+
+    const asksCurrentLocation = typeof message === "string" && (
+      /\b(where am i|where i am|where are we|where are we now|current location|current place|my location|which location|what location)\b/i.test(message) ||
+      /\b(tell|show|give|find)\b.*\b(location|place|where)\b/i.test(message) ||
+      /\b(location|place)\b.*\b(now|current|currently)\b/i.test(message)
+    );
+    if (asksCurrentLocation) {
+      if (!location) {
+        return NextResponse.json({
+          reply: gpsStatus === "denied"
+            ? "Location permission is blocked. Enable GPS/location permission for this site, then ask again."
+            : "Current GPS location is not available yet. Tap Enable GPS and wait for a location lock.",
+        });
+      }
+
+      return NextResponse.json({
+        reply: locationName
+          ? `Current location: ${locationName}. Coordinates ${Number(location.lat).toFixed(5)}, ${Number(location.lon).toFixed(5)}.`
+          : `Current GPS coordinates: ${Number(location.lat).toFixed(5)}, ${Number(location.lon).toFixed(5)}.`,
+      });
+    }
+
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return NextResponse.json({ reply: "No API key configured." });
 
     // Road context summary
     let ctxSummary = "";
@@ -109,6 +170,7 @@ export async function POST(req: Request) {
 CURRENT STATE:
 - Speed: ${speed} km/h | Limit: ${limit} km/h | Status: ${speed > limit ? `OVER by ${overspeedBy} km/h` : "Within limit"}
 - Trip duration: ${tripDurationMinutes} minutes
+${locationSummary ? `- Current location: ${locationSummary}` : `- Current location: unavailable. GPS status: ${gpsStatus}.`}
 ${ctxSummary ? `- Road: ${ctxSummary}` : ""}
 ${weatherSummary ? `- ${weatherSummary}` : ""}
 ${timeContext ? `- Time: ${timeContext}` : ""}

@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
 import { isRateLimited, getClientIp } from '../../../lib/rateLimit';
 
+const fetchOverpass = (query: string, timeoutMs = 7000) => {
+  const body = new URLSearchParams({ data: query });
+  return fetch("https://overpass-api.de/api/interpreter", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      "Accept": "application/json",
+      "User-Agent": "LexDriveAI/1.0",
+    },
+    body,
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+};
+
 export async function POST(req: Request) {
   if (isRateLimited(getClientIp(req), { limit: 30, windowMs: 60_000 })) {
     return NextResponse.json({ error: "Rate limited" }, { status: 429 });
@@ -8,7 +22,9 @@ export async function POST(req: Request) {
 
   try {
     const { lat, lon } = await req.json();
-    if (!lat || !lon) return NextResponse.json({ error: "lat/lon required" }, { status: 400 });
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      return NextResponse.json({ error: "lat/lon required" }, { status: 400 });
+    }
 
     const query = `
       [out:json][timeout:8];
@@ -23,10 +39,7 @@ export async function POST(req: Request) {
       out tags 25;
     `;
 
-    const osmRes = await fetch(
-      `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
-      { signal: AbortSignal.timeout(7000) }
-    );
+    const osmRes = await fetchOverpass(query);
 
     type RoadCtx = {
       nearbyZones: string[]; roadType: string;

@@ -155,7 +155,7 @@ export default function PostDriveSummary() {
         <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <div className="pulse-dot" style={{ width: 8, height: 8, background: "#10b981", borderRadius: "50%", boxShadow: "0 0 10px #10b981" }} />
-            <span style={{ fontSize: "0.65rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.systemLive}</span> // Increased contrast from #64748b
+            <span style={{ fontSize: "0.65rem", fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.systemLive}</span>
           </div>
           
           <div id="google_translate_element" style={{ height: "36px", overflow: "hidden", display: "flex", alignItems: "center" }}></div>
@@ -181,7 +181,7 @@ export default function PostDriveSummary() {
           
           {/* Card 1: Score */}
           <div className="scroll-reveal glass-card" style={{ animationDelay: "0.1s" }}>
-            <h3 style={{ fontSize: "0.85rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2.5rem" }}>{st.driverPerformance}</h3> // Increased contrast
+            <h3 style={{ fontSize: "0.85rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2.5rem" }}>{st.driverPerformance}</h3>
             
             <div style={{ position: "relative", width: "180px", height: "180px", margin: "0 auto 2rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="180" height="180" viewBox="0 0 180 180" style={{ transform: "rotate(-90deg)" }}>
@@ -213,12 +213,12 @@ export default function PostDriveSummary() {
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", borderTop: "1px solid rgba(0,0,0,0.05)", paddingTop: "2rem" }}>
               <div>
-                <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#0f172a" }}>{maxSpeedReached} <span style={{ fontSize: "0.8rem", color: "#475569", fontWeight: 600 }}>km/h</span></div> // Increased contrast
-                <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.peakVelocity}</div> // Increased contrast from #94a3b8
+                <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#0f172a" }}>{maxSpeedReached} <span style={{ fontSize: "0.8rem", color: "#475569", fontWeight: 600 }}>km/h</span></div>
+                <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.peakVelocity}</div>
               </div>
               <div>
                 <div style={{ fontSize: "1.75rem", fontWeight: 900, color: alertsTriggered > 0 ? "#ef4444" : "#0ea5e9" }}>{alertsTriggered}</div>
-                <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.systemAlerts}</div> // Increased contrast from #94a3b8
+                <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.1em" }}>{st.systemAlerts}</div>
               </div>
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function PostDriveSummary() {
               <div style={{ width: "8px", height: "8px", background: "#0ea5e9", borderRadius: "50%", boxShadow: "0 0 10px #0ea5e9" }} />
               <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.01em" }}>{st.echallanPortal}</h3>
             </div>
-            <p style={{ color: "#334155", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: "2rem", fontWeight: 500 }}>{st.echallanDesc}</p> // Increased contrast and weight
+            <p style={{ color: "#334155", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: "2rem", fontWeight: 500 }}>{st.echallanDesc}</p>
             
             <form onSubmit={handleFetchChallans} style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem" }}>
               <input 
@@ -249,7 +249,7 @@ export default function PostDriveSummary() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                       {[{l:"OWNER",v:vehicleDetails.ownerName},{l:"MODEL",v:vehicleDetails.vehicleModel},{l:"FUEL",v:vehicleDetails.fuelType},{l:"REG DATE",v:vehicleDetails.registrationDate}].map(item => (
                         <div key={item.l}>
-                          <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "#64748b", marginBottom: "0.25rem" }}>{item.l}</div> // Increased contrast from #94a3b8
+                          <div style={{ fontSize: "0.6rem", fontWeight: 700, color: "#64748b", marginBottom: "0.25rem" }}>{item.l}</div>
                           <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a" }}>{item.v}</div>
                         </div>
                       ))}
@@ -263,7 +263,7 @@ export default function PostDriveSummary() {
                     <div key={c.id} className="challan-item">
                       <div>
                         <div style={{ fontWeight: 700, color: "#0f172a", fontSize: "0.9rem" }}>{c.violation}</div>
-                        <div style={{ fontSize: "0.7rem", color: "#64748b", fontFamily: "monospace" }}>{c.id}</div> // Increased contrast from #94a3b8
+                        <div style={{ fontSize: "0.7rem", color: "#64748b", fontFamily: "monospace" }}>{c.id}</div>
                       </div>
                       <div style={{ textAlign: "right" }}>
                         <div style={{ fontWeight: 800, color: c.status === "PAID" ? "#059669" : "#ef4444" }}>₹{c.amount}</div>
@@ -286,7 +286,7 @@ export default function PostDriveSummary() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem", marginBottom: "2.5rem" }}>
               {[{l:"Jurisdiction",v:calcCountry,s:setCalcCountry,o:uniqueCountries},{l:"Zone",v:calcState,s:setCalcState,o:uniqueStates},{l:"Class",v:calcVehicle,s:setCalcVehicle,o:uniqueVehicles},{l:"Infraction",v:calcViolation,s:setCalcViolation,o:uniqueViolations}].map(f => (
                 <div key={f.l}>
-                  <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "#64748b", marginBottom: "0.5rem", textTransform: "uppercase" }}>{f.l}</label> // Increased contrast from #94a3b8
+                  <label style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, color: "#64748b", marginBottom: "0.5rem", textTransform: "uppercase" }}>{f.l}</label>
                   <select value={f.v as string} onChange={e => (f.s as any)(e.target.value)} className="futuristic-select">
                     {f.o.map(opt => <option key={opt as string} value={opt as string}>{opt as string}</option>)}
                   </select>
@@ -299,12 +299,12 @@ export default function PostDriveSummary() {
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
                     <span className="section-badge">SEC {(calculatedFine as any).section}</span>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#475569" }}>{(calculatedFine as any).country} REGULATION</span> // Increased contrast from #64748b
+                    <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#475569" }}>{(calculatedFine as any).country} REGULATION</span>
                   </div>
                   <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a" }}>{(calculatedFine as any).violation}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{st.estimatedLiability}</div> // Increased contrast from #94a3b8
+                  <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{st.estimatedLiability}</div>
                   <div style={{ fontSize: "2.5rem", fontWeight: 900, color: "#0ea5e9", letterSpacing: "-0.05em" }}>₹{(calculatedFine as any).amount.toLocaleString()}</div>
                 </div>
               </div>

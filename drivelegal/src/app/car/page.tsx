@@ -20,17 +20,23 @@ const Waveform = ({ active }: { active: boolean }) => (
 );
 
 const darkCard = (extra?: React.CSSProperties): React.CSSProperties => ({
-  background: "rgba(255,255,255,0.03)",
-  backdropFilter: "blur(40px)",
-  WebkitBackdropFilter: "blur(40px)",
-  border: "1px solid rgba(99,102,241,0.3)",
+  background: "#f8fafc",
+  border: "none",
   borderRadius: "24px",
-  boxShadow: "0 20px 50px rgba(0,0,0,0.3)",
+  boxShadow: "0 18px 42px rgba(15,23,42,0.09)",
   ...extra,
 });
 
+const lightText = {
+  strong: "#0f172a",
+  body: "#1e293b",
+  muted: "#475569",
+  faint: "#64748b",
+  accent: "#0284c7",
+};
+
 export default function CarDisplayMode() {
-  const { speed, limit, setIsCarMode, drivingScore, askCoPilot, appLanguage, aiAlert, roadContext, weather, obdStatus, speedSource, connectOBD, disconnectOBD, obdSupported } = useDriveContext();
+  const { speed, limit, setIsCarMode, drivingScore, askCoPilot, appLanguage, aiAlert, roadContext, weather, obdStatus, speedSource, connectOBD, disconnectOBD, obdSupported, gpsStatus, gpsError, requestGPS, lastKnownLocation, currentLocationName, speedLimitSource, speedLimitStatus } = useDriveContext();
 
   const [aiCompanionState, setAiCompanionState] = useState<"idle" | "listening" | "speaking" | "alert">("idle");
   const [aiSpeechText, setAiSpeechText] = useState(`"Cruising perfectly. The view of the city is clear tonight."`);
@@ -146,23 +152,21 @@ export default function CarDisplayMode() {
   if (!mounted) return null;
 
   return (
-    <main style={{ minHeight: "100vh", background: "#0a0a0f", color: "#ffffff", padding: "1.5rem", fontFamily: "'Inter', sans-serif", position: "relative", overflow: "hidden" }}>
+    <main className="car-terminal" style={{ minHeight: "100vh", background: "#f3f4f6", color: lightText.strong, padding: "1.5rem", fontFamily: "'Inter', sans-serif", position: "relative", overflow: "hidden" }}>
 
-      {/* Plasma background */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 20% 30%, rgba(99,102,241,0.15) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(168,85,247,0.15) 0%, transparent 40%)", zIndex: 0 }} />
-      <div style={{ position: "absolute", bottom: 0, left: "-20%", right: "-20%", height: "40%", background: "repeating-linear-gradient(0deg,transparent,transparent 49px,rgba(99,102,241,0.08) 50px),repeating-linear-gradient(90deg,transparent,transparent 49px,rgba(99,102,241,0.08) 50px)", transform: "perspective(800px) rotateX(75deg)", transformOrigin: "bottom", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, background: "#f3f4f6", zIndex: 0 }} />
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", position: "relative", zIndex: 10 }}>
-        <div style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)", fontWeight: 700, letterSpacing: "0.1em" }}> // Increased from 0.5
-          TEMP: <span style={{ color: "#ffffff" }}>{weather ? `${weather.temp}°C` : "—"}</span>
+      <div className="car-terminal-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", position: "relative", zIndex: 10 }}>
+        <div style={{ fontSize: "0.9rem", color: lightText.body, fontWeight: 700, letterSpacing: "0.1em" }}>
+          TEMP: <span style={{ color: lightText.strong }}>{weather ? `${weather.temp}°C` : "—"}</span>
         </div>
-        <div style={{ fontSize: "1.75rem", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.05em", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", paddingRight: "0.1em" }}> // Added padding-right
+        <div className="car-terminal-title" style={{ fontSize: "1.75rem", fontWeight: 900, color: lightText.strong, letterSpacing: "-0.05em", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", paddingRight: "0.1em" }}>
           LEXDRIVE <span style={{ color: "#818cf8", textShadow: "0 0 20px rgba(99,102,241,0.5)" }}>{ct.terminal}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-          <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)", fontWeight: 700, letterSpacing: "0.1em" }}> // Increased from 0.5
-            TIME: <span style={{ color: "#ffffff" }}>{currentTime}</span>
+        <div className="car-terminal-actions" style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+          <span style={{ fontSize: "0.9rem", color: lightText.body, fontWeight: 700, letterSpacing: "0.1em" }}>
+            TIME: <span style={{ color: lightText.strong }}>{currentTime}</span>
           </span>
           {obdSupported && (
             <button
@@ -184,7 +188,7 @@ export default function CarDisplayMode() {
               {obdStatus === "connected" ? `🔌 ${ct.obdLive}` : obdStatus === "connecting" ? ct.connecting : ct.connectObd}
             </button>
           )}
-          <a href="/summary" style={{ padding: "0.6rem 1.25rem", background: "#ffffff", color: "#0a0a0f", borderRadius: "980px", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+          <a href="/summary" style={{ padding: "0.6rem 1.25rem", background: "#0284c7", color: "#ffffff", borderRadius: "980px", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
             {ct.endTrip}
           </a>
         </div>
@@ -192,37 +196,58 @@ export default function CarDisplayMode() {
 
       {/* AI Alert Banner */}
       {(aiAlert || roadContext?.nearbyZones?.length > 0 || roadContext?.hasSpeedCamera) && (
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem", zIndex: 10, flexWrap: "wrap", position: "relative" }}>
+        <div className="car-alert-banner" style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem", zIndex: 10, flexWrap: "wrap", position: "relative" }}>
           {aiAlert && (
-            <div style={{ flex: 1, minWidth: 300, background: isOverLimit ? "rgba(239,68,68,0.15)" : "rgba(99,102,241,0.15)", border: `1px solid ${isOverLimit ? "#ef4444" : "#6366f1"}`, borderRadius: "12px", padding: "0.75rem 1rem", display: "flex", alignItems: "center", gap: "0.625rem" }}>
+            <div style={{ flex: 1, minWidth: 300, background: isOverLimit ? "rgba(239,68,68,0.12)" : "rgba(99,102,241,0.1)", border: "none", borderRadius: "12px", padding: "0.75rem 1rem", display: "flex", alignItems: "center", gap: "0.625rem" }}>
               <span style={{ fontSize: "1.25rem", flexShrink: 0 }}>{isOverLimit ? "🚨" : "🤖"}</span>
               <span style={{ fontSize: "0.9rem", fontWeight: 600, color: isOverLimit ? "#f87171" : "#a5b4fc", lineHeight: 1.4 }}>{aiAlert}</span>
             </div>
           )}
           {roadContext?.nearbyZones?.map((z: string) => (
-            <span key={z} style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.375rem 0.875rem", borderRadius: "999px", background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.4)", color: "#fbbf24", textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>⚠️ {z}</span>
+            <span key={z} style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.375rem 0.875rem", borderRadius: "999px", background: "rgba(245,158,11,0.15)", border: "none", color: "#f59e0b", textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>⚠️ {z}</span>
           ))}
           {roadContext?.hasSpeedCamera && (
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.375rem 0.875rem", borderRadius: "999px", background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.4)", color: "#f87171", textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>📷 Speed Camera Ahead</span>
+            <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.375rem 0.875rem", borderRadius: "999px", background: "rgba(239,68,68,0.12)", border: "none", color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>📷 Speed Camera Ahead</span>
           )}
         </div>
       )}
 
+      {(gpsStatus !== "active" || !lastKnownLocation) && (
+        <div style={{ position: "absolute", top: "4.75rem", left: "50%", transform: "translateX(-50%)", width: "min(460px, calc(100vw - 2rem))", zIndex: 30, background: "#ffffff", border: "none", borderRadius: "14px", padding: "0.65rem 0.8rem", display: "flex", alignItems: "center", gap: "0.75rem", boxShadow: "0 16px 36px rgba(15,23,42,0.1)" }}>
+          <span style={{ fontSize: "1rem", flexShrink: 0 }}>📍</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: "0.8rem", fontWeight: 800, color: lightText.strong, lineHeight: 1.25 }}>
+              {gpsStatus === "requesting" ? "Turning on GPS..." : "Turn on GPS"}
+            </div>
+            <div style={{ fontSize: "0.7rem", color: lightText.muted, lineHeight: 1.3, marginTop: "0.1rem" }}>
+              {gpsError || "Allow location access for live speed limits and current-location answers."}
+            </div>
+          </div>
+          <button
+            onClick={requestGPS}
+            disabled={gpsStatus === "requesting"}
+            style={{ flexShrink: 0, padding: "0.45rem 0.8rem", borderRadius: "999px", border: "1px solid rgba(14,165,233,0.35)", background: "rgba(14,165,233,0.12)", color: lightText.accent, fontSize: "0.72rem", fontWeight: 800, cursor: gpsStatus === "requesting" ? "wait" : "pointer" }}
+          >
+            {gpsStatus === "requesting" ? "Waiting" : "Enable"}
+          </button>
+        </div>
+      )}
+
       {/* 3-COLUMN LAYOUT */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr 1fr", gap: "1.5rem", position: "relative", zIndex: 10 }}>
+      <div className="car-terminal-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr 1fr", gap: "1.5rem", position: "relative", zIndex: 10 }}>
 
         {/* ── LEFT: GPS & SPEED ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={darkCard({ flex: 1, padding: "1.25rem", display: "flex", flexDirection: "column", overflow: "hidden" })}>
+        <div className="car-left-column" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div className="car-map-card" style={darkCard({ flex: 1, padding: "1.25rem", display: "flex", flexDirection: "column", overflow: "hidden" })}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.displayMode}</div> // Increased from 0.4
-              <div style={{ display: "flex", background: "rgba(255,255,255,0.05)", borderRadius: "999px", padding: "2px" }}>
-                <button onClick={() => setViewMode("radar")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "radar" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "radar" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.radar}</button>
-                <button onClick={() => setViewMode("map")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "map" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "map" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.map}</button>
-                <button onClick={() => setViewMode("dashcam")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "dashcam" ? "rgba(255,255,255,0.1)" : "transparent", color: viewMode === "dashcam" ? "#fff" : "rgba(255,255,255,0.5)", fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.dashcam}</button>
+            <div style={{ fontSize: "0.75rem", color: lightText.muted, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.displayMode}</div>
+              <div style={{ display: "flex", background: "rgba(14,165,233,0.08)", borderRadius: "999px", padding: "2px" }}>
+                <button onClick={() => setViewMode("radar")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "radar" ? "#ffffff" : "transparent", color: viewMode === "radar" ? lightText.accent : lightText.faint, fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.radar}</button>
+                <button onClick={() => setViewMode("map")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "map" ? "#ffffff" : "transparent", color: viewMode === "map" ? lightText.accent : lightText.faint, fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.map}</button>
+                <button onClick={() => setViewMode("dashcam")} style={{ padding: "0.3rem 0.6rem", borderRadius: "999px", border: "none", background: viewMode === "dashcam" ? "#ffffff" : "transparent", color: viewMode === "dashcam" ? lightText.accent : lightText.faint, fontWeight: 700, fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.dashcam}</button>
               </div>
             </div>
-            <div style={{ flex: 1, position: "relative", background: "rgba(0,113,227,0.02)", borderRadius: "16px", border: "1px solid rgba(0,113,227,0.1)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ flex: 1, position: "relative", background: "rgba(255,255,255,0.42)", borderRadius: "16px", border: "none", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
               {viewMode === "radar" && (
                 <div style={{ width: "100%", height: "100%", position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <div style={{ position: "absolute", top: 0, bottom: 0, left: "45%", width: "10px", background: "#2563eb", boxShadow: "0 0 30px #2563eb", filter: "blur(2px)", transform: "skew(-15deg)" }} />
@@ -245,44 +270,51 @@ export default function CarDisplayMode() {
                   <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.9rem", fontFamily: "'JetBrains Mono', monospace" }}>[ CAMERA FEED ]</div>
                 </div>
               )}
-              <div style={{ position: "absolute", top: "1rem", right: "1rem", background: speedSource === "obd" ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)", backdropFilter: "blur(10px)", padding: "0.5rem 1rem", borderRadius: "980px", fontSize: "0.75rem", fontWeight: 600, border: `1px solid ${speedSource === "obd" ? "rgba(16,185,129,0.3)" : "rgba(255,255,255,0.12)"}`, color: speedSource === "obd" ? "#10b981" : "rgba(255,255,255,0.75)" }}>
+              <div style={{ position: "absolute", top: "1rem", right: "1rem", background: speedSource === "obd" ? "#dcfce7" : "#ffffff", padding: "0.5rem 1rem", borderRadius: "980px", fontSize: "0.75rem", fontWeight: 700, border: "none", color: speedSource === "obd" ? "#059669" : lightText.accent }}>
                 {speedSource === "obd" ? ct.obdTelemetry : ct.gpsTelemetry}
               </div>
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center", border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99,102,241,0.3)" })}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.speed}</div> // Increased from 0.4
-              <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: isOverLimit ? "#ef4444" : "#ffffff", lineHeight: 1, textShadow: isOverLimit ? "0 0 20px rgba(239,68,68,0.5)" : "0 0 20px rgba(255,255,255,0.1)" }}>{speed}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
+          <div className="car-speed-row" style={{ display: "flex", gap: "1rem" }}>
+            <div className="car-metric-card" style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center", border: "none" })}>
+              <div style={{ fontSize: "0.7rem", color: lightText.muted, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.speed}</div>
+              <div className="car-metric-value" style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: isOverLimit ? "#ef4444" : lightText.strong, lineHeight: 1, textShadow: isOverLimit ? "0 0 20px rgba(239,68,68,0.35)" : "none" }}>{speed}</div>
+              <div style={{ fontSize: "0.8rem", color: lightText.muted, fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
             </div>
-            <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center" })}>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.limit}</div> // Increased from 0.4
-              <div style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: "#ffffff", lineHeight: 1 }}>{limit}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
+            <div className="car-metric-card" style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", alignItems: "center" })}>
+              <div style={{ fontSize: "0.7rem", color: lightText.muted, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>{ct.limit}</div>
+              <div className="car-metric-value" style={{ fontSize: "4.5rem", fontWeight: 700, fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic", letterSpacing: "-0.04em", color: lightText.strong, lineHeight: 1 }}>{limit}</div>
+              <div style={{ fontSize: "0.8rem", color: lightText.muted, fontWeight: 600, marginTop: "5px" }}>{ct.kmh}</div>
+              <div style={{ marginTop: "0.45rem", maxWidth: "100%", fontSize: "0.58rem", color: speedLimitStatus === "live" ? "#059669" : speedLimitStatus === "detecting" ? lightText.accent : lightText.faint, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {speedLimitStatus === "detecting" ? "Detecting" : speedLimitStatus === "live" ? speedLimitSource : speedLimitStatus === "error" ? "Backend error" : "Default"}
+              </div>
             </div>
           </div>
         </div>
 
         {/* ── CENTER: ROBOT + VOICE ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ flex: 1, background: "rgba(255,255,255,0.03)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", border: "1px solid rgba(99,102,241,0.3)", borderRadius: "18px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}>
-            <div style={{ position: "absolute", inset: 0, background: aiCompanionState === "alert" ? "radial-gradient(circle at center, rgba(255,59,48,0.12) 0%, transparent 70%)" : aiCompanionState === "listening" ? "radial-gradient(circle at center, rgba(99,102,241,0.12) 0%, transparent 70%)" : aiCompanionState === "speaking" ? "radial-gradient(circle at center, rgba(168,85,247,0.08) 0%, transparent 70%)" : "transparent" }} />
+        <div className="car-center-column" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div className="car-robot-card" style={{ flex: 1, background: "#f8fafc", border: "none", borderRadius: "18px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", boxShadow: "0 18px 42px rgba(15,23,42,0.09)" }}>
+            <div style={{ position: "absolute", inset: 0, background: "transparent" }} />
             <div style={{ zIndex: 1, width: "100%", height: "100%" }}>
               <Robot3D state={aiCompanionState} size={190} />
             </div>
+            {gpsStatus === "active" && lastKnownLocation && (
+              <div style={{ position: "absolute", left: "50%", bottom: "1rem", transform: "translateX(-50%)", zIndex: 3, maxWidth: "calc(100% - 2rem)", fontSize: "0.66rem", fontWeight: 800, color: "#16a34a", letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.35rem 0.8rem", borderRadius: "999px", border: "none", background: "#ffffff", boxShadow: "0 12px 28px rgba(15,23,42,0.12)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                GPS locked · {currentLocationName || `${lastKnownLocation.lat.toFixed(4)}, ${lastKnownLocation.lon.toFixed(4)}`}
+              </div>
+            )}
           </div>
 
-          <div onClick={handleVoiceInput} style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)", borderRadius: "18px", padding: "1.5rem", border: aiCompanionState === "listening" ? "1px solid #6366f1" : "1px solid rgba(99,102,241,0.3)", cursor: "pointer", position: "relative", overflow: "hidden", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}>
-            {aiCompanionState === "listening" && <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "2px", background: "#6366f1", animation: "scan 2s linear infinite", boxShadow: "0 0 15px #6366f1" }} />}
-            <div style={{ fontSize: "1.05rem", lineHeight: 1.6, color: "#ffffff", zIndex: 1, fontWeight: 400 }}>
-              <span style={{ color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.65rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>LexDrive AI // </span><br /> // Increased from 0.35
-              <span style={{ color: aiCompanionState === "alert" ? "#f87171" : "#ffffff", textShadow: aiCompanionState === "alert" ? "0 0 10px rgba(239,68,68,0.5)" : "none" }}>{aiSpeechText}</span>
+          <div className="car-voice-card" onClick={handleVoiceInput} style={{ background: "#f8fafc", borderRadius: "18px", padding: "1.5rem", border: "none", cursor: "pointer", position: "relative", overflow: "hidden", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 18px 42px rgba(15,23,42,0.09)" }}>
+            <div style={{ fontSize: "1.05rem", lineHeight: 1.6, color: lightText.strong, zIndex: 1, fontWeight: 400 }}>
+              <span style={{ color: lightText.muted, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "0.65rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>LexDrive AI // </span><br />
+              <span style={{ color: aiCompanionState === "alert" ? "#dc2626" : lightText.strong, textShadow: "none" }}>{aiSpeechText}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 1 }}>
               <Waveform active={aiCompanionState === "listening" || aiCompanionState === "speaking"} />
-              <div style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.75rem" }}> // Increased from 0.45
+              <div style={{ color: lightText.body, fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "0.75rem" }}>
                 {aiCompanionState === "listening" && <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#FF3B30", animation: "live-pulse 1s infinite" }} />}
                 {aiCompanionState === "listening" ? ct.listening : ct.tapToTransmit}
               </div>
@@ -291,35 +323,35 @@ export default function CarDisplayMode() {
         </div>
 
         {/* ── RIGHT: ANALYTICS + VIOLATIONS + COMPLIANCE ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div className="car-right-column" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 
           {/* Analytics */}
-          <div style={darkCard({ padding: "1.5rem" })}>
-            <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.drivingAnalytics}</div> // Increased from 0.4
+          <div className="car-side-card car-analytics-card" style={darkCard({ padding: "1.5rem" })}>
+            <div style={{ fontSize: "0.75rem", color: lightText.muted, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.drivingAnalytics}</div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{ct.safetyScore}</div>
-                <div style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0.25rem 0", color: "#ffffff", letterSpacing: "-0.03em" }}>{drivingScore} / 100</div>
-                <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.8)", fontWeight: 500 }}>{drivingScore >= 90 ? ct.excellent : drivingScore >= 70 ? ct.good : ct.needsWork}</div> // Increased from 0.45
+                <div style={{ fontSize: "0.8rem", color: lightText.faint, fontWeight: 500 }}>{ct.safetyScore}</div>
+                <div style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0.25rem 0", color: lightText.strong, letterSpacing: "-0.03em" }}>{drivingScore} / 100</div>
+                <div style={{ fontSize: "0.8rem", color: lightText.body, fontWeight: 500 }}>{drivingScore >= 90 ? ct.excellent : drivingScore >= 70 ? ct.good : ct.needsWork}</div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <div style={{ width: "70px", height: "35px", borderTopLeftRadius: "35px", borderTopRightRadius: "35px", background: "conic-gradient(from 270deg at 50% 100%, #FF3B30 0deg, #FF9500 45deg, #34C759 90deg, transparent 90deg)", position: "relative" }}>
-                  <div style={{ position: "absolute", bottom: 0, left: "6px", right: "6px", top: "6px", background: "#0a0a0f", borderTopLeftRadius: "30px", borderTopRightRadius: "30px" }} />
+                  <div style={{ position: "absolute", bottom: 0, left: "6px", right: "6px", top: "6px", background: "#ffffff", borderTopLeftRadius: "30px", borderTopRightRadius: "30px" }} />
                 </div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: "4px", color: "#ffffff" }}>{drivingScore}%</div>
+                <div style={{ fontSize: "1.1rem", fontWeight: 800, marginTop: "4px", color: lightText.strong }}>{drivingScore}%</div>
               </div>
             </div>
           </div>
 
           {/* Violations */}
-          <div style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", background: isOverLimit ? "rgba(239,68,68,0.06)" : "rgba(255,255,255,0.03)", border: isOverLimit ? "2px solid #ef4444" : "1px solid rgba(99,102,241,0.3)" })}>
-            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#fca5a5" : "rgba(255,255,255,0.75)", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.violations}</div> // Increased from 0.4
+          <div className="car-side-card car-violations-card" style={darkCard({ flex: 1, padding: "1.5rem", display: "flex", flexDirection: "column", background: isOverLimit ? "#fef2f2" : "#f8fafc", border: "none" })}>
+            <div style={{ fontSize: "0.75rem", color: isOverLimit ? "#dc2626" : lightText.muted, fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.violations}</div>
             {isOverLimit ? (
               <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", flex: 1 }}>
                 <div style={{ fontSize: "1.5rem", animation: "live-pulse 1s infinite" }}>🚨</div>
                 <div>
                   <div style={{ fontWeight: 700, color: "#ff6b6b", fontSize: "1rem", marginBottom: "0.375rem" }}>{ct.overspeedTitle}</div>
-                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.5 }}>{ct.overspeedDesc}</div>
+                  <div style={{ color: lightText.muted, fontSize: "0.875rem", lineHeight: 1.5 }}>{ct.overspeedDesc}</div>
                 </div>
               </div>
             ) : (
@@ -327,23 +359,23 @@ export default function CarDisplayMode() {
                 <div style={{ fontSize: "1.5rem" }}>✅</div>
                 <div>
                   <div style={{ fontWeight: 700, color: "#34C759", fontSize: "1rem", marginBottom: "0.375rem" }}>{ct.noViolations}</div>
-                  <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.5 }}>{ct.noViolationsDesc}</div>
+                  <div style={{ color: lightText.muted, fontSize: "0.875rem", lineHeight: 1.5 }}>{ct.noViolationsDesc}</div>
                 </div>
               </div>
             )}
           </div>
 
           {/* Compliance */}
-          <div style={darkCard({ padding: "1.5rem" })}>
-            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "rgba(255,255,255,0.75)", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.compliance}</div> // Increased from 0.4
+          <div className="car-side-card car-compliance-card" style={darkCard({ padding: "1.5rem" })}>
+            <div style={{ fontSize: "0.75rem", fontWeight: 800, color: lightText.muted, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", fontFamily: "'Latin Modern Roman', serif", fontStyle: "italic" }}>{ct.compliance}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {[
                 { label: ct.seatbelt, color: "#34C759" },
                 { label: ct.noPhone, color: "#34C759" },
                 { label: ct.laneDiscipline, color: "#FF9500" },
               ].map(({ label, color }, i, arr) => (
-                <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.07)" : "none", paddingBottom: i < arr.length - 1 ? "0.5rem" : 0 }}>
-                  <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.875rem", fontWeight: 500 }}>{label}</span>
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "none", paddingBottom: i < arr.length - 1 ? "0.5rem" : 0 }}>
+                  <span style={{ color: lightText.body, fontSize: "0.875rem", fontWeight: 500 }}>{label}</span>
                   <span style={{ color, fontSize: "1.2rem" }}>•</span>
                 </div>
               ))}

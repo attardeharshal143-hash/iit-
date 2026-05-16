@@ -1116,3 +1116,513 @@ main {
 /* ── Prevent horizontal overflow ── */
 * { max-width: 100%; }
 img, svg, video { max-width: 100%; }
+
+/* -- Finebook responsive layout -- */
+@media (max-width: 768px) {
+  .finebook-nav {
+    height: auto !important;
+    min-height: 64px !important;
+    padding: 0.75rem 5% !important;
+    gap: 0.75rem !important;
+    flex-wrap: wrap !important;
+  }
+
+  .finebook-brand {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .finebook-nav-links {
+    order: 3 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 1.25rem !important;
+    padding-top: 0.5rem !important;
+    border-top: 1px solid var(--border) !important;
+  }
+
+  .finebook-nav-cta {
+    flex: 0 0 auto !important;
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.8125rem !important;
+  }
+
+  .finebook-header {
+    padding-top: 2.75rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .finebook-header h1 {
+    font-size: clamp(2rem, 11vw, 2.75rem) !important;
+    letter-spacing: 0 !important;
+  }
+
+  .finebook-header p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .finebook-tabs {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: min(100%, 420px) !important;
+    border-radius: var(--radius-xl) !important;
+  }
+
+  .finebook-tabs button {
+    min-width: 0 !important;
+    padding: 0.7rem 0.75rem !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
+  }
+
+  .finebook-section {
+    padding-top: 0 !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .finebook-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .finebook-stats-grid .stat-card {
+    padding: 1rem 0.75rem !important;
+  }
+
+  .finebook-law-header {
+    align-items: flex-start !important;
+    padding: 1rem !important;
+  }
+
+  .finebook-law-title-row {
+    align-items: flex-start !important;
+    min-width: 0 !important;
+  }
+
+  .finebook-law-meta {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 0.5rem !important;
+    max-width: 38% !important;
+  }
+
+  .finebook-law-meta span {
+    max-width: 100% !important;
+    white-space: normal !important;
+    text-align: right !important;
+    line-height: 1.25 !important;
+  }
+
+  .finebook-cta-panel {
+    padding: 2rem 1rem !important;
+    border-radius: var(--radius-xl) !important;
+  }
+
+  .finebook-filters {
+    align-items: stretch !important;
+  }
+
+  .finebook-filters > div:first-child,
+  .finebook-filter-controls,
+  .finebook-select {
+    width: 100% !important;
+  }
+
+  .finebook-filter-controls {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .finebook-filter-controls button,
+  .finebook-select {
+    border-radius: var(--radius-lg) !important;
+    min-height: 42px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+  }
+
+  .finebook-select {
+    grid-column: span 3 !important;
+  }
+
+  .finebook-table-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .finebook-table-card:hover {
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .finebook-table-card .data-table,
+  .finebook-table-card .data-table tbody,
+  .finebook-table-card .data-table tr,
+  .finebook-table-card .data-table td {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .finebook-table-card .data-table thead {
+    display: none !important;
+  }
+
+  .finebook-table-card .data-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.875rem !important;
+  }
+
+  .finebook-table-card .data-table tr {
+    background: var(--bg-white) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--shadow-sm) !important;
+    overflow: hidden !important;
+  }
+
+  .finebook-table-card .data-table td {
+    position: relative !important;
+    min-height: 3rem !important;
+    padding: 0.875rem 1rem 0.875rem 7.25rem !important;
+    border-bottom: 1px solid var(--border) !important;
+    text-align: left !important;
+    background: transparent !important;
+  }
+
+  .finebook-table-card .data-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    top: 0.95rem;
+    width: 5.75rem;
+    color: var(--fg-muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .finebook-table-card .data-table tr td:last-child {
+    border-bottom: none !important;
+    text-align: left !important;
+  }
+
+  .finebook-table-card .data-table tbody tr:nth-child(even) td,
+  .finebook-table-card .data-table tbody tr:hover td {
+    background: transparent !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .finebook-nav {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .finebook-brand span {
+    font-size: 1rem !important;
+  }
+
+  .finebook-nav-links {
+    gap: 1rem !important;
+  }
+
+  .finebook-nav-links .nav-link {
+    font-size: 0.84rem !important;
+  }
+
+  .finebook-nav-cta {
+    padding: 0.45rem 0.7rem !important;
+  }
+
+  .finebook-header,
+  .finebook-section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .finebook-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .finebook-law-header {
+    flex-direction: column !important;
+  }
+
+  .finebook-law-meta {
+    width: 100% !important;
+    max-width: none !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .finebook-law-meta span {
+    text-align: left !important;
+  }
+
+  .finebook-filter-controls {
+    grid-template-columns: 1fr !important;
+  }
+
+  .finebook-select {
+    grid-column: auto !important;
+  }
+
+  .finebook-table-card .data-table td {
+    padding: 2.1rem 1rem 0.875rem !important;
+  }
+
+  .finebook-table-card .data-table td::before {
+    top: 0.8rem;
+    width: auto;
+  }
+}
+
+/* -- Car terminal: viewport-fit dashboard -- */
+.car-terminal {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: clamp(0.6rem, 1.2vh, 0.9rem) !important;
+  padding: clamp(0.75rem, 1.6vw, 1.25rem) !important;
+}
+
+.car-terminal-header,
+.car-terminal-grid,
+.car-left-column,
+.car-center-column,
+.car-right-column,
+.car-map-card,
+.car-robot-card,
+.car-violations-card {
+  min-height: 0 !important;
+}
+
+.car-terminal-header {
+  margin-bottom: 0 !important;
+  gap: 1rem !important;
+}
+
+.car-terminal-title {
+  font-size: clamp(1.45rem, 2.1vw, 1.75rem) !important;
+  white-space: nowrap !important;
+}
+
+.car-terminal-actions {
+  gap: clamp(0.65rem, 1.3vw, 1.25rem) !important;
+}
+
+.car-terminal-grid {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  grid-template-columns: minmax(280px, 1fr) minmax(360px, 1.18fr) minmax(280px, 1fr) !important;
+  gap: clamp(0.75rem, 1.4vw, 1.25rem) !important;
+  overflow: hidden !important;
+}
+
+.car-left-column,
+.car-center-column,
+.car-right-column {
+  height: 100% !important;
+  gap: clamp(0.65rem, 1.3vh, 1rem) !important;
+  overflow: hidden !important;
+}
+
+.car-left-column {
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) clamp(128px, 20vh, 166px) !important;
+}
+
+.car-center-column {
+  display: grid !important;
+  grid-template-rows: minmax(0, 1fr) clamp(124px, 18vh, 150px) !important;
+}
+
+.car-right-column {
+  display: grid !important;
+  grid-template-rows: clamp(142px, 20vh, 174px) minmax(0, 1fr) clamp(166px, 24vh, 208px) !important;
+}
+
+.car-map-card,
+.car-metric-card,
+.car-voice-card,
+.car-side-card {
+  padding: clamp(0.85rem, 1.4vw, 1.25rem) !important;
+}
+
+.car-map-card {
+  height: 100% !important;
+}
+
+.car-speed-row {
+  height: 100% !important;
+  gap: clamp(0.65rem, 1.2vw, 1rem) !important;
+}
+
+.car-metric-card {
+  justify-content: center !important;
+}
+
+.car-metric-value {
+  font-size: clamp(3.25rem, 8vh, 4.5rem) !important;
+}
+
+.car-robot-card {
+  min-height: 0 !important;
+}
+
+.car-voice-card {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.car-analytics-card,
+.car-compliance-card {
+  overflow: hidden !important;
+}
+
+.car-analytics-card {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.car-analytics-card > div:nth-child(2) {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  align-items: center !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:first-child {
+  min-width: 0 !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:first-child > div:nth-child(1) {
+  font-size: 0.74rem !important;
+  line-height: 1.2 !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:first-child > div:nth-child(2) {
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem) !important;
+  line-height: 1.05 !important;
+  margin: 0.15rem 0 !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:first-child > div:nth-child(3) {
+  font-size: 0.72rem !important;
+  line-height: 1.2 !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:last-child {
+  flex: 0 0 88px !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:last-child > div:first-child {
+  width: 70px !important;
+  height: 35px !important;
+}
+
+.car-analytics-card > div:nth-child(2) > div:last-child > div:last-child {
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  margin-top: 0.25rem !important;
+}
+
+.car-violations-card {
+  overflow: hidden !important;
+}
+
+.car-compliance-card {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.car-compliance-card > div:first-child,
+.car-analytics-card > div:first-child,
+.car-violations-card > div:first-child {
+  margin-bottom: 0.55rem !important;
+}
+
+.car-compliance-card > div:last-child {
+  flex: 1 1 auto !important;
+  justify-content: space-between !important;
+  gap: 0.35rem !important;
+}
+
+.car-compliance-card > div:last-child > div {
+  min-height: 0 !important;
+  padding-bottom: 0.35rem !important;
+}
+
+.car-compliance-card span {
+  font-size: 0.82rem !important;
+  line-height: 1.25 !important;
+}
+
+.car-violations-card > div:last-child {
+  align-items: center !important;
+}
+
+.car-alert-banner {
+  margin-bottom: 0 !important;
+}
+
+@media (max-height: 720px) and (min-width: 900px) {
+  .car-terminal {
+    padding: 0.75rem !important;
+    gap: 0.55rem !important;
+  }
+
+  .car-terminal-grid {
+    gap: 0.75rem !important;
+  }
+
+  .car-left-column,
+  .car-center-column,
+  .car-right-column {
+    gap: 0.65rem !important;
+  }
+
+  .car-left-column {
+    grid-template-rows: minmax(0, 1fr) 124px !important;
+  }
+
+  .car-center-column {
+    grid-template-rows: minmax(0, 1fr) 118px !important;
+  }
+
+  .car-right-column {
+    grid-template-rows: 132px minmax(0, 1fr) 154px !important;
+  }
+
+  .car-map-card,
+  .car-metric-card,
+  .car-voice-card,
+  .car-side-card {
+    padding: 0.7rem !important;
+  }
+
+  .car-metric-value {
+    font-size: 3rem !important;
+  }
+
+  .car-analytics-card > div:nth-child(2) > div:first-child > div:nth-child(2) {
+    font-size: 1.35rem !important;
+  }
+
+  .car-analytics-card > div:nth-child(2) > div:last-child {
+    flex-basis: 76px !important;
+  }
+
+  .car-analytics-card > div:nth-child(2) > div:last-child > div:first-child {
+    width: 58px !important;
+    height: 29px !important;
+  }
+}

@@ -301,7 +301,7 @@ export const carTranslations: Record<string, any> = {
     noViolationsDesc: "Perfect compliance. Scanning surroundings...",
     compliance: "Compliance Check //",
     seatbelt: "Seatbelts Mandatory", noPhone: "No Mobile Phones", laneDiscipline: "Lane Discipline Enforced",
-    tapToTransmit: "Tap to Transmit", listening: "Listening...",
+    tapToTransmit: "Tap to Speak", listening: "Listening...",
   },
   "hi-IN": {
     terminal: "टर्मिनल", displayMode: "डिस्प्ले मोड",
